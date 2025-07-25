@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Net.NetworkInformation;
 using UnityEngine;
 using static Character;
 
@@ -33,6 +32,8 @@ public class CharacterController : MonoBehaviour
 
     void Update()
     {
+        if (UIUtils.IsPointerOverUI())
+            return;
         if (Input.GetMouseButtonDown(0))
         {
  
