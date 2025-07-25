@@ -12,8 +12,6 @@ public class CameraDrag : MonoBehaviour
     private bool isDragging = false;
     private Camera cam;
 
-    public UIDocument uiDocument; // asignar desde el editor si querés
-
     void Start()
     {
         cam = Camera.main;
@@ -21,8 +19,7 @@ public class CameraDrag : MonoBehaviour
 
     void Update()
     {
-
-     //   if (UIUtils.IsPointerOverUI()) return; 
+        if (UIUtils.IsPointerOverUI()) return;
         HandleDrag();
         HandleZoom();
     }
@@ -31,11 +28,11 @@ public class CameraDrag : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-           // if (UIUtils.IsPointerOverUI())
-          //  {
-          //      isDragging = false;
-           //     return;
-           // }
+            if (UIUtils.IsPointerOverUI())
+            {
+                isDragging = false;
+                return;
+            }
 
             dragOrigin = Input.mousePosition;
             isDragging = true;
