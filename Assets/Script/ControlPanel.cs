@@ -12,6 +12,10 @@ public class ControlPanel : MonoBehaviour
     private VisualElement buttons;
     private Label title;
     private VisualElement info;
+    private Label goldLabel;
+    private Label woodLabel;
+    private Label foodLabel;
+    private Label cronoLabel;
     public static ControlPanel Instance { get; private set; }
 
 
@@ -22,14 +26,24 @@ public class ControlPanel : MonoBehaviour
         buttons = root.Q<VisualElement>("buttons");
         title = root.Q<Label>("InfoTitle");
         info = root.Q<VisualElement>("info");
+        goldLabel = root.Q<Label>("GoldLabel");
+        woodLabel = root.Q<Label>("WoodLabel");
+        foodLabel = root.Q<Label>("FoodLabel");
+        cronoLabel = root.Q<Label>("CronoLabel");
 
         RegisterClickBlocker();
 
+        UpdateResourceLabels();
         GameEvents.OnSelectionChanged += UpdatePanel;
     }
     void OnDisable()
     {
         GameEvents.OnSelectionChanged -= UpdatePanel;
+    }
+
+    void Update()
+    {
+        UpdateResourceLabels();
     }
 
     void UpdatePanel(GameObject selected)
@@ -270,6 +284,16 @@ public class ControlPanel : MonoBehaviour
         button.pickingMode = PickingMode.Position;
 
         buttons.Add(button);
+    }
+
+    void UpdateResourceLabels()
+    {
+        if (GameState.playerResources == null) return;
+        var res = GameState.playerResources;
+        if (goldLabel != null) goldLabel.text = $"Oro: {res.gold}";
+        if (woodLabel != null) woodLabel.text = $"Madera: {res.wood}";
+        if (foodLabel != null) foodLabel.text = $"Comida: {res.food}";
+        if (cronoLabel != null) cronoLabel.text = $"Crono: {res.crono}";
     }
 
     void RegisterClickBlocker()
