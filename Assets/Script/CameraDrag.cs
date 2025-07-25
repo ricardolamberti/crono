@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UIElements;
+using UnityEngine.EventSystems;
 
 public class CameraDrag : MonoBehaviour
 {
@@ -21,8 +22,7 @@ public class CameraDrag : MonoBehaviour
 
     void Update()
     {
-
-     //   if (UIUtils.IsPointerOverUI()) return; 
+        if (UIUtils.IsPointerOverUI()) return;
         HandleDrag();
         HandleZoom();
     }
@@ -31,11 +31,11 @@ public class CameraDrag : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-           // if (UIUtils.IsPointerOverUI())
-          //  {
-          //      isDragging = false;
-           //     return;
-           // }
+            if (UIUtils.IsPointerOverUI())
+            {
+                isDragging = false;
+                return;
+            }
 
             dragOrigin = Input.mousePosition;
             isDragging = true;
