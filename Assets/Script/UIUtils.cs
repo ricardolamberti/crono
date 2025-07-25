@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UIElements;
 
@@ -21,17 +21,26 @@ public static class UIUtils
         Vector2 pos = Input.mousePosition;
 #endif
 
+       
+     
         foreach (var doc in Object.FindObjectsOfType<UIDocument>())
         {
-            var panel = doc.rootVisualElement.panel;
-            if (panel == null)
-                continue;
+            if (doc.rootVisualElement.panel == null) continue;
 
-            var picked = panel.Pick(pos);
-            if (picked != null && picked != doc.rootVisualElement)
-                return true;
+            var root = doc.rootVisualElement;
+            foreach (var child in root.Children())
+            {
+                child.pickingMode = PickingMode.Position;
+                Vector2 panelZone = RuntimePanelUtils.ScreenToPanel(child.panel, pos);
+                if (child.ContainsPoint(panelZone))
+                {
+                  //  Debug.Log($"✅ Zonw Dentro del rectángulo UI: {panelZone}");
+                    return true;
+                }
+            }
+
+
         }
-
         return false;
     }
 }

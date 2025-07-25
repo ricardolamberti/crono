@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Net.NetworkInformation;
 using UnityEngine;
 using static Character;
 
@@ -37,7 +36,9 @@ public class CharacterController : MonoBehaviour
             return;
         if (Input.GetMouseButtonDown(0))
         {
- 
+            if (UIUtils.IsPointerOverUI())
+                return;
+
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit))
             {

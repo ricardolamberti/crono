@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Unity.IO.LowLevel.Unsafe;
 using UnityEngine;
 using UnityEngine.UIElements;
 using static Character;
@@ -286,7 +285,7 @@ public class ControlPanel : MonoBehaviour
         blocker.RegisterCallback<PointerDownEvent>(evt => evt.StopPropagation());
         blocker.RegisterCallback<ClickEvent>(evt => evt.StopPropagation());
 
-        root.Add(blocker); // al fondo, no tapa visualmente
+        root.Insert(0, blocker); // al fondo para no cubrir los controles
     }
 
     void CreateUnit(string type) { Debug.Log($"Crear unidad: {type}"); }
