@@ -170,6 +170,7 @@ public class ControlPanel : MonoBehaviour
                     var worker = FindFreeWorker();
                     if (worker != null)
                     {
+                        worker.SetGatherRoute(null);
                         GameState.playerResources.Consume(req);
                         worker.AssignBuildTask(pos, buildingCode);
                     }

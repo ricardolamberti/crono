@@ -119,7 +119,7 @@ public class GameTimeManager : MonoBehaviour
                 else task = Character.GatherTask.Food;
 
                 w.gatherTask = task;
-                PlanGatherRoute(w);
+                w.PlanGatherRoute();
             }
         }
 
@@ -161,71 +161,7 @@ public class GameTimeManager : MonoBehaviour
         GameState.playerResources.AddFlow(total);
     }
 
-    Vector2Int FindNearest(Vector2Int origin, System.Func<MapCellDTO, bool> filter)
-    {
-        int best = int.MaxValue;
-        Vector2Int bestPos = new(-1, -1);
-        foreach (var kvp in MapState.cellMap)
-        {
-            if (!filter(kvp.Value))
-                continue;
-            int dist = Mathf.Abs(kvp.Key.x - origin.x) + Mathf.Abs(kvp.Key.y - origin.y);
-            if (dist < best)
-            {
-                best = dist;
-                bestPos = kvp.Key;
-            }
-        }
-        return bestPos;
-    }
 
-    void PlanGatherRoute(Character worker)
-    {
-        Vector2Int start = worker.GetGridPosition();
-        Vector2Int townhall = FindNearest(start, c => c.building == "townhall");
-        if (townhall.x < 0) return;
-
-        List<Vector2Int> route = new();
-        List<Vector2Int> segment;
-        switch (worker.gatherTask)
-        {
-            case Character.GatherTask.Gold:
-                Vector2Int mine = FindNearest(start, c => c.building == "mine");
-                if (mine.x < 0) return;
-                segment = Pathfinder.FindPath(start, mine, MapState.cellMap);
-                route.AddRange(segment);
-                segment = Pathfinder.FindPath(mine, townhall, MapState.cellMap);
-                for (int i = 1; i < segment.Count; i++) route.Add(segment[i]);
-                segment = Pathfinder.FindPath(townhall, mine, MapState.cellMap);
-                for (int i = 1; i < segment.Count; i++) route.Add(segment[i]);
-                break;
-            case Character.GatherTask.Wood:
-                Vector2Int lumber = FindNearest(start, c => c.building == "lumbermill");
-                if (lumber.x < 0) return;
-                Vector2Int tree = FindNearest(lumber, c => c.resources != null && c.resources.wood > 0);
-                if (tree.x < 0) return;
-                segment = Pathfinder.FindPath(start, lumber, MapState.cellMap);
-                route.AddRange(segment);
-                segment = Pathfinder.FindPath(lumber, tree, MapState.cellMap);
-                for (int i = 1; i < segment.Count; i++) route.Add(segment[i]);
-                segment = Pathfinder.FindPath(tree, lumber, MapState.cellMap);
-                for (int i = 1; i < segment.Count; i++) route.Add(segment[i]);
-                break;
-            case Character.GatherTask.Food:
-                Vector2Int farm = FindNearest(start, c => c.building == "farm");
-                if (farm.x < 0) return;
-                segment = Pathfinder.FindPath(start, farm, MapState.cellMap);
-                route.AddRange(segment);
-                segment = Pathfinder.FindPath(farm, townhall, MapState.cellMap);
-                for (int i = 1; i < segment.Count; i++) route.Add(segment[i]);
-                segment = Pathfinder.FindPath(townhall, farm, MapState.cellMap);
-                for (int i = 1; i < segment.Count; i++) route.Add(segment[i]);
-                break;
-        }
-
-        if (route.Count > 0)
-            worker.SetGatherRoute(route);
-    }
 
     void AdvanceCycle()
     {
