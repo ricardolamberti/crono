@@ -1,0 +1,16 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="True">
+    <Style src="project://database/Assets/UI%20Toolkit/ControlPanel.uss?fileID=7433441132597879392&amp;guid=fc6db9428fb7f694dac375997d165b80&amp;type=3#ControlPanel" />
+    <ui:VisualElement name="root" class="panel-root">
+        <ui:VisualElement class="panel-column resources-panel">
+            <ui:Label name="GoldLabel" text="Oro: 0" />
+            <ui:Label name="WoodLabel" text="Madera: 0" />
+            <ui:Label name="FoodLabel" text="Comida: 0" />
+            <ui:Label name="CronoLabel" text="Crono: 0" />
+        </ui:VisualElement>
+        <ui:VisualElement name="buttons" class="panel-column buttons-panel" />
+        <ui:VisualElement name="info" class="panel-column info-panel" />
+        <ui:VisualElement class="panel-column empty-panel">
+            <ui:Label name="InfoTitle" text="Información:" class="info-title" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
