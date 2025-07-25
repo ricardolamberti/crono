@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UIElements;
 
@@ -21,18 +21,39 @@ public static class UIUtils
         Vector2 pos = Input.mousePosition;
 #endif
 
+       
+     
         foreach (var doc in Object.FindObjectsOfType<UIDocument>())
         {
-            var panel = doc.rootVisualElement.panel;
-            if (panel == null)
-                continue;
+            if (doc.rootVisualElement.panel == null) continue;
 
-            Vector2 panelPos = RuntimePanelUtils.ScreenToPanel(panel, pos);
-            var picked = panel.Pick(panelPos);
-            if (picked != null && picked != doc.rootVisualElement)
+            var root = doc.rootVisualElement;
+            foreach (var child in root.Children())
+            {
+                child.pickingMode = PickingMode.Position;
+                Vector2 panelZone = RuntimePanelUtils.ScreenToPanel(child.panel, pos);
+                if (child.ContainsPoint(panelZone))
+                {
+                    Debug.Log($"✅ Zonw Dentro del rectángulo UI: {panelZone}");
+                    return true;
+                }
+            }
+
+            Vector2 panelPos = RuntimePanelUtils.ScreenToPanel(doc.rootVisualElement.panel, pos);
+            var picked = doc.rootVisualElement.panel.Pick(panelPos);
+
+            if (doc.rootVisualElement.worldBound.Contains(panelPos))
+            {
+                Debug.Log($"✅ Dentro del rectángulo UI: {panelPos}");
+               }
+            if (picked != null )
+            {
+                Debug.Log($"picked: Mouse: {Input.mousePosition} PanelPos: {panelPos} PanelRect: {doc.rootVisualElement.worldBound}");
                 return true;
-        }
+            }
+            Debug.Log($"No picked:Mouse: {Input.mousePosition} PanelPos: {panelPos} PanelRect: {doc.rootVisualElement.worldBound}");
 
+        }
         return false;
     }
 }

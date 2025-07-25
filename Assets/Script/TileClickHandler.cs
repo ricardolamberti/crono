@@ -14,7 +14,9 @@ public class TileClickHandler : MonoBehaviour
 
     void OnMouseDown()
     {
-       
+        if (UIUtils.IsPointerOverUI())
+            return;
+
         GameEvents.RaiseSelection(gameObject); // reusar el evento ya existente
     }
 

@@ -32,11 +32,11 @@ public class CharacterController : MonoBehaviour
 
     void Update()
     {
-        if (UIUtils.IsPointerOverUI())
-            return;
         if (Input.GetMouseButtonDown(0))
         {
- 
+            if (UIUtils.IsPointerOverUI())
+                return;
+
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit))
             {
