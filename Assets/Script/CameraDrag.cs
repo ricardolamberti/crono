@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEngine.UIElements;
-using UnityEngine.EventSystems;
 
 public class CameraDrag : MonoBehaviour
 {
@@ -12,8 +11,6 @@ public class CameraDrag : MonoBehaviour
     private Vector3 dragOrigin;
     private bool isDragging = false;
     private Camera cam;
-
-    public UIDocument uiDocument; // asignar desde el editor si querés
 
     void Start()
     {

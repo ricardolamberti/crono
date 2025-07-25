@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using static Character;
 
 public class CharacterController : MonoBehaviour

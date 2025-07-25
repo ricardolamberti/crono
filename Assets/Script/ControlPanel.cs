@@ -24,7 +24,7 @@ public class ControlPanel : MonoBehaviour
         title = root.Q<Label>("InfoTitle");
         info = root.Q<VisualElement>("info");
 
-       // RegisterClickBlocker();
+        RegisterClickBlocker();
 
         GameEvents.OnSelectionChanged += UpdatePanel;
     }
