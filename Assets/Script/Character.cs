@@ -31,6 +31,8 @@ public class Character : MonoBehaviour
     public enum GatherTask { Gold, Wood, Food }
     public GatherTask gatherTask = GatherTask.Food;
 
+    private List<Vector2Int> gatherRoute;
+
     public void LoadSprites(Dictionary<string, Sprite[]> loaded)
     {
         animations = loaded;
@@ -103,6 +105,20 @@ public void AssignBuildTask(Vector2Int pos, string building)
     {
         currentPath = new Queue<Vector2Int>(path);
         MoveToNext();
+    }
+
+    public void SetGatherRoute(List<Vector2Int> route)
+    {
+        if (route == null || route.Count == 0)
+        {
+            gatherRoute = null;
+            currentTask = Task.None;
+            return;
+        }
+
+        gatherRoute = route;
+        SetPath(route);
+        currentTask = Task.Move;
     }
 
     void MoveToNext()
@@ -178,6 +194,11 @@ MoveTo(GridUtils.GridToWorld(next));
             return;
         }
 
+        if (!moving && currentTask == Task.Move && gatherRoute != null && (currentPath == null || currentPath.Count == 0))
+        {
+            SetPath(gatherRoute);
+        }
+
         if (moving)
         {
             Vector3 dir = (targetPosition - transform.position).normalized;
@@ -250,5 +271,6 @@ MoveTo(GridUtils.GridToWorld(next));
         // Podés limpiar path y movimiento si querés
         currentPath = null;
         moving = false;
+        gatherRoute = null;
     }
 }
