@@ -19,8 +19,7 @@ public class CameraDrag : MonoBehaviour
 
     void Update()
     {
-
-     //   if (UIUtils.IsPointerOverUI()) return; 
+        if (UIUtils.IsPointerOverUI()) return;
         HandleDrag();
         HandleZoom();
     }

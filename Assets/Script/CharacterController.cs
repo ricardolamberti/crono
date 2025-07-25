@@ -32,8 +32,6 @@ public class CharacterController : MonoBehaviour
 
     void Update()
     {
-        if (UIUtils.IsPointerOverUI())
-            return;
         if (Input.GetMouseButtonDown(0))
         {
             if (UIUtils.IsPointerOverUI())
