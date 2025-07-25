@@ -27,3 +27,5 @@ sysinfo.txt
 *.opendb
 *.VC.db
 .vscode/
+.vs
+ProjectSettings/
