@@ -26,9 +26,12 @@ public class Character : MonoBehaviour
 
     public string buildingToConstruct = "";
     public enum ControlMode { Automatic, Manual }
-public ControlMode controlMode = ControlMode.Automatic;
+    public ControlMode controlMode = ControlMode.Automatic;
 
-public void LoadSprites(Dictionary<string, Sprite[]> loaded)
+    public enum GatherTask { Gold, Wood, Food }
+    public GatherTask gatherTask = GatherTask.Food;
+
+    public void LoadSprites(Dictionary<string, Sprite[]> loaded)
     {
         animations = loaded;
   //      SetIdleSprite();
@@ -143,6 +146,7 @@ MoveTo(GridUtils.GridToWorld(next));
                 return;
             }
             cell.building = building;
+            GameState.IncrementBuilding(building);
             MapLoader.instance.DrawBuilding(pos, building); // <- 🔥 Dibuja en el tile
             Debug.Log($"{name} construyó {building} en {pos}");
             MapLoader.instance.ClearConstructionPreview(pos);

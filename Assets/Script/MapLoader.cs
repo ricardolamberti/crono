@@ -413,7 +413,9 @@ public class MapLoader : MonoBehaviour
             return;
         }
 
+        string oldBuilding = cell.building;
         cell.building = null;
+        GameState.DecrementBuilding(oldBuilding);
 
         if (tiles.TryGetValue(pos, out var tile))
         {

@@ -5,6 +5,8 @@ public class GameTimeManager : MonoBehaviour
     public float interval = 5f; // cada 5 segundos
     public int cyclesPerMonth = 30;
 
+    private const int workersPerBuilding = 3;
+
     private float timer = 0f;
     private int currentCycle = 0;
 
@@ -59,41 +61,93 @@ public class GameTimeManager : MonoBehaviour
             }
         }
 
-        int availableWorkers = 0;
+        List<Character> allWorkers = new();
+        List<Character> autoIdleWorkers = new();
 
         foreach (var character in GameObject.FindObjectsOfType<Character>())
         {
             string unitCode = character.characterType.ToString().ToLower();
             total += ResourceProductionMatrix.GetFlow(unitCode);
 
-            if (character.characterType == Character.Type.Worker &&
-                character.controlMode == Character.ControlMode.Automatic &&
-                character.currentTask == Character.Task.None)
+            if (character.characterType == Character.Type.Worker)
             {
-                availableWorkers++;
+                if (character.currentTask == Character.Task.None)
+                {
+                    allWorkers.Add(character);
+                    if (character.controlMode == Character.ControlMode.Automatic)
+                        autoIdleWorkers.Add(character);
+                }
             }
         }
 
         int totalWeight = farmCount + mineCount + lumberCount;
-        float goldWorkers = 0f;
-        float woodWorkers = 0f;
-        float foodWorkers = 0f;
-
-        if (totalWeight > 0 && availableWorkers > 0)
+        if (totalWeight > 0 && autoIdleWorkers.Count > 0)
         {
-            goldWorkers = availableWorkers * (mineCount / (float)totalWeight);
-            woodWorkers = availableWorkers * (lumberCount / (float)totalWeight);
-            foodWorkers = availableWorkers * (farmCount / (float)totalWeight);
+            int available = autoIdleWorkers.Count;
 
-            goldWorkers = Mathf.Min(goldWorkers, mineCount);
-            woodWorkers = Mathf.Min(woodWorkers, lumberCount);
-            foodWorkers = Mathf.Min(foodWorkers, farmCount);
+            int targetGold = Mathf.RoundToInt(available * (mineCount / (float)totalWeight));
+            int targetWood = Mathf.RoundToInt(available * (lumberCount / (float)totalWeight));
+            int targetFood = available - targetGold - targetWood;
 
-            var mineFlow = ResourceProductionMatrix.GetFlow("mine").Scale(goldWorkers);
-            var lumberFlow = ResourceProductionMatrix.GetFlow("lumbermill").Scale(woodWorkers);
-            var farmFlow = ResourceProductionMatrix.GetFlow("farm").Scale(foodWorkers);
+            targetGold = Mathf.Min(targetGold, mineCount * workersPerBuilding);
+            targetWood = Mathf.Min(targetWood, lumberCount * workersPerBuilding);
+            targetFood = Mathf.Min(targetFood, farmCount * workersPerBuilding);
 
-            total += mineFlow + lumberFlow + farmFlow;
+            int used = Mathf.Min(targetGold + targetWood + targetFood, available);
+            int remaining = available - used;
+
+            while (remaining > 0)
+            {
+                if (targetGold < mineCount * workersPerBuilding)
+                { targetGold++; remaining--; if (remaining == 0) break; }
+                if (targetWood < lumberCount * workersPerBuilding)
+                { targetWood++; remaining--; if (remaining == 0) break; }
+                if (targetFood < farmCount * workersPerBuilding)
+                { targetFood++; remaining--; if (remaining == 0) break; }
+                if (remaining > 0) { targetFood++; remaining--; }
+            }
+
+            for (int i = 0; i < autoIdleWorkers.Count; i++)
+            {
+                if (i < targetGold) autoIdleWorkers[i].gatherTask = Character.GatherTask.Gold;
+                else if (i < targetGold + targetWood) autoIdleWorkers[i].gatherTask = Character.GatherTask.Wood;
+                else autoIdleWorkers[i].gatherTask = Character.GatherTask.Food;
+            }
+        }
+
+        int goldWorkers = 0;
+        int woodWorkers = 0;
+        int foodWorkers = 0;
+
+        foreach (var w in allWorkers)
+        {
+            switch (w.gatherTask)
+            {
+                case Character.GatherTask.Gold: goldWorkers++; break;
+                case Character.GatherTask.Wood: woodWorkers++; break;
+                case Character.GatherTask.Food: foodWorkers++; break;
+            }
+        }
+
+        if (mineCount > 0)
+        {
+            int effective = Mathf.Min(goldWorkers, mineCount * workersPerBuilding);
+            float groups = effective / (float)workersPerBuilding;
+            total += ResourceProductionMatrix.GetFlow("mine").Scale(groups);
+        }
+
+        if (lumberCount > 0)
+        {
+            int effective = Mathf.Min(woodWorkers, lumberCount * workersPerBuilding);
+            float groups = effective / (float)workersPerBuilding;
+            total += ResourceProductionMatrix.GetFlow("lumbermill").Scale(groups);
+        }
+
+        if (farmCount > 0)
+        {
+            int effective = Mathf.Min(foodWorkers, farmCount * workersPerBuilding);
+            float groups = effective / (float)workersPerBuilding;
+            total += ResourceProductionMatrix.GetFlow("farm").Scale(groups);
         }
 
         GameState.playerResources.AddFlow(total);
