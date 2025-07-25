@@ -18,6 +18,7 @@ public class ControlPanel : MonoBehaviour
     private Label woodLabel;
     private Label foodLabel;
     private Label cronoLabel;
+    private Label dateLabel;
     void OnEnable()
     {
         Instance = this;
@@ -29,6 +30,9 @@ public class ControlPanel : MonoBehaviour
         woodLabel = root.Q<Label>("WoodLabel");
         foodLabel = root.Q<Label>("FoodLabel");
         cronoLabel = root.Q<Label>("CronoLabel");
+        dateLabel = uiDocument.rootVisualElement.Q<Label>("DateLabel");
+        GameTimeManager.OnDateChanged += UpdateDateLabel;
+        UpdateDateLabel(GameTimeManager.CurrentMonth, GameTimeManager.CurrentYear);
         RegisterClickBlocker();
         UpdateResourceLabels();
         GameEvents.OnSelectionChanged += UpdatePanel;
@@ -36,6 +40,7 @@ public class ControlPanel : MonoBehaviour
     void OnDisable()
     {
         GameEvents.OnSelectionChanged -= UpdatePanel;
+        GameTimeManager.OnDateChanged -= UpdateDateLabel;
     }
     void Update()
     {
@@ -305,6 +310,12 @@ public class ControlPanel : MonoBehaviour
         if (woodLabel != null) woodLabel.text = $"Madera: {res.wood}";
         if (foodLabel != null) foodLabel.text = $"Comida: {res.food}";
         if (cronoLabel != null) cronoLabel.text = $"Crono: {res.crono}";
+    }
+
+    void UpdateDateLabel(int month, int year)
+    {
+        if (dateLabel != null)
+            dateLabel.text = $"Mes {month} - Año {year}";
     }
 
 

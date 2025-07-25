@@ -13,6 +13,22 @@
 
 }
 
+.date-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 24px;
+    background-color: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+}
+
+.date-bar .unity-label {
+    color: white;
+    font-size: 14px;
+}
+
 .panel-column {
     flex-grow: 1;
     flex-direction: column;

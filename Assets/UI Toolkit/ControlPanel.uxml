@@ -1,5 +1,8 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="True">
     <Style src="project://database/Assets/UI%20Toolkit/ControlPanel.uss?fileID=7433441132597879392&amp;guid=fc6db9428fb7f694dac375997d165b80&amp;type=3#ControlPanel" />
+    <ui:VisualElement name="dateBar" class="date-bar">
+        <ui:Label name="DateLabel" text="Mes 1 - Año 1" />
+    </ui:VisualElement>
     <ui:VisualElement name="root" class="panel-root">
         <ui:VisualElement class="panel-column resources-panel">
             <ui:Label name="GoldLabel" text="Oro: 0" />
