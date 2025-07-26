@@ -19,6 +19,8 @@ public class ControlPanel : MonoBehaviour
     private Label foodLabel;
     private Label cronoLabel;
     private Label dateLabel;
+    public bool freeResource = false;
+
     void OnEnable()
     {
         Instance = this;
@@ -160,12 +162,16 @@ public class ControlPanel : MonoBehaviour
             {
                 AddButton(nombre, () => {
                     var req = BuildRules.TakeRequirements(buildingCode);
-
-                    if (!GameState.playerResources.HasEnough(req))
+                    if (!freeResource)
                     {
-                        Debug.Log($"No hay recursos suficientes para construir {buildingCode}");
-                        return;
+  
+                        if (!GameState.playerResources.HasEnough(req))
+                        {
+                            Debug.Log($"No hay recursos suficientes para construir {buildingCode}");
+                            return;
+                        }
                     }
+
 
                     var worker = FindFreeWorker();
                     if (worker != null)
@@ -237,12 +243,15 @@ public class ControlPanel : MonoBehaviour
     void SpawnWorkerNear(MapCellDTO cell, Character.Type type )
     {
         var req = BuildRules.TakeRequirements(type);
-
-        if (!GameState.playerResources.HasEnough(req))
+        if (!freeResource)
         {
-            Debug.Log($"No hay recursos suficientes para construir { type}");
-            return;
+            if (!GameState.playerResources.HasEnough(req))
+            {
+                Debug.Log($"No hay recursos suficientes para construir {type}");
+                return;
+            }
         }
+
 
         Vector2Int basePos = new(cell.x, cell.y);
         foreach (var dir in new[] {
