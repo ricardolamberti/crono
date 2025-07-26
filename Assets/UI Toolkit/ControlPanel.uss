@@ -46,8 +46,16 @@
     color: white;
 }
 
+.buttons-panel {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+}
+
 .buttons-panel > * {
+    margin-right: 4px;
     margin-bottom: 4px;
+    flex-grow: 0;
 }
 
 .empty-panel {
