@@ -5,6 +5,7 @@ using UnityEngine.UIElements;
 using static Character;
 using static DTO;
 
+
 public class ControlPanel : MonoBehaviour
 {
     public UIDocument uiDocument;
@@ -178,7 +179,7 @@ public class ControlPanel : MonoBehaviour
                     {
                         worker.SetGatherRoute(null);
                         GameState.playerResources.Consume(req);
-                        worker.AssignBuildTask(pos, buildingCode);
+                        ActionManager.Instance.Enqueue(new BuildAction(worker, pos, buildingCode));
                     }
 
                 });
@@ -201,7 +202,7 @@ public class ControlPanel : MonoBehaviour
                     AddButton("Construir casa central", () => {
                         var worker = FindFreeWorker();
                         if (worker != null)
-                            worker.AssignBuildTask(new Vector2Int(cell.x, cell.y), "townhall");
+                            ActionManager.Instance.Enqueue(new BuildAction(worker, new Vector2Int(cell.x, cell.y), "townhall"));
                         else
                             Debug.Log("No hay obreros disponibles.");
                     });
@@ -262,7 +263,7 @@ public class ControlPanel : MonoBehaviour
                 && string.IsNullOrEmpty(targetCell.building)
                 && MapLoader.instance.IsPositionFree(target))
             {
-                MapLoader.instance.SpawnCharacter(target, type, "player1" );
+                ActionManager.Instance.Enqueue(new SpawnCharacterAction(target, type, "player1"));
                 return;
             }
         }
