@@ -186,6 +186,10 @@ public void AssignBuildTask(Vector2Int pos, string building)
                 for (int i = 1; i < segment.Count; i++) route.Add(segment[i]);
                 segment = Pathfinder.FindPath(tree, lumber, MapState.cellMap);
                 for (int i = 1; i < segment.Count; i++) route.Add(segment[i]);
+                segment = Pathfinder.FindPath(lumber, townhall, MapState.cellMap);
+                for (int i = 1; i < segment.Count; i++) route.Add(segment[i]);
+                segment = Pathfinder.FindPath(townhall, lumber, MapState.cellMap);
+                for (int i = 1; i < segment.Count; i++) route.Add(segment[i]);
                 break;
             case Character.GatherTask.Food:
                 Vector2Int farm = FindNearest(start, c => c.building == "farm");
@@ -251,6 +255,15 @@ public void AssignBuildTask(Vector2Int pos, string building)
             MapLoader.instance.DrawBuilding(pos, building); // <- 🔥 Dibuja en el tile
             Debug.Log($"{name} construyó {building} en {pos}");
             MapLoader.instance.ClearConstructionPreview(pos);
+
+            if (building == "townhall")
+            {
+                foreach (var c in GameObject.FindObjectsOfType<Character>())
+                {
+                    if (c.role is WorkerRole && c.owner == owner)
+                        c.PlanGatherRoute();
+                }
+            }
 
             GameEvents.RaiseSelection(gameObject);
         }
