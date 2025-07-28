@@ -261,7 +261,7 @@
             "resources": {
                 "gold": 0,
                 "wood": 37,
-                "crono": 0
+                "crono": 1
             }
         },
         {
@@ -465,7 +465,7 @@
             "resources": {
                 "gold": 0,
                 "wood": 34,
-                "crono": 0
+                "crono": 1
             }
         },
         {
@@ -4341,7 +4341,7 @@
             "resources": {
                 "gold": 0,
                 "wood": 19,
-                "crono": 0
+                "crono": 1
             }
         },
         {
@@ -4545,7 +4545,7 @@
             "resources": {
                 "gold": 0,
                 "wood": 17,
-                "crono": 0
+                "crono": 1
             }
         },
         {
