@@ -8,6 +8,7 @@ public class PlayerManager : MonoBehaviour
     public int playerCount = 2;
 
     private readonly List<Player> players = new();
+    public Vector2Int Player1Spawn { get; private set; }
 
     readonly Vector2Int[] defaultSpawns = new Vector2Int[]
     {
@@ -41,6 +42,7 @@ public class PlayerManager : MonoBehaviour
             ? mapSpawns["player1"]
             : (defaultSpawns.Length > 0 ? defaultSpawns[0] : new Vector2Int(1,1));
 
+        Player1Spawn = spawn;
         players.Add(new HumanPlayer("player1", spawn));
 
         for (int i = 1; i < playerCount; i++)
@@ -54,6 +56,10 @@ public class PlayerManager : MonoBehaviour
 
         foreach (var p in players)
             p.Initialize();
+
+        Vector3 focus = GridUtils.GridToWorld(Player1Spawn);
+        Camera.main.transform.position = focus + new Vector3(5, 10, -5);
+        Camera.main.transform.LookAt(focus);
     }
 
     void Update()
