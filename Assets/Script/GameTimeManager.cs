@@ -5,6 +5,7 @@ using static DTO;
 
 public class GameTimeManager : MonoBehaviour
 {
+    public static GameTimeManager Instance { get; private set; }
     public float interval = 5f; // cada 5 segundos
     public int cyclesPerMonth = 30;
 
@@ -17,6 +18,11 @@ public class GameTimeManager : MonoBehaviour
     public static int CurrentYear { get; private set; } = 1;
 
     public static event System.Action<int, int> OnDateChanged;
+
+    void Awake()
+    {
+        Instance = this;
+    }
 
     void Start()
     {
@@ -178,5 +184,10 @@ public class GameTimeManager : MonoBehaviour
 
             OnDateChanged?.Invoke(CurrentMonth, CurrentYear);
         }
+    }
+
+    public bool Approve(ControlPanelAction action)
+    {
+        return true; // placeholder for time-based rules
     }
 }
