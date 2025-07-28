@@ -122,6 +122,7 @@ public class MapLoader : MonoBehaviour
 
         GenerateGrid(wrapper.cells);
         CenterCamera(wrapper.cells);
+        PlayerManager.Instance?.InitializePlayers();
         yield return null;
     }
     public void ShowConstructionPreview(Vector2Int pos, string building)
@@ -211,15 +212,6 @@ public class MapLoader : MonoBehaviour
                     DrawResourceIcon(tile, "crono", iconCrono);
             }
 
-            if (cell.x == 1 && cell.y == 1)
-                SpawnCharacter(new Vector2Int(1, 1), Character.Type.Worker, "player1");
-/*
-            if (cell.x == 2 && cell.y == 2)
-                SpawnCharacter(new Vector2Int(2, 2), Character.Type.Scientist, "player1");
-
-            if (cell.x == 3 && cell.y == 3)
-                SpawnCharacter(new Vector2Int(3, 3), Character.Type.Warrior, "player1");
-*/
         }
 
         // Después de crear todos los tiles
