@@ -6,6 +6,7 @@ public class Character : MonoBehaviour
 {
     public enum Type { Worker, Scientist, Warrior }
     public Type characterType;
+    public CharacterRole role;
     public string owner;
 
     private Vector3 targetPosition;
@@ -42,11 +43,27 @@ public class Character : MonoBehaviour
     public void Init(Type type, string ownerId)
     {
         characterType = type;
+        role = GetComponent<CharacterRole>();
         owner = ownerId;
         name = $"{type}_{owner}";
         targetPosition = transform.position;
 
         // Asignar automáticamente el SpriteRenderer si no está asignado
+        if (spriteRenderer == null)
+            spriteRenderer = GetComponent<SpriteRenderer>();
+
+        animator = GetComponent<CharacterAnimator>();
+
+        SetIdleSprite();
+    }
+
+    public void Init(CharacterRole roleComponent, string ownerId)
+    {
+        role = roleComponent;
+        owner = ownerId;
+        name = $"{roleComponent.Code}_{owner}";
+        targetPosition = transform.position;
+
         if (spriteRenderer == null)
             spriteRenderer = GetComponent<SpriteRenderer>();
 

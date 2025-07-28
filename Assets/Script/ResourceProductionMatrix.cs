@@ -18,4 +18,9 @@ public static class ResourceProductionMatrix
     {
         return production.TryGetValue(code, out var flow) ? flow : new ResourceFlow();
     }
+
+    public static ResourceFlow GetFlow(CharacterRole role)
+    {
+        return GetFlow(role.Code);
+    }
 }

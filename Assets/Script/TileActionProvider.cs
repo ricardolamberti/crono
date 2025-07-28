@@ -115,7 +115,7 @@ public class TileActionProvider : MonoBehaviour, IActionProposer
         var all = GameObject.FindObjectsOfType<Character>();
         foreach (var c in all)
         {
-            if (c.characterType == Character.Type.Worker &&
+            if (c.role is WorkerRole &&
                 c.controlMode == Character.ControlMode.Automatic &&
                 c.currentTask == Character.Task.None)
             {
@@ -124,7 +124,7 @@ public class TileActionProvider : MonoBehaviour, IActionProposer
         }
         foreach (var c in all)
         {
-            if (c.characterType == Character.Type.Worker &&
+            if (c.role is WorkerRole &&
                 c.controlMode == Character.ControlMode.Manual &&
                 c.currentTask == Character.Task.None)
             {

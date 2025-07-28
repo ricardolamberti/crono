@@ -58,13 +58,14 @@ public class ControlPanel : MonoBehaviour
             title.text = character.name;
             buttons.Clear();
 
-            if (character.characterType == Character.Type.Warrior)
+            if (character.role is WarriorRole)
                 AddButton("Atacar", () => GameEvents.RequestAttack(character));
 
-            if (character.characterType == Character.Type.Scientist)
+            if (character.role is ScientistRole)
                 AddButton("Curar", () => GameEvents.RequestHeal(character));
 
-            info.Add(new Label($"Tipo: {character.characterType}"));
+            string typeName = character.role != null ? character.role.Code : character.characterType.ToString();
+            info.Add(new Label($"Tipo: {typeName}"));
             info.Add(new Label($"Control: {character.controlMode}"));
             info.Add(new Label($"Dueño: {character.owner}"));
 

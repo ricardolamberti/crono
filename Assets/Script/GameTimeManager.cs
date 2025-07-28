@@ -75,10 +75,12 @@ public class GameTimeManager : MonoBehaviour
 
         foreach (var character in GameObject.FindObjectsOfType<Character>())
         {
-            string unitCode = character.characterType.ToString().ToLower();
-            total += ResourceProductionMatrix.GetFlow(unitCode);
+            if (character.role != null)
+                total += ResourceProductionMatrix.GetFlow(character.role);
+            else
+                total += ResourceProductionMatrix.GetFlow(character.characterType.ToString().ToLower());
 
-            if (character.characterType == Character.Type.Worker)
+            if (character.role is WorkerRole)
             {
                 if (character.currentTask == Character.Task.None)
                 {
