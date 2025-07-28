@@ -28,6 +28,12 @@ public class MapGenerator : MonoBehaviour
     {
         List<MapCellDTO> map = new();
 
+        Dictionary<Vector2Int, string> spawnPoints = new()
+        {
+            { new Vector2Int(1,1), "player1" },
+            { new Vector2Int(width-2, height-2), "ai1" }
+        };
+
         GenerateRivers();
         GenerateMountainClusters();
 
@@ -59,6 +65,8 @@ public class MapGenerator : MonoBehaviour
                     res.crono = 1;
                 }
 
+                string startId = spawnPoints.ContainsKey(pos) ? spawnPoints[pos] : null;
+
                 map.Add(new MapCellDTO
                 {
                     x = x,
@@ -66,6 +74,7 @@ public class MapGenerator : MonoBehaviour
                     terrain = terrain,
                     building = "",//buildings[Random.Range(0, buildings.Length)],
                     owner = "",//owners[Random.Range(0, owners.Length)],
+                    start_player = startId,
                     resources = res
                 });
 

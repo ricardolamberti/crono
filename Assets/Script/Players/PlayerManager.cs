@@ -26,13 +26,30 @@ public class PlayerManager : MonoBehaviour
     {
         players.Clear();
         if (playerCount < 1) playerCount = 1;
-        Vector2Int spawn = defaultSpawns.Length > 0 ? defaultSpawns[0] : new Vector2Int(1,1);
+
+        // buscar posiciones de inicio definidas en el mapa
+        Dictionary<string, Vector2Int> mapSpawns = new();
+        foreach (var kv in MapState.cellMap)
+        {
+            if (!string.IsNullOrEmpty(kv.Value.start_player))
+            {
+                mapSpawns[kv.Value.start_player] = kv.Key;
+            }
+        }
+
+        Vector2Int spawn = mapSpawns.ContainsKey("player1")
+            ? mapSpawns["player1"]
+            : (defaultSpawns.Length > 0 ? defaultSpawns[0] : new Vector2Int(1,1));
+
         players.Add(new HumanPlayer("player1", spawn));
 
         for (int i = 1; i < playerCount; i++)
         {
-            Vector2Int pos = i < defaultSpawns.Length ? defaultSpawns[i] : new Vector2Int(1 + i*2, 1 + i*2);
-            players.Add(new AIPlayer($"ai{i}", pos));
+            string id = $"ai{i}";
+            Vector2Int pos = mapSpawns.ContainsKey(id)
+                ? mapSpawns[id]
+                : (i < defaultSpawns.Length ? defaultSpawns[i] : new Vector2Int(1 + i*2, 1 + i*2));
+            players.Add(new AIPlayer(id, pos));
         }
 
         foreach (var p in players)
