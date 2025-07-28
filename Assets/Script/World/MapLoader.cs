@@ -338,7 +338,7 @@ public class MapLoader : MonoBehaviour
     public void SpawnCharacter(Vector2Int pos, Character.Type type, string owner)
     {
         GameObject go = Instantiate(characterPrefab);
-        go.transform.position = new Vector3(pos.x, 0.5f, pos.y);
+        go.transform.position = GridUtils.GridToWorld(pos);
         go.transform.localScale = Vector3.one;
 
         var character = go.GetComponent<Character>();
