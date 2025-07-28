@@ -137,7 +137,8 @@ public class ControlPanel : MonoBehaviour
 
     bool TownhallExists()
     {
-        return MapState.cellMap.Values.Any(c => c.building == "townhall");
+        return MapState.cellMap.Values.Any(c =>
+            c.building == "townhall" && c.owner == "player1");
     }
     public void ShowBuildOptionsForTile(GameObject tileObject)
     {

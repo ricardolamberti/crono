@@ -164,6 +164,7 @@ public class TileActionProvider : MonoBehaviour, IActionProposer
 
     bool TownhallExists()
     {
-        return MapState.cellMap.Values.Any(c => c.building == "townhall");
+        return MapState.cellMap.Values.Any(c =>
+            c.building == "townhall" && c.owner == "player1");
     }
 }
