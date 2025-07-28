@@ -58,15 +58,12 @@ public class ControlPanel : MonoBehaviour
             title.text = character.name;
             buttons.Clear();
 
-         
-            // Acción: Atacar (solo si es Guerrero)
             if (character.characterType == Character.Type.Warrior)
                 AddButton("Atacar", () => GameEvents.RequestAttack(character));
 
-            // Acción: Curar (solo si es Científico)
             if (character.characterType == Character.Type.Scientist)
                 AddButton("Curar", () => GameEvents.RequestHeal(character));
-           
+
             info.Add(new Label($"Tipo: {character.characterType}"));
             info.Add(new Label($"Control: {character.controlMode}"));
             info.Add(new Label($"Dueño: {character.owner}"));
@@ -75,167 +72,36 @@ public class ControlPanel : MonoBehaviour
             {
                 info.Add(new Label($"Salud: {health.currentHealth}/{health.maxHealth}"));
             }
-
         }
 
-
-
-        Character FindFreeWorker()
+        var tileProvider = selected.GetComponent<IActionProposer>();
+        if (tileProvider != null)
         {
-            var all = GameObject.FindObjectsOfType<Character>();
-            foreach (var c in all)
+            var handler = selected.GetComponent<TileClickHandler>();
+            if (handler != null)
             {
-                if (c.characterType == Character.Type.Worker &&
-                    c.controlMode == Character.ControlMode.Automatic &&
-                    c.currentTask == Character.Task.None)
+                var cell = handler.GetCellData();
+                title.text = $"Tile ({cell.x}, {cell.y})";
+                info.Clear();
+                if (cell.resources != null)
                 {
-                    return c;
+                    info.Add(new Label($"Oro: {cell.resources.gold}"));
+                    info.Add(new Label($"Madera: {cell.resources.wood}"));
+                    info.Add(new Label($"Crono: {cell.resources.crono}"));
                 }
-            }
-            foreach (var c in all)
-            {
-                if (c.characterType == Character.Type.Worker &&
-                    c.controlMode == Character.ControlMode.Manual &&
-                    c.currentTask == Character.Task.None)
+                if (!string.IsNullOrEmpty(cell.building))
                 {
-                    return c;
+                    info.Add(new Label($"Construcción existente: {cell.building}"));
                 }
             }
 
-            return null;
-        }
-
-      
-
-
-        var tileHandler = selected.GetComponent<TileClickHandler>();
-        if (tileHandler != null)
-        {
-            var cell = tileHandler.GetCellData();
-            title.text = $"Tile ({cell.x}, {cell.y})";
             buttons.Clear();
-            info.Clear();
-
-            if (cell.resources != null)
+            GamePlayer.Instance.Clear();
+            tileProvider.ProposeActions(GamePlayer.Instance);
+            foreach (var act in GamePlayer.Instance.GetActions())
             {
-                info.Add(new Label($"Oro: {cell.resources.gold}"));
-                info.Add(new Label($"Madera: {cell.resources.wood}"));
-                info.Add(new Label($"Crono: {cell.resources.crono}"));
+                AddButton(act.label, act.callback);
             }
-              if (!string.IsNullOrEmpty(cell.building))
-            {
-                info.Add(new Label($"Construcción existente: {cell.building}"));
-
-                if (cell.building == "townhall")
-                {
-                    AddButton("Crear obrero", () => {
-                        SpawnWorkerNear(tileHandler.GetCellData(), Character.Type.Worker);
-                    });
-                }
-                if (cell.building == "academy")
-                {
-                    AddButton("Crear cientifico", () => {
-                        SpawnWorkerNear(tileHandler.GetCellData(), Character.Type.Scientist);
-                    });
-                }
-                if (cell.building == "barracks")
-                {
-                    AddButton("Crear soldado", () => {
-                        SpawnWorkerNear(tileHandler.GetCellData(), Character.Type.Warrior);
-                    });
-                }
-
-                if (cell.building != "townhall")
-                {
-                    AddButton("Derrumbar", () =>
-                    {
-                        MapLoader.instance.DemolishBuilding(new Vector2Int(cell.x, cell.y));
-                        GameEvents.RaiseSelection(selected); // 🔄 Refresca el panel tras destruir
-                    });
-                }
-                return;
-            }
-
-            Vector2Int pos = new(cell.x, cell.y);
-
-            // 🔧 Función auxiliar para simplificar
-            void IntentarConstruir(string nombre, string buildingCode)
-            {
-                AddButton(nombre, () => {
-                    var req = BuildRules.TakeRequirements(buildingCode);
-                    if (!freeResource)
-                    {
-  
-                        if (!GameState.playerResources.HasEnough(req))
-                        {
-                            Debug.Log($"No hay recursos suficientes para construir {buildingCode}");
-                            return;
-                        }
-                    }
-
-
-                    var worker = FindFreeWorker();
-                    if (worker != null)
-                    {
-                        worker.SetGatherRoute(null);
-                        GameState.playerResources.Consume(req);
-                        ActionManager.Instance.Enqueue(new BuildAction(worker, pos, buildingCode));
-                    }
-
-                });
-            }
-  
-
-            // 🌄 Construcciones según tipo de terreno
-            if (cell.terrain == "mountain")
-            {
-                IntentarConstruir("Construir mina", "mine");
-            }
-            else if (cell.terrain == "water")
-            {
-                IntentarConstruir("Construir puerto", "dock");
-            }
-            else if (cell.terrain == "forest")
-            {
-                if (!TownhallExists())
-                {
-                    AddButton("Construir casa central", () => {
-                        var worker = FindFreeWorker();
-                        if (worker != null)
-                            ActionManager.Instance.Enqueue(new BuildAction(worker, new Vector2Int(cell.x, cell.y), "townhall"));
-                        else
-                            Debug.Log("No hay obreros disponibles.");
-                    });
-                } else
-                {
-                    IntentarConstruir("Construir choza", "hut");
-                    IntentarConstruir("Construir aserradero", "lumbermill");
-                    IntentarConstruir("Construir granja", "farm");
-                    IntentarConstruir("Construir academia", "academy");
-                    IntentarConstruir("Construir barraca", "barracks");
-
-                }
-
-            }
-           
-
-            // 🔵 Crono en cualquier terreno
-            if (cell.resources?.crono > 0)
-            {
-                IntentarConstruir("Construir extractor de crono", "extractor");
-            }
-            if (GameState.playerResources != null)
-            {
-                var res = GameState.playerResources;
-                info.Add(new Label($"Recursos:"));
-                info.Add(new Label($"Oro: {res.gold}"));
-                info.Add(new Label($"Madera: {res.wood}"));
-                info.Add(new Label($"Comida: {res.food}"));
-                info.Add(new Label($"Crono: {res.crono}"));
-                info.Add(new Label($"Habitaciones: {res.freeHousing}"));
-                info.Add(new Label($"Ciencia: {res.academicUnits}"));
-            }
-
             return;
         }
 
