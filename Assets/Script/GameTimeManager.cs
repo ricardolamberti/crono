@@ -192,4 +192,9 @@ public class GameTimeManager : MonoBehaviour
     {
         return true; // placeholder for time-based rules
     }
+
+    public bool Approve(InfoItem info)
+    {
+        return true; // placeholder for time-based rules
+    }
 }

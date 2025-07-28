@@ -11,6 +11,10 @@ public class ActionManager : MonoBehaviour
     {
         return true; // placeholder for extra rules
     }
+    public bool Approve(InfoItem info)
+    {
+        return true; // placeholder for extra rules
+    }
     void Awake()
     {
         Instance = this;
