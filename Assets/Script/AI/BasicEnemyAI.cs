@@ -5,15 +5,17 @@ using System.Linq;
 public class BasicEnemyAI
 {
     private readonly string ownerId;
+    private readonly Vector2Int spawnPosition;
     private float timer = 0f;
     private readonly float decisionInterval = 3f;
     
     private enum BuildPhase { NeedTownhall, NeedMine, Established }
     private BuildPhase currentPhase = BuildPhase.NeedTownhall;
 
-    public BasicEnemyAI(string owner)
+    public BasicEnemyAI(string owner, Vector2Int spawn)
     {
         ownerId = owner;
+        spawnPosition = spawn;
     }
 
     public void Update()
@@ -149,6 +151,10 @@ public class BasicEnemyAI
         float closestCrono = FindClosestResourceDistance(position, "crono");
         if (closestCrono < float.MaxValue)
             score += 50f / (1f + closestCrono * 0.5f);
+
+        // Preferir proximidad al punto de inicio del jugador
+        float spawnDist = Vector2Int.Distance(spawnPosition, position);
+        score += 50f / (1f + spawnDist * 0.5f);
         
         // Penalizar si está muy cerca del borde
         if (position.x < 2 || position.y < 2 || position.x > 18 || position.y > 18)
