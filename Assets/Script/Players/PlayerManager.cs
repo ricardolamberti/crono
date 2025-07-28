@@ -57,9 +57,7 @@ public class PlayerManager : MonoBehaviour
         foreach (var p in players)
             p.Initialize();
 
-        Vector3 focus = GridUtils.GridToWorld(Player1Spawn);
-        Camera.main.transform.position = focus + new Vector3(5, 10, -5);
-        Camera.main.transform.LookAt(focus);
+        FindObjectOfType<CameraController>().FocusOnCell(Player1Spawn);
     }
 
     void Update()

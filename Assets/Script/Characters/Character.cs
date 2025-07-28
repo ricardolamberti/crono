@@ -277,7 +277,7 @@ public void AssignBuildTask(Vector2Int pos, string building)
     }
     bool ShouldProcessUpdate()
     {
-        return controlMode == ControlMode.Manual || currentTask != Task.None;
+        return controlMode == ControlMode.Manual || currentTask != Task.None || controlMode == ControlMode.Automatic;
     }
 
     void Update()

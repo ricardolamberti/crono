@@ -1,16 +1,23 @@
 ﻿using UnityEngine;
-using UnityEngine.UIElements;
+using System.Collections;
 
-public class CameraDrag : MonoBehaviour
+public class CameraController : MonoBehaviour
 {
-    public float dragSpeed = 0.5f;
-    public float zoomSpeed = 10f;
+    [Header("Drag")]
+    public float dragSpeed = 5f;
+
+    [Header("Zoom")]
+    public float zoomSpeed = 30f;
     public float minZoom = 5f;
     public float maxZoom = 30f;
+
+    [Header("Tiles")]
+    public float tileSize = 2.5f; // Tamaño de tile en mundo
 
     private Vector3 dragOrigin;
     private bool isDragging = false;
     private Camera cam;
+    private Coroutine moveRoutine;
 
     void Start()
     {
@@ -20,20 +27,16 @@ public class CameraDrag : MonoBehaviour
     void Update()
     {
         if (UIUtils.IsPointerOverUI()) return;
+
         HandleDrag();
         HandleZoom();
     }
 
+    // 🟢 Arrastrar cámara
     void HandleDrag()
     {
         if (Input.GetMouseButtonDown(0))
         {
-            if (UIUtils.IsPointerOverUI())
-            {
-                isDragging = false;
-                return;
-            }
-
             dragOrigin = Input.mousePosition;
             isDragging = true;
         }
@@ -56,6 +59,7 @@ public class CameraDrag : MonoBehaviour
         }
     }
 
+    // 🟢 Zoom cámara
     void HandleZoom()
     {
         float scroll = Input.mouseScrollDelta.y;
@@ -64,5 +68,32 @@ public class CameraDrag : MonoBehaviour
             cam.orthographicSize -= scroll * zoomSpeed * Time.deltaTime;
             cam.orthographicSize = Mathf.Clamp(cam.orthographicSize, minZoom, maxZoom);
         }
+    }
+
+    // 🟢 Centrar cámara en una celda manteniendo rotación
+    public void FocusOnCell(Vector2Int cell)
+    {
+        Vector3 worldPos = new Vector3(cell.x * tileSize, 0, cell.y * tileSize);
+
+        Vector3 camPos = cam.transform.position;
+        Vector3 target = new Vector3(worldPos.x, camPos.y, worldPos.z);
+
+        if (moveRoutine != null) StopCoroutine(moveRoutine);
+        moveRoutine = StartCoroutine(MoveCameraSmooth(target));
+    }
+
+    private IEnumerator MoveCameraSmooth(Vector3 target)
+    {
+        Vector3 start = cam.transform.position;
+        float t = 0;
+
+        while (t < 1f)
+        {
+            t += Time.deltaTime * 2f; // velocidad de centrado
+            cam.transform.position = Vector3.Lerp(start, target, t);
+            yield return null;
+        }
+
+        cam.transform.position = target;
     }
 }
