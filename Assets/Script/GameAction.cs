@@ -7,3 +7,4 @@ public abstract class GameAction
     public abstract bool Validate();
     public abstract void Execute();
 }
+

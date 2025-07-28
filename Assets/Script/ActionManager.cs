@@ -7,7 +7,10 @@ public class ActionManager : MonoBehaviour
     public static ActionManager Instance { get; private set; }
 
     private readonly Queue<GameAction> queue = new();
-
+    public bool Approve(ControlPanelAction action)
+    {
+        return true; // placeholder for extra rules
+    }
     void Awake()
     {
         Instance = this;

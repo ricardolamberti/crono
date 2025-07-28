@@ -190,6 +190,7 @@ public class MapLoader : MonoBehaviour
             tile.transform.position = pos;
             tile.name = $"Tile_{cell.x}_{cell.y}";
             tile.AddComponent<TileClickHandler>().SetData(cell);
+            tile.AddComponent<TileActionProvider>();
 
             ApplyTerrain(tile, cell.terrain);
             ApplyBuilding(tile, cell.building);
