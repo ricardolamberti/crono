@@ -30,7 +30,7 @@ public class ControlPanel : MonoBehaviour
         buttons = root.Q<VisualElement>("buttons");
         title = root.Q<Label>("InfoTitle");
         info = root.Q<VisualElement>("info");
-        resourceInfo = root.Q<VisualElement>(className: "resources-panel");
+        resourceInfo = root.Q<VisualElement>("resources-panel");
         goldLabel = root.Q<Label>("GoldLabel");
         woodLabel = root.Q<Label>("WoodLabel");
         foodLabel = root.Q<Label>("FoodLabel");
