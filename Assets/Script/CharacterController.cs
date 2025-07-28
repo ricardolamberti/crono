@@ -131,7 +131,7 @@ public class CharacterController : MonoBehaviour
             selectedCharacter.SetPath(path);
 
         // Mostrar opciones si es trabajador y se puede construir allí
-        if (selectedCharacter.characterType == Character.Type.Worker
+        if (selectedCharacter.role is WorkerRole
             && MapState.cellMap.TryGetValue(gridPos, out var cell)
             && string.IsNullOrEmpty(cell.building))
         {

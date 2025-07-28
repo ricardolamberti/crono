@@ -73,6 +73,11 @@ public static class BuildRules
         };
     }
 
+    public static BuildRequirement GetRequirements(CharacterRole role)
+    {
+        return GetRequirements(role.Code);
+    }
+
 
     public static BuildRequirement TakeRequirements(string code)
     {
@@ -95,5 +100,10 @@ public static class BuildRules
             Character.Type.Scientist => TakeRequirements("scientist"),
             _ => new BuildRequirement()
         };
+    }
+
+    public static BuildRequirement TakeRequirements(CharacterRole role)
+    {
+        return TakeRequirements(role.Code);
     }
 }

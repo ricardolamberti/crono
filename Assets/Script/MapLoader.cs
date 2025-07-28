@@ -361,6 +361,7 @@ public class MapLoader : MonoBehaviour
 
 
         // Asignar sprites al animator
+        CharacterRole role = null;
         if (type == Character.Type.Worker && animator != null)
         {
             go.tag = "Worker";
@@ -369,6 +370,7 @@ public class MapLoader : MonoBehaviour
             animator.southSprites = workerSouthSprites;
             animator.eastSprites = workerEastSprites;
             animator.westSprites = workerWestSprites;
+            role = go.AddComponent<WorkerRole>();
         }
         if (type == Character.Type.Scientist && animator != null)
         {
@@ -378,6 +380,7 @@ public class MapLoader : MonoBehaviour
             animator.southSprites = scientistSouthSprites;
             animator.eastSprites = scientistEastSprites;
             animator.westSprites = scientistWestSprites;
+            role = go.AddComponent<ScientistRole>();
         }
         if (type == Character.Type.Warrior && animator != null)
         {
@@ -387,6 +390,7 @@ public class MapLoader : MonoBehaviour
             animator.southSprites = warriorSouthSprites;
             animator.eastSprites = warriorEastSprites;
             animator.westSprites = warriorWestSprites;
+            role = go.AddComponent<WarriorRole>();
         }
         character.LoadSprites(new Dictionary<string, Sprite[]>
             {
@@ -397,7 +401,10 @@ public class MapLoader : MonoBehaviour
             });
 
 
-        character.Init(type, owner);
+        if (role != null)
+            character.Init(role, owner);
+        else
+            character.Init(type, owner);
 
         go.transform.LookAt(Camera.main.transform);
         go.transform.rotation = Quaternion.Euler(0, go.transform.rotation.eulerAngles.y, 0);
