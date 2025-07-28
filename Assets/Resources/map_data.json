@@ -258,6 +258,7 @@
             "terrain": "forest",
             "building": "",
             "owner": "",
+            "start_player": "player1",
             "resources": {
                 "gold": 0,
                 "wood": 37,
@@ -4542,6 +4543,7 @@
             "terrain": "forest",
             "building": "",
             "owner": "",
+            "start_player": "ai1",
             "resources": {
                 "gold": 0,
                 "wood": 17,

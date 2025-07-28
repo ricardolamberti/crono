@@ -11,6 +11,7 @@ public class DTO
         public string terrain;
         public string building;
         public string owner;
+        public string start_player;
         public ResourceBundle resources;
 
     }
