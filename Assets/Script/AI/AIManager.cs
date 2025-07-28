@@ -8,7 +8,7 @@ public class AIManager : MonoBehaviour
 
     void Start()
     {
-        ai = new BasicEnemyAI(enemyId);
+        ai = new BasicEnemyAI(enemyId, initialSpawn);
         if (MapLoader.instance != null)
             MapLoader.instance.SpawnCharacter(initialSpawn, Character.Type.Worker, enemyId);
     }

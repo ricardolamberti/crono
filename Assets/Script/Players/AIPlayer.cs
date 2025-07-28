@@ -6,7 +6,7 @@ public class AIPlayer : Player
 
     public AIPlayer(string id, Vector2Int spawn) : base(id, spawn)
     {
-        ai = new BasicEnemyAI(id);
+        ai = new BasicEnemyAI(id, spawn);
     }
 
     public override void Initialize()
