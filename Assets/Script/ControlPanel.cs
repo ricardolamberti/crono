@@ -13,6 +13,7 @@ public class ControlPanel : MonoBehaviour
     private VisualElement buttons;
     private Label title;
     private VisualElement info;
+    private VisualElement resourceInfo;
     public static ControlPanel Instance { get; private set; }
 
     private Label goldLabel;
@@ -29,11 +30,17 @@ public class ControlPanel : MonoBehaviour
         buttons = root.Q<VisualElement>("buttons");
         title = root.Q<Label>("InfoTitle");
         info = root.Q<VisualElement>("info");
+        resourceInfo = root.Q<VisualElement>(className: "resources-panel");
         goldLabel = root.Q<Label>("GoldLabel");
         woodLabel = root.Q<Label>("WoodLabel");
         foodLabel = root.Q<Label>("FoodLabel");
         cronoLabel = root.Q<Label>("CronoLabel");
         dateLabel = uiDocument.rootVisualElement.Q<Label>("DateLabel");
+        if (resourceInfo != null)
+        {
+            resourceInfo.Add(new VisualElement { name = "SelectedResourceInfo" });
+            resourceInfo = resourceInfo.Q<VisualElement>("SelectedResourceInfo");
+        }
         GameTimeManager.OnDateChanged += UpdateDateLabel;
         UpdateDateLabel(GameTimeManager.CurrentMonth, GameTimeManager.CurrentYear);
         RegisterClickBlocker();
@@ -52,24 +59,19 @@ public class ControlPanel : MonoBehaviour
     void UpdatePanel(GameObject selected)
     {
         info.Clear();
+        resourceInfo?.Clear();
+        GamePlayer.Instance.Clear();
         var character = selected.GetComponent<Character>();
         if (character != null)
         {
             title.text = character.name;
             buttons.Clear();
-
-            string typeName = character.role != null ? character.role.Code : character.characterType.ToString();
-            info.Add(new Label($"Tipo: {typeName}"));
-            info.Add(new Label($"Control: {character.controlMode}"));
-            info.Add(new Label($"Dueño: {character.owner}"));
-
-            if (character.TryGetComponent(out HealthComponent health))
-            {
-                info.Add(new Label($"Salud: {health.currentHealth}/{health.maxHealth}"));
-            }
-
-            GamePlayer.Instance.Clear();
+            character.ProvideInfo(GamePlayer.Instance);
             character.ProposeActions(GamePlayer.Instance);
+            foreach (var infoItem in GamePlayer.Instance.GetInfo())
+            {
+                AddInfoLabel(infoItem);
+            }
             foreach (var act in GamePlayer.Instance.GetActions())
             {
                 AddButton(act.label, act.callback);
@@ -84,21 +86,14 @@ public class ControlPanel : MonoBehaviour
             {
                 var cell = handler.GetCellData();
                 title.text = $"Tile ({cell.x}, {cell.y})";
-                info.Clear();
-                if (cell.resources != null)
+                handler.ProvideInfo(GamePlayer.Instance);
+                foreach (var infoItem in GamePlayer.Instance.GetInfo())
                 {
-                    info.Add(new Label($"Oro: {cell.resources.gold}"));
-                    info.Add(new Label($"Madera: {cell.resources.wood}"));
-                    info.Add(new Label($"Crono: {cell.resources.crono}"));
-                }
-                if (!string.IsNullOrEmpty(cell.building))
-                {
-                    info.Add(new Label($"Construcción existente: {cell.building}"));
+                    AddInfoLabel(infoItem);
                 }
             }
 
             buttons.Clear();
-            GamePlayer.Instance.Clear();
             tileProvider.ProposeActions(GamePlayer.Instance);
             foreach (var act in GamePlayer.Instance.GetActions())
             {
@@ -163,6 +158,14 @@ public class ControlPanel : MonoBehaviour
         button.pickingMode = PickingMode.Position;
 
         buttons.Add(button);
+    }
+
+    void AddInfoLabel(InfoItem item)
+    {
+        if (item.type == "resource" && resourceInfo != null)
+            resourceInfo.Add(new Label(item.label));
+        else
+            info.Add(new Label(item.label));
     }
 
     void RegisterClickBlocker()

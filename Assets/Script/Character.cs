@@ -2,7 +2,7 @@
 using UnityEngine;
 using static DTO;
 
-public class Character : MonoBehaviour, IActionProposer
+public class Character : MonoBehaviour, IActionProposer, IInfoProvider
 {
     public enum Type { Worker, Scientist, Warrior }
     public Type characterType;
@@ -362,5 +362,18 @@ public void AssignBuildTask(Vector2Int pos, string building)
     public void ProposeActions(GamePlayer player)
     {
         role?.ProposeActions(this, player);
+    }
+
+    public void ProvideInfo(GamePlayer player)
+    {
+        string typeName = role != null ? role.Code : characterType.ToString();
+        player.AddInfo(new InfoItem($"Tipo: {typeName}", "detail"));
+        player.AddInfo(new InfoItem($"Control: {controlMode}", "detail"));
+        player.AddInfo(new InfoItem($"Dueño: {owner}", "detail"));
+
+        if (TryGetComponent(out HealthComponent health))
+        {
+            player.AddInfo(new InfoItem($"Salud: {health.currentHealth}/{health.maxHealth}", "status"));
+        }
     }
 }
