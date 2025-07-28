@@ -2,7 +2,7 @@
 using UnityEngine;
 using static DTO;
 
-public class Character : MonoBehaviour
+public class Character : MonoBehaviour, IActionProposer
 {
     public enum Type { Worker, Scientist, Warrior }
     public Type characterType;
@@ -357,5 +357,10 @@ public void AssignBuildTask(Vector2Int pos, string building)
         currentPath = null;
         moving = false;
         gatherRoute = null;
+    }
+
+    public void ProposeActions(GamePlayer player)
+    {
+        role?.ProposeActions(this, player);
     }
 }

@@ -58,12 +58,6 @@ public class ControlPanel : MonoBehaviour
             title.text = character.name;
             buttons.Clear();
 
-            if (character.role is WarriorRole)
-                AddButton("Atacar", () => GameEvents.RequestAttack(character));
-
-            if (character.role is ScientistRole)
-                AddButton("Curar", () => GameEvents.RequestHeal(character));
-
             string typeName = character.role != null ? character.role.Code : character.characterType.ToString();
             info.Add(new Label($"Tipo: {typeName}"));
             info.Add(new Label($"Control: {character.controlMode}"));
@@ -73,10 +67,17 @@ public class ControlPanel : MonoBehaviour
             {
                 info.Add(new Label($"Salud: {health.currentHealth}/{health.maxHealth}"));
             }
+
+            GamePlayer.Instance.Clear();
+            character.ProposeActions(GamePlayer.Instance);
+            foreach (var act in GamePlayer.Instance.GetActions())
+            {
+                AddButton(act.label, act.callback);
+            }
         }
 
         var tileProvider = selected.GetComponent<IActionProposer>();
-        if (tileProvider != null)
+        if (tileProvider != null && character == null)
         {
             var handler = selected.GetComponent<TileClickHandler>();
             if (handler != null)
