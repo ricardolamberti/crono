@@ -29,22 +29,28 @@ public class BasicEnemyAI
     void EvaluateStrategy()
     {
         UpdateBuildPhase();
-        
-        Character[] myCharacters = GameObject.FindObjectsOfType<Character>()
-            .Where(c => c.owner == ownerId).ToArray();
+
+        Character[] myCharacters = GetMyCharacters();
 
         switch (currentPhase)
         {
             case BuildPhase.NeedTownhall:
-                BuildTownhall(myCharacters);
+                BuildTownhall();
                 break;
             case BuildPhase.NeedMine:
-                BuildGoldMine(myCharacters);
+                BuildGoldMine();
                 break;
             case BuildPhase.Established:
-                ManageEstablishedBase(myCharacters);
+                ManageEstablishedBase();
                 break;
         }
+    }
+
+    Character[] GetMyCharacters()
+    {
+        return GameObject.FindObjectsOfType<Character>()
+            .Where(c => c.owner == ownerId)
+            .ToArray();
     }
 
     void UpdateBuildPhase()
@@ -66,9 +72,9 @@ public class BasicEnemyAI
             cell.building == buildingType && cell.owner == ownerId);
     }
 
-    void BuildTownhall(Character[] characters)
+    void BuildTownhall()
     {
-        var idleWorker = characters.FirstOrDefault(c => 
+        var idleWorker = GetMyCharacters().FirstOrDefault(c =>
             c.currentTask == Character.Task.None && c.characterType == Character.Type.Worker);
         
         if (idleWorker == null) return;
@@ -81,9 +87,9 @@ public class BasicEnemyAI
         }
     }
 
-    void BuildGoldMine(Character[] characters)
+    void BuildGoldMine()
     {
-        var idleWorker = characters.FirstOrDefault(c => 
+        var idleWorker = GetMyCharacters().FirstOrDefault(c =>
             c.currentTask == Character.Task.None && c.characterType == Character.Type.Worker);
         
         if (idleWorker == null) return;
@@ -96,9 +102,9 @@ public class BasicEnemyAI
         }
     }
 
-    void ManageEstablishedBase(Character[] characters)
+    void ManageEstablishedBase()
     {
-        foreach (var c in characters)
+        foreach (var c in GetMyCharacters())
         {
             if (c.currentTask == Character.Task.None)
             {
