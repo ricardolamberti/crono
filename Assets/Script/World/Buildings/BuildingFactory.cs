@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public static class BuildingFactory
 {
@@ -64,5 +65,10 @@ public static class BuildingFactory
             return null;
 
         return constructors.TryGetValue((code, level), out var ctor) ? ctor() : null;
+    }
+
+    public static IEnumerable<string> GetAvailableCodes()
+    {
+        return constructors.Keys.Select(k => k.Item1).Distinct();
     }
 }
