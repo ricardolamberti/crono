@@ -8,6 +8,13 @@ public class TileActionProvider : MonoBehaviour, IActionProposer
 {
     TileClickHandler handler;
 
+    static readonly System.Collections.Generic.Dictionary<string, string[]> terrainBuildings = new()
+    {
+        { "mountain", new[] { "mine" } },
+        { "water", new[] { "dock" } },
+        { "forest", new[] { "hut", "lumbermill", "farm", "academy", "barracks" } }
+    };
+
     void Awake()
     {
         handler = GetComponent<TileClickHandler>();
@@ -20,23 +27,41 @@ public class TileActionProvider : MonoBehaviour, IActionProposer
 
         if (!string.IsNullOrEmpty(cell.building))
         {
-            switch (cell.building)
+            Vector2Int pos = new(cell.x, cell.y);
+            if (MapState.buildings.TryGetValue(pos, out var building))
             {
-                case "townhall":
-                    player.AddAction(new ControlPanelAction("Crear obrero", () => {
-                        SpawnWorkerNear(cell, Character.Type.Worker);
-                    }));
-                    break;
-                case "academy":
-                    player.AddAction(new ControlPanelAction("Crear cientifico", () => {
-                        SpawnWorkerNear(cell, Character.Type.Scientist);
-                    }));
-                    break;
-                case "barracks":
-                    player.AddAction(new ControlPanelAction("Crear soldado", () => {
-                        SpawnWorkerNear(cell, Character.Type.Warrior);
-                    }));
-                    break;
+                foreach (var act in building.Actions)
+                {
+                    string lower = act.ToLowerInvariant();
+                    if (lower.Contains("obrero"))
+                    {
+                        player.AddAction(new ControlPanelAction(act, () =>
+                        {
+                            SpawnWorkerNear(cell, Character.Type.Worker);
+                        }));
+                    }
+                    else if (lower.Contains("cientifico"))
+                    {
+                        player.AddAction(new ControlPanelAction(act, () =>
+                        {
+                            SpawnWorkerNear(cell, Character.Type.Scientist);
+                        }));
+                    }
+                    else if (lower.Contains("soldado"))
+                    {
+                        player.AddAction(new ControlPanelAction(act, () =>
+                        {
+                            SpawnWorkerNear(cell, Character.Type.Warrior);
+                        }));
+                    }
+                    else
+                    {
+                        player.AddAction(new ControlPanelAction(act, () =>
+                        {
+                            Debug.Log($"Acción '{act}' no implementada.");
+                        }));
+                    }
+                }
             }
 
             if (BuildingEvolutionMatrix.TryGetEvolution(cell.building, cell.level, out var evo))
@@ -75,7 +100,7 @@ public class TileActionProvider : MonoBehaviour, IActionProposer
         {
             player.AddAction(new ControlPanelAction(text, () => {
                 var building = BuildingFactory.Create(code);
-                var req = building != null ? building.Cost : BuildRules.TakeRequirements(code);
+                var req = building != null ? building.Cost : new BuildRequirement();
                 if (!ControlPanel.Instance.freeResource)
                 {
                     if (!GameState.playerResources.HasEnough(req))
@@ -95,17 +120,9 @@ public class TileActionProvider : MonoBehaviour, IActionProposer
             }));
         }
 
-        if (cell.terrain == "mountain")
+        if (terrainBuildings.TryGetValue(cell.terrain, out var options))
         {
-            TryBuild("Construir mina", "mine");
-        }
-        else if (cell.terrain == "water")
-        {
-            TryBuild("Construir puerto", "dock");
-        }
-        else if (cell.terrain == "forest")
-        {
-            if (!TownhallExists())
+            if (cell.terrain == "forest" && !TownhallExists())
             {
                 player.AddAction(new ControlPanelAction("Construir casa central", () => {
                     var worker = FindFreeWorker();
@@ -117,11 +134,8 @@ public class TileActionProvider : MonoBehaviour, IActionProposer
             }
             else
             {
-                TryBuild("Construir choza", "hut");
-                TryBuild("Construir aserradero", "lumbermill");
-                TryBuild("Construir granja", "farm");
-                TryBuild("Construir academia", "academy");
-                TryBuild("Construir barraca", "barracks");
+                foreach (var bCode in options)
+                    TryBuild($"Construir {bCode}", bCode);
             }
         }
 
