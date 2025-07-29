@@ -253,6 +253,9 @@ public void AssignBuildTask(Vector2Int pos, string building)
             cell.building = building;
             cell.owner = owner;
             GameState.IncrementBuilding(building);
+            var buildingObj = BuildingFactory.Create(building);
+            if (buildingObj != null)
+                MapState.buildings[pos] = buildingObj;
             MapLoader.instance.DrawBuilding(pos, building); // <- 🔥 Dibuja en el tile
             Debug.Log($"{name} construyó {building} en {pos}");
             MapLoader.instance.ClearConstructionPreview(pos);

@@ -74,7 +74,8 @@ public class TileActionProvider : MonoBehaviour, IActionProposer
         void TryBuild(string text, string code)
         {
             player.AddAction(new ControlPanelAction(text, () => {
-                var req = BuildRules.TakeRequirements(code);
+                var building = BuildingFactory.Create(code);
+                var req = building != null ? building.Cost : BuildRules.TakeRequirements(code);
                 if (!ControlPanel.Instance.freeResource)
                 {
                     if (!GameState.playerResources.HasEnough(req))
