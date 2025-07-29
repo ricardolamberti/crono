@@ -198,6 +198,10 @@ public class MapLoader : MonoBehaviour
             ApplyTerrain(tile, cell.terrain);
             ApplyBuilding(tile, cell.building);
 
+            var buildingObj = BuildingFactory.Create(cell.building);
+            if (buildingObj != null)
+                MapState.buildings[coord] = buildingObj;
+
             tiles[coord] = tile;
 
             if (cell.resources != null)
@@ -317,6 +321,10 @@ public class MapLoader : MonoBehaviour
         var renderer = buildingIcon.AddComponent<SpriteRenderer>();
         renderer.sprite = buildingSprites.ContainsKey(building) ? buildingSprites[building] : defaultBuildingSprite;
         renderer.sortingOrder = 10;
+
+        var obj = BuildingFactory.Create(building);
+        if (obj != null)
+            MapState.buildings[pos] = obj;
     }
 
 
@@ -418,6 +426,7 @@ public class MapLoader : MonoBehaviour
         string oldBuilding = cell.building;
         cell.building = null;
         GameState.DecrementBuilding(oldBuilding);
+        MapState.buildings.Remove(pos);
 
         if (tiles.TryGetValue(pos, out var tile))
         {
@@ -443,6 +452,7 @@ public class MapLoader : MonoBehaviour
         cell.building = newBuilding;
         GameState.DecrementBuilding(old);
         GameState.IncrementBuilding(newBuilding);
+        MapState.buildings[pos] = BuildingFactory.Create(newBuilding);
 
         if (tiles.TryGetValue(pos, out var tile))
         {

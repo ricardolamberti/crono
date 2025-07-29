@@ -41,7 +41,11 @@ public class TileClickHandler : MonoBehaviour, IInfoProvider
 
         if (!string.IsNullOrEmpty(cellData.building))
         {
-            player.AddInfo(new InfoItem($"Construcción existente: {cellData.building}", "detail"));
+            Vector2Int pos = new(cellData.x, cellData.y);
+            if (MapState.buildings.TryGetValue(pos, out var b))
+                player.AddInfo(new InfoItem($"Construcción existente: {b.Code} nivel {b.Level}", "detail"));
+            else
+                player.AddInfo(new InfoItem($"Construcción existente: {cellData.building}", "detail"));
         }
     }
 }
