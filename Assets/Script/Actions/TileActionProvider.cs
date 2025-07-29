@@ -27,8 +27,8 @@ public class TileActionProvider : MonoBehaviour, IActionProposer
 
         if (!string.IsNullOrEmpty(cell.building))
         {
-            Vector2Int pos = new(cell.x, cell.y);
-            if (MapState.buildings.TryGetValue(pos, out var building))
+            Vector2Int posCell = new(cell.x, cell.y);
+            if (MapState.buildings.TryGetValue(posCell, out var building))
             {
                 foreach (var act in building.Actions)
                 {
