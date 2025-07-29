@@ -41,6 +41,9 @@ Este documento detalla las acciones habilitadas en cada nivel de las distintas c
 | Aserradero | 1 | potencia madera por 5 |
 | Aserradero | 2 | potencia madera por 15 |
 | Aserradero | 3 | potencia madera por 30 |
+| Mina | 1 | genera 4 de oro |
+| Mina | 2 | genera 8 de oro |
+| Mina | 3 | genera 16 de oro |
 | Extractor Crono | 1 | Nuevo hechicero, Asistencia futuro |
 | Extractor Crono | 2 | Nuevo hechicero, Asistencia futuro, Misiones pasado |
 | Extractor Crono | 3 | Nuevo hechicero, Asistencia futuro, Misiones pasado, proteccion |
