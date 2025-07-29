@@ -10,6 +10,16 @@ public class PlayerManager : MonoBehaviour
     private readonly List<Player> players = new();
     public Vector2Int Player1Spawn { get; private set; }
 
+    public bool IsHumanPlayer(string id)
+    {
+        foreach (var p in players)
+        {
+            if (p.Id == id)
+                return p is HumanPlayer;
+        }
+        return false;
+    }
+
     readonly Vector2Int[] defaultSpawns = new Vector2Int[]
     {
         new Vector2Int(1,1),

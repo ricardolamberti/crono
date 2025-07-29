@@ -327,7 +327,11 @@ public void AssignBuildTask(Vector2Int pos, string building)
                 transform.position = targetPosition;
                 moving = false;
 
-                MapLoader.instance?.RevealRadius(GetGridPosition(), 1);
+                if (PlayerManager.Instance == null ||
+                    PlayerManager.Instance.IsHumanPlayer(owner))
+                {
+                    MapLoader.instance?.RevealRadius(GetGridPosition(), 1);
+                }
 
                 if (animator != null)
                     animator.SetWalking(false);
