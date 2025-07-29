@@ -7,10 +7,12 @@ public static class ResourceProductionMatrix
     {
         { "farm", new ResourceFlow(food: +5) },
         { "mine", new ResourceFlow(gold: +3) },
+        { "advanced_mine", new ResourceFlow(gold: +6) },
         { "lumbermill", new ResourceFlow(wood: +4) },
         { "crono_extractor", new ResourceFlow(crono: +2) },
+        { "house", new ResourceFlow(food: +2) },
         { "worker", new ResourceFlow(food: -1) },
-        { "scientist", new ResourceFlow(food: -1) },
+        { "scientist", new ResourceFlow(food: -1, science: +1) },
         { "warrior", new ResourceFlow(food: -2) },
     };
 

@@ -83,10 +83,12 @@ public class MapLoader : MonoBehaviour
             { "dock", dockSprite },
             { "barracks", barracksSprite },
             { "mine", mineSprite },
+            { "advanced_mine", mineSprite },
             { "farm", farmSprite },
             { "lumbermill", sawmillSprite },
             { "academy", academySprite },
             { "extractor", extractorSprite },
+            { "house", hutSprite },
             { "townhall", defaultBuildingSprite }
          };
 
@@ -430,6 +432,32 @@ public class MapLoader : MonoBehaviour
         }
 
         Debug.Log($"Edificio en {pos} ha sido demolido.");
+    }
+
+    public void UpgradeBuilding(Vector2Int pos, string newBuilding)
+    {
+        if (!MapState.cellMap.TryGetValue(pos, out var cell))
+            return;
+
+        string old = cell.building;
+        cell.building = newBuilding;
+        GameState.DecrementBuilding(old);
+        GameState.IncrementBuilding(newBuilding);
+
+        if (tiles.TryGetValue(pos, out var tile))
+        {
+            foreach (Transform child in tile.transform)
+            {
+                if (child.name.StartsWith("Building_"))
+                {
+                    Destroy(child.gameObject);
+                    break;
+                }
+            }
+        }
+
+        DrawBuilding(pos, newBuilding);
+        Debug.Log($"Edificio en {pos} actualizado de {old} a {newBuilding}");
     }
 
 
