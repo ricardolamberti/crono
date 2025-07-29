@@ -30,38 +30,8 @@ public class TileActionProvider : MonoBehaviour, IActionProposer
             Vector2Int posCell = new(cell.x, cell.y);
             if (MapState.buildings.TryGetValue(posCell, out var building))
             {
-                foreach (var act in building.Actions)
-                {
-                    string lower = act.ToLowerInvariant();
-                    if (lower.Contains("obrero"))
-                    {
-                        player.AddAction(new ControlPanelAction(act, () =>
-                        {
-                            SpawnWorkerNear(cell, Character.Type.Worker);
-                        }));
-                    }
-                    else if (lower.Contains("cientifico"))
-                    {
-                        player.AddAction(new ControlPanelAction(act, () =>
-                        {
-                            SpawnWorkerNear(cell, Character.Type.Scientist);
-                        }));
-                    }
-                    else if (lower.Contains("soldado"))
-                    {
-                        player.AddAction(new ControlPanelAction(act, () =>
-                        {
-                            SpawnWorkerNear(cell, Character.Type.Warrior);
-                        }));
-                    }
-                    else
-                    {
-                        player.AddAction(new ControlPanelAction(act, () =>
-                        {
-                            Debug.Log($"Acción '{act}' no implementada.");
-                        }));
-                    }
-                }
+                foreach (var action in building.GetActions(cell))
+                    player.AddAction(action);
             }
 
             if (BuildingEvolutionMatrix.TryGetEvolution(cell.building, cell.level, out var evo))
@@ -169,33 +139,6 @@ public class TileActionProvider : MonoBehaviour, IActionProposer
         return null;
     }
 
-    void SpawnWorkerNear(MapCellDTO cell, Character.Type type)
-    {
-        var req = BuildRules.TakeRequirements(type);
-        if (!ControlPanel.Instance.freeResource)
-        {
-            if (!GameState.playerResources.HasEnough(req))
-            {
-                Debug.Log($"No hay recursos suficientes para construir {type}");
-                return;
-            }
-        }
-
-        Vector2Int basePos = new(cell.x, cell.y);
-        foreach (var dir in new[] { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right })
-        {
-            Vector2Int target = basePos + dir;
-            if (MapState.cellMap.TryGetValue(target, out var targetCell)
-                && string.IsNullOrEmpty(targetCell.building)
-                && MapLoader.instance.IsPositionFree(target))
-            {
-                ActionManager.Instance.Enqueue(new SpawnCharacterAction(target, type, "player1"));
-                return;
-            }
-        }
-
-        Debug.Log("No hay espacio disponible junto al townhall.");
-    }
 
     bool TownhallExists()
     {
