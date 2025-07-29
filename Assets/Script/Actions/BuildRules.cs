@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using GameConstants;
 
 
 
@@ -11,7 +12,7 @@ public static class BuildRules
             housing = 1,
             requiresTownhall = true
         }},
-        { "barracks", new BuildRequirement {
+        { BuildingCodes.Barracks, new BuildRequirement {
             wood = 30,
             gold = 10
         }},
@@ -28,34 +29,34 @@ public static class BuildRules
             academicUnits = 1,
             requiresAcademy = true
         }},
-        { "farm", new BuildRequirement {
+        { BuildingCodes.Farm, new BuildRequirement {
             wood = 20
         }},
-        { "mine", new BuildRequirement {
+        { BuildingCodes.Mine, new BuildRequirement {
             wood = 20
         }},
-        { "advanced_mine", new BuildRequirement {
+        { BuildingCodes.AdvancedMine, new BuildRequirement {
             wood = 40,
             gold = 20
         }},
-        { "lumbermill", new BuildRequirement {
+        { BuildingCodes.Lumbermill, new BuildRequirement {
             wood = 15,
             gold = 5
         }},
-        { "acadamy", new BuildRequirement {
+        { BuildingCodes.Academy, new BuildRequirement {
             wood = 30,
             gold = 20
         }},
-        { "townhall", new BuildRequirement {
+        { BuildingCodes.Townhall, new BuildRequirement {
             wood = 0,
             gold = 0
         }},
-        { "crono_extractor", new BuildRequirement {
+        { BuildingCodes.CronoExtractor, new BuildRequirement {
             gold = 20,
             wood = 20,
             sciencePoints = 10
         }},
-        { "house", new BuildRequirement {
+        { BuildingCodes.House, new BuildRequirement {
             wood = 20,
             gold = 5
         }}

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using static DTO;
+using GameConstants;
 
 public class Character : MonoBehaviour, IActionProposer, IInfoProvider
 {
@@ -158,7 +159,7 @@ public void AssignBuildTask(Vector2Int pos, string building)
     public void PlanGatherRoute()
     {
         Vector2Int start = this.GetGridPosition();
-        Vector2Int townhall = FindNearest(start, c => c.building == "townhall" && c.owner == owner);
+        Vector2Int townhall = FindNearest(start, c => c.building == BuildingCodes.Townhall && c.owner == owner);
         if (townhall.x < 0) return;
 
         List<Vector2Int> route = new();
@@ -166,7 +167,7 @@ public void AssignBuildTask(Vector2Int pos, string building)
         switch (this.gatherTask)
         {
             case Character.GatherTask.Gold:
-                Vector2Int mine = FindNearest(start, c => c.building == "mine" && c.owner == owner);
+                Vector2Int mine = FindNearest(start, c => c.building == BuildingCodes.Mine && c.owner == owner);
                 if (mine.x < 0) return;
                 segment = Pathfinder.FindPath(start, mine, MapState.cellMap);
                 route.AddRange(segment);
@@ -176,7 +177,7 @@ public void AssignBuildTask(Vector2Int pos, string building)
                 for (int i = 1; i < segment.Count; i++) route.Add(segment[i]);
                 break;
             case Character.GatherTask.Wood:
-                Vector2Int lumber = FindNearest(start, c => c.building == "lumbermill" && c.owner == owner);
+                Vector2Int lumber = FindNearest(start, c => c.building == BuildingCodes.Lumbermill && c.owner == owner);
                 if (lumber.x < 0) return;
                 Vector2Int tree = FindNearest(lumber, c => c.resources != null && c.resources.wood > 0);
                 if (tree.x < 0) return;
@@ -192,7 +193,7 @@ public void AssignBuildTask(Vector2Int pos, string building)
                 for (int i = 1; i < segment.Count; i++) route.Add(segment[i]);
                 break;
             case Character.GatherTask.Food:
-                Vector2Int farm = FindNearest(start, c => c.building == "farm" && c.owner == owner);
+                Vector2Int farm = FindNearest(start, c => c.building == BuildingCodes.Farm && c.owner == owner);
                 if (farm.x < 0) return;
                 segment = Pathfinder.FindPath(start, farm, MapState.cellMap);
                 route.AddRange(segment);
@@ -261,7 +262,7 @@ public void AssignBuildTask(Vector2Int pos, string building)
             Debug.Log($"{name} construyó {building} en {pos}");
             MapLoader.instance.ClearConstructionPreview(pos);
 
-            if (building == "townhall")
+            if (building == BuildingCodes.Townhall)
             {
                 foreach (var c in GameObject.FindObjectsOfType<Character>())
                 {

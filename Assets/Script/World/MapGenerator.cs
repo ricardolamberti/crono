@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using static DTO;
+using GameConstants;
 
 public class MapGenerator : MonoBehaviour
 {
@@ -42,19 +43,19 @@ public class MapGenerator : MonoBehaviour
             for (int y = 0; y < height; y++)
             {
                 Vector2Int pos = new(x, y);
-                string terrain = "forest";
+                string terrain = TerrainTypes.Forest;
 
-                if (waterTiles.Contains(pos)) terrain = "water";
-                else if (mountainTiles.Contains(pos)) terrain = "mountain";
+                if (waterTiles.Contains(pos)) terrain = TerrainTypes.Water;
+                else if (mountainTiles.Contains(pos)) terrain = TerrainTypes.Mountain;
 
                 
                 var res = new ResourceBundle();
 
-                if (terrain == "mountain")
+                if (terrain == TerrainTypes.Mountain)
                 {
                     res.gold = Random.Range(10, 30);
                 }
-                else if (terrain == "forest")
+                else if (terrain == TerrainTypes.Forest)
                 {
                     res.wood = Random.Range(10, 50);
                 }

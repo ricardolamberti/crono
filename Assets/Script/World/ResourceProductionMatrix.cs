@@ -1,16 +1,17 @@
 using System.Collections.Generic;
 using UnityEngine;
+using GameConstants;
 
 public static class ResourceProductionMatrix
 {
     public static Dictionary<string, ResourceFlow> production = new()
     {
-        { "farm", new ResourceFlow(food: +5) },
-        { "mine", new ResourceFlow(gold: +3) },
-        { "advanced_mine", new ResourceFlow(gold: +6) },
-        { "lumbermill", new ResourceFlow(wood: +4) },
-        { "crono_extractor", new ResourceFlow(crono: +2) },
-        { "house", new ResourceFlow(food: +2) },
+        { BuildingCodes.Farm, new ResourceFlow(food: +5) },
+        { BuildingCodes.Mine, new ResourceFlow(gold: +3) },
+        { BuildingCodes.AdvancedMine, new ResourceFlow(gold: +6) },
+        { BuildingCodes.Lumbermill, new ResourceFlow(wood: +4) },
+        { BuildingCodes.CronoExtractor, new ResourceFlow(crono: +2) },
+        { BuildingCodes.House, new ResourceFlow(food: +2) },
         { "worker", new ResourceFlow(food: -1) },
         { "scientist", new ResourceFlow(food: -1, science: +1) },
         { "warrior", new ResourceFlow(food: -2) },

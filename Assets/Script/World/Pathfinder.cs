@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using static DTO;
+using GameConstants;
 
 public static class Pathfinder
 {
@@ -107,7 +108,7 @@ public static class Pathfinder
     }
 
     public static bool IsWalkable(string terrain) =>
-        terrain != "water" && terrain != "mountain";
+        terrain != TerrainTypes.Water && terrain != TerrainTypes.Mountain;
 
     // ✅ 8 direcciones (N, S, E, O, NE, NW, SE, SW)
     private static readonly List<Vector2Int> Directions = new()
