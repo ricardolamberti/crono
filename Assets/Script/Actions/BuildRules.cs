@@ -34,6 +34,10 @@ public static class BuildRules
         { "mine", new BuildRequirement {
             wood = 20
         }},
+        { "advanced_mine", new BuildRequirement {
+            wood = 40,
+            gold = 20
+        }},
         { "lumbermill", new BuildRequirement {
             wood = 15,
             gold = 5
@@ -50,6 +54,10 @@ public static class BuildRules
             gold = 20,
             wood = 20,
             sciencePoints = 10
+        }},
+        { "house", new BuildRequirement {
+            wood = 20,
+            gold = 5
         }}
     };
 

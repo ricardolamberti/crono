@@ -39,6 +39,26 @@ public class TileActionProvider : MonoBehaviour, IActionProposer
                     break;
             }
 
+            if (BuildingEvolutionMatrix.TryGetEvolution(cell.building, out var evo))
+            {
+                if (GameState.playerResources.science >= evo.requiredScience)
+                {
+                    player.AddAction(new ControlPanelAction($"Mejorar a {evo.next}", () =>
+                    {
+                        var req = BuildRules.GetRequirements(evo.next);
+                        if (!ControlPanel.Instance.freeResource && !GameState.playerResources.HasEnough(req))
+                        {
+                            Debug.Log($"No hay recursos suficientes para evolucionar {evo.next}");
+                            return;
+                        }
+                        GameState.playerResources.Consume(req);
+                        GameState.playerResources.science -= evo.requiredScience;
+                        MapLoader.instance.UpgradeBuilding(new Vector2Int(cell.x, cell.y), evo.next);
+                        GameEvents.RaiseSelection(gameObject);
+                    }));
+                }
+            }
+
             if (cell.building != "townhall")
             {
                 player.AddAction(new ControlPanelAction("Derrumbar", () => {
