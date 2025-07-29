@@ -295,6 +295,8 @@ public class MapLoader : MonoBehaviour
             ApplyTerrain(tile, cell.terrain);
             ApplyBuilding(tile, cell.building, cell.level);
 
+            AddFog(tile, coord);
+
             var buildingObj = BuildingFactory.Create(cell.building, cell.level);
             if (buildingObj != null)
                 MapState.buildings[coord] = buildingObj;
@@ -441,6 +443,45 @@ public class MapLoader : MonoBehaviour
         iconObj.AddComponent<Billboard>();
 
 
+    }
+
+    void AddFog(GameObject tile, Vector2Int coord)
+    {
+        var baseRenderer = tile.GetComponentInChildren<SpriteRenderer>();
+        if (baseRenderer == null) return;
+
+        GameObject fogObj = new GameObject("Fog");
+        fogObj.transform.SetParent(tile.transform);
+        fogObj.transform.localPosition = baseRenderer.transform.localPosition;
+        fogObj.transform.localRotation = baseRenderer.transform.localRotation;
+        fogObj.transform.localScale = baseRenderer.transform.localScale;
+
+        var fogRenderer = fogObj.AddComponent<SpriteRenderer>();
+        fogRenderer.sprite = baseRenderer.sprite;
+        fogRenderer.color = new Color(0, 0, 0, 0.75f);
+        fogRenderer.sortingOrder = 30;
+
+        var fog = tile.AddComponent<FogTile>();
+        fog.Initialize(coord, fogRenderer);
+    }
+
+    public void RevealTile(Vector2Int pos)
+    {
+        if (!tiles.TryGetValue(pos, out var tile)) return;
+        var fog = tile.GetComponent<FogTile>();
+        if (fog != null) fog.Reveal();
+    }
+
+    public void RevealRadius(Vector2Int center, int radius)
+    {
+        for (int dx = -radius; dx <= radius; dx++)
+        {
+            for (int dy = -radius; dy <= radius; dy++)
+            {
+                Vector2Int p = new Vector2Int(center.x + dx, center.y + dy);
+                RevealTile(p);
+            }
+        }
     }
 
 

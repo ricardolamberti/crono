@@ -14,7 +14,10 @@ public abstract class Player
     public virtual void Initialize()
     {
         if (MapLoader.instance != null)
+        {
             MapLoader.instance.SpawnCharacter(SpawnPosition, Character.Type.Worker, Id);
+            MapLoader.instance.RevealRadius(SpawnPosition, 1);
+        }
     }
 
     public virtual void Update() { }
