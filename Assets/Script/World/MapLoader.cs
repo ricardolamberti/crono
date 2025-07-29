@@ -451,19 +451,26 @@ public class MapLoader : MonoBehaviour
         if (baseRenderer == null) return;
 
         GameObject fogObj = new GameObject("Fog");
-        fogObj.transform.SetParent(tile.transform);
-        fogObj.transform.localPosition = baseRenderer.transform.localPosition;
-        fogObj.transform.localRotation = baseRenderer.transform.localRotation;
-        fogObj.transform.localScale = baseRenderer.transform.localScale;
+
+        // 🔥 Posicionar en mundo igual que el tile base
+        fogObj.transform.position = baseRenderer.transform.position + new Vector3(0, 0.01f, 0);
+        fogObj.transform.rotation = baseRenderer.transform.rotation;
+        fogObj.transform.localScale = baseRenderer.transform.lossyScale; // 🔥 Usa escala absoluta
+
+        // 🔥 Padre opcional: mapa general en vez del tile para evitar herencia de transform
+        fogObj.transform.SetParent(tile.transform.parent);
 
         var fogRenderer = fogObj.AddComponent<SpriteRenderer>();
         fogRenderer.sprite = baseRenderer.sprite;
-        fogRenderer.color = new Color(0, 0, 0, 0.75f);
-        fogRenderer.sortingOrder = 30;
+        fogRenderer.color = new Color(0, 0, 0, 1f);
+        fogRenderer.sortingOrder = baseRenderer.sortingOrder + 5;
+        fogRenderer.sortingLayerID = baseRenderer.sortingLayerID;
 
         var fog = tile.AddComponent<FogTile>();
         fog.Initialize(coord, fogRenderer);
     }
+
+
 
     public void RevealTile(Vector2Int pos)
     {
