@@ -73,6 +73,7 @@ public class MapGenerator : MonoBehaviour
                     y = y,
                     terrain = terrain,
                     building = "",//buildings[Random.Range(0, buildings.Length)],
+                    level = 1,
                     owner = "",//owners[Random.Range(0, owners.Length)],
                     start_player = startId,
                     resources = res

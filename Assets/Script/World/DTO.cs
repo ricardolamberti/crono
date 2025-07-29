@@ -10,6 +10,7 @@ public class DTO
         public int y;
         public string terrain;
         public string building;
+        public int level = 1;
         public string owner;
         public string start_player;
         public ResourceBundle resources;
