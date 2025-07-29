@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using static DTO;
 
 /// <summary>
 /// Clase base para todas las construcciones del juego.

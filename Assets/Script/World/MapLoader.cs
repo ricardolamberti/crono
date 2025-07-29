@@ -31,6 +31,7 @@ public class MapLoader : MonoBehaviour
     public Sprite extractorSprite;
     public Sprite dockSprite;
     public Sprite atalayaSprite;
+    public Sprite wallSprite;
 
     public Sprite hutSprite2;
     public Sprite barracksSprite2;
@@ -42,6 +43,7 @@ public class MapLoader : MonoBehaviour
     public Sprite extractorSprite2;
     public Sprite dockSprite2;
     public Sprite atalayaSprite2;
+    public Sprite wallSprite2;
 
     public Sprite hutSprite3;
     public Sprite barracksSprite3;
@@ -53,6 +55,7 @@ public class MapLoader : MonoBehaviour
     public Sprite extractorSprite3;
     public Sprite dockSprite3;
     public Sprite atalayaSprite3;
+    public Sprite wallSprite3;
 
     public Sprite hutSprite4;
     public Sprite barracksSprite4;
@@ -64,6 +67,7 @@ public class MapLoader : MonoBehaviour
     public Sprite extractorSprite4;
     public Sprite dockSprite4;
     public Sprite atalayaSprite4;
+    public Sprite wallSprite4;
 
     public Sprite airportSprite;
     public Sprite airportSprite2;
@@ -171,7 +175,14 @@ public class MapLoader : MonoBehaviour
             { "townhall_1", defaultBuildingSprite },
             { "townhall_2", defaultBuildingSprite2 },
             { "townhall_3", defaultBuildingSprite3 },
-            { "townhall_4", defaultBuildingSprite4 }
+            { "townhall_4", defaultBuildingSprite4 },
+
+             { "wall_1", wallSprite },
+            { "wall_2", wallSprite2 },
+            { "wall_3", wallSprite3 },
+            { "wall_4", wallSprite4 }
+
+
          };
 
 

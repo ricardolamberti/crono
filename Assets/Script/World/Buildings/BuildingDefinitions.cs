@@ -291,7 +291,13 @@ public class SawmillLevel3 : SawmillLevel2
 {
     public override int Level => 3;
     public override BuildRequirement Cost => new BuildRequirement { wood = 45, gold = 20 };
-    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "potencia madera por 30" );
+    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "potencia madera por 30");
+}
+public class SawmillLevel4 : SawmillLevel3
+{
+    public override int Level => 4;
+    public override BuildRequirement Cost => new BuildRequirement { wood = 45, gold = 20 };
+    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "potencia madera por 30");
 }
 #endregion
 
@@ -326,3 +332,33 @@ public class CronoExtractorLevel4 : CronoExtractorLevel3
 }
 #endregion
 
+#region Mine
+public class MineLevel1 : Building
+{
+    public override string Code => "mine";
+    public override int Level => 1;
+    public override BuildRequirement Cost => new BuildRequirement { wood = 15, gold = 5 };
+    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "");
+}
+
+public class MineLevel2 : MineLevel1
+{
+    public override int Level => 2;
+    public override BuildRequirement Cost => new BuildRequirement { wood = 30, gold = 10 };
+    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "");
+}
+
+public class MineLevel3 : MineLevel2
+{
+    public override int Level => 3;
+    public override BuildRequirement Cost => new BuildRequirement { wood = 45, gold = 20 };
+    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "");
+}
+
+public class MineLevel4 : MineLevel3
+{
+    public override int Level => 4;
+    public override BuildRequirement Cost => new BuildRequirement { wood = 45, gold = 20 };
+    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "");
+}
+#endregion

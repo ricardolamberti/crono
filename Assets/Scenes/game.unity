@@ -815,9 +815,10 @@ MonoBehaviour:
   extractorSprite: {fileID: 21300000, guid: c747d70d25cb71f4f9bd2b9ff3a83522, type: 3}
   dockSprite: {fileID: 21300000, guid: ab95835cdb7744049930c1b8ccfc6fb4, type: 3}
   atalayaSprite: {fileID: 21300000, guid: fd097b87a8c32dc41af6000e4a17b291, type: 3}
+  wallSprite: {fileID: 21300000, guid: 21c12221746dd0d408f095eef9d71f40, type: 3}
   hutSprite2: {fileID: 21300000, guid: 677c20a6f7de2104483c8ec65dd9b893, type: 3}
   barracksSprite2: {fileID: 21300000, guid: 67972df023dafc04aae4a63075ff3563, type: 3}
-  mineSprite2: {fileID: 21300000, guid: 3192598fc826cf14e81ae4ce0dd388e6, type: 3}
+  mineSprite2: {fileID: 21300000, guid: 4e273d62f6884d94cab00b6fcf5a176c, type: 3}
   farmSprite2: {fileID: 21300000, guid: b5f617bb022684741bdbc9c9464e5008, type: 3}
   sawmillSprite2: {fileID: 21300000, guid: defec3c3665934d4d8056ec8b61a1675, type: 3}
   defaultBuildingSprite2: {fileID: 21300000, guid: 8be016db0e9a2c942bb2cd75cb40fa84, type: 3}
@@ -825,9 +826,10 @@ MonoBehaviour:
   extractorSprite2: {fileID: 21300000, guid: 3acdc1f5ffdd6bf4b810e6d68d96bc28, type: 3}
   dockSprite2: {fileID: 21300000, guid: 05d8bb2479994ea4dbc904daf88c99a9, type: 3}
   atalayaSprite2: {fileID: 21300000, guid: 40cb8eb324e74144287b1873afcf54ef, type: 3}
+  wallSprite2: {fileID: 21300000, guid: 8bb0fdfec20a9e64bbc013341155a5eb, type: 3}
   hutSprite3: {fileID: 21300000, guid: f7e173b176ff75f48b3911b3982a4091, type: 3}
   barracksSprite3: {fileID: 21300000, guid: 687b46503e6e95f4f8827b79ea4b4576, type: 3}
-  mineSprite3: {fileID: 21300000, guid: 3192598fc826cf14e81ae4ce0dd388e6, type: 3}
+  mineSprite3: {fileID: 21300000, guid: 41a2055ebc68d97488b73812b0af077d, type: 3}
   farmSprite3: {fileID: 21300000, guid: 4b0262835df72a445b57adc7a09e3af5, type: 3}
   sawmillSprite3: {fileID: 21300000, guid: 8538bccce71fc034c92302cc2b2b2c08, type: 3}
   defaultBuildingSprite3: {fileID: 21300000, guid: 07c568c2b9d309641acc246a7522e777, type: 3}
@@ -835,16 +837,20 @@ MonoBehaviour:
   extractorSprite3: {fileID: 21300000, guid: 9dc851bba35cb2844955870f1dda991c, type: 3}
   dockSprite3: {fileID: 21300000, guid: 508177c60c9a7264b84d2cff7f277f09, type: 3}
   atalayaSprite3: {fileID: 21300000, guid: f30259c47cb2b4343b9a866dfc92fe9b, type: 3}
-  hutSprite4: {fileID: 21300000, guid: 14aa3907b3bf720408879f0588874e8e, type: 3}
-  barracksSprite4: {fileID: 21300000, guid: 3192598fc826cf14e81ae4ce0dd388e6, type: 3}
-  mineSprite4: {fileID: 21300000, guid: 3192598fc826cf14e81ae4ce0dd388e6, type: 3}
+  wallSprite3: {fileID: 21300000, guid: b49d21ded99197345ab0615e23a9e5b2, type: 3}
+  hutSprite4: {fileID: 21300000, guid: 5d18f49a44fd10240af65eeeba59f017, type: 3}
+  barracksSprite4: {fileID: 21300000, guid: 8dd11ba6c062fd148ae244ba76fd4403, type: 3}
+  mineSprite4: {fileID: 21300000, guid: a5d83e65a81383246968281522aa5f11, type: 3}
   farmSprite4: {fileID: 21300000, guid: 40c0699ee7ed3a441af8334974041bcc, type: 3}
-  sawmillSprite4: {fileID: 21300000, guid: 3192598fc826cf14e81ae4ce0dd388e6, type: 3}
+  sawmillSprite4: {fileID: 21300000, guid: f7cf9e0cd1d07ff47a9962352d89d79c, type: 3}
   defaultBuildingSprite4: {fileID: 21300000, guid: 572b2ffba6edd9b43a80060df9068410, type: 3}
-  academySprite4: {fileID: 21300000, guid: 3192598fc826cf14e81ae4ce0dd388e6, type: 3}
-  extractorSprite4: {fileID: 21300000, guid: 3192598fc826cf14e81ae4ce0dd388e6, type: 3}
-  dockSprite4: {fileID: 21300000, guid: 3192598fc826cf14e81ae4ce0dd388e6, type: 3}
+  academySprite4: {fileID: 21300000, guid: c46092bd09d2a4b4f8de504a4e1511ad, type: 3}
+  extractorSprite4: {fileID: 21300000, guid: 48d44764709abe640a8a7563363775e4, type: 3}
+  dockSprite4: {fileID: 21300000, guid: bfc728171487e7c48b7df2d541263b60, type: 3}
   atalayaSprite4: {fileID: 21300000, guid: 556fa77dfc2573b429fc6a8710f5be9b, type: 3}
+  wallSprite4: {fileID: 21300000, guid: ff4fb429219cd2c4dbac264c7a3e6570, type: 3}
+  airportSprite: {fileID: 21300000, guid: c5bcb1cd3c06b814cba679fa72191820, type: 3}
+  airportSprite2: {fileID: 21300000, guid: 4afc1afd59e017f4382e714b99dc7c02, type: 3}
   iconGold: {fileID: 21300000, guid: ae188517cf7da1e4b989b4faca00220d, type: 3}
   iconWood: {fileID: -1488921459, guid: c8cda923bc4504441a08c8d6042385f2, type: 3}
   iconCrono: {fileID: 21300000, guid: 589515601e2159e4e8a226b33b1616e3, type: 3}

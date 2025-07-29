@@ -12,7 +12,7 @@ public class TileActionProvider : MonoBehaviour, IActionProposer
     {
         { "mountain", new[] { "mine" } },
         { "water", new[] { "dock" } },
-        { "forest", new[] { "hut", "lumbermill", "farm", "academy", "barracks" } }
+        { "forest", new[] { "hut", "lumbermill", "farm", "academy", "barracks", "wall", "atalaya", "airport" } }
     };
 
     void Awake()

@@ -18,6 +18,11 @@ public static class BuildingFactory
 
         { ("airport", 1), () => new AirportLevel1() },
         { ("airport", 2), () => new AirportLevel2() },
+    
+        { ("mine", 1), () => new MineLevel1() },
+        { ("mine", 2), () => new MineLevel2() },
+        { ("mine", 3), () => new MineLevel3() },
+        { ("mine", 4), () => new MineLevel4() },
 
         { ("dock", 1), () => new DockLevel1() },
         { ("dock", 2), () => new DockLevel2() },
@@ -52,6 +57,7 @@ public static class BuildingFactory
         { ("lumbermill", 1), () => new SawmillLevel1() },
         { ("lumbermill", 2), () => new SawmillLevel2() },
         { ("lumbermill", 3), () => new SawmillLevel3() },
+        { ("lumbermill", 4), () => new SawmillLevel4() },
 
         { ("extractor", 1), () => new CronoExtractorLevel1() },
         { ("extractor", 2), () => new CronoExtractorLevel2() },
