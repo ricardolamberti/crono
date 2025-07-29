@@ -254,6 +254,12 @@ public void AssignBuildTask(Vector2Int pos, string building)
             cell.building = building;
             cell.level = level;
             cell.owner = owner;
+
+            if (cell.resources != null && cell.resources.wood > 0)
+            {
+                GameState.playerResources.wood += cell.resources.wood;
+                cell.resources.wood = 0;
+            }
             GameState.IncrementBuilding(building);
             var buildingObj = BuildingFactory.Create(building, level);
             if (buildingObj != null)
