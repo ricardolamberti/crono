@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using GameConstants;
 
 public static class BuildingEvolutionMatrix
 {
@@ -20,61 +21,61 @@ public static class BuildingEvolutionMatrix
     {
 
         // Townhall
-        { ("townhall", 1), new Evolution("townhall", 2, 10) },
-        { ("townhall", 2), new Evolution("townhall", 3, 20) },
-        { ("townhall", 3), new Evolution("townhall", 4, 30) },
+        { (BuildingCodes.Townhall, 1), new Evolution(BuildingCodes.Townhall, 2, 10) },
+        { (BuildingCodes.Townhall, 2), new Evolution(BuildingCodes.Townhall, 3, 20) },
+        { (BuildingCodes.Townhall, 3), new Evolution(BuildingCodes.Townhall, 4, 30) },
 
         // Barracks
-        { ("barracks", 1), new Evolution("barracks", 2, 10) },
-        { ("barracks", 2), new Evolution("barracks", 3, 20) },
-        { ("barracks", 3), new Evolution("barracks", 4, 30) },
+        { (BuildingCodes.Barracks, 1), new Evolution(BuildingCodes.Barracks, 2, 10) },
+        { (BuildingCodes.Barracks, 2), new Evolution(BuildingCodes.Barracks, 3, 20) },
+        { (BuildingCodes.Barracks, 3), new Evolution(BuildingCodes.Barracks, 4, 30) },
 
         // Airport
-        { ("airport", 1), new Evolution("airport", 2, 10) },
+        { (BuildingCodes.Airport, 1), new Evolution(BuildingCodes.Airport, 2, 10) },
 
         // Dock
-        { ("dock", 1), new Evolution("dock", 2, 10) },
-        { ("dock", 2), new Evolution("dock", 3, 20) },
-        { ("dock", 3), new Evolution("dock", 4, 30) },
+        { (BuildingCodes.Dock, 1), new Evolution(BuildingCodes.Dock, 2, 10) },
+        { (BuildingCodes.Dock, 2), new Evolution(BuildingCodes.Dock, 3, 20) },
+        { (BuildingCodes.Dock, 3), new Evolution(BuildingCodes.Dock, 4, 30) },
 
         // Hut
-        { ("hut", 1), new Evolution("hut", 2, 5) },
-        { ("hut", 2), new Evolution("hut", 3, 10) },
-        { ("hut", 3), new Evolution("hut", 4, 15) },
+        { (BuildingCodes.Hut, 1), new Evolution(BuildingCodes.Hut, 2, 5) },
+        { (BuildingCodes.Hut, 2), new Evolution(BuildingCodes.Hut, 3, 10) },
+        { (BuildingCodes.Hut, 3), new Evolution(BuildingCodes.Hut, 4, 15) },
 
         // Farm
-        { ("farm", 1), new Evolution("farm", 2, 10) },
-        { ("farm", 2), new Evolution("farm", 3, 20) },
-        { ("farm", 3), new Evolution("farm", 4, 30) },
+        { (BuildingCodes.Farm, 1), new Evolution(BuildingCodes.Farm, 2, 10) },
+        { (BuildingCodes.Farm, 2), new Evolution(BuildingCodes.Farm, 3, 20) },
+        { (BuildingCodes.Farm, 3), new Evolution(BuildingCodes.Farm, 4, 30) },
 
         // Academy
-        { ("academy", 1), new Evolution("academy", 2, 10) },
-        { ("academy", 2), new Evolution("academy", 3, 20) },
-        { ("academy", 3), new Evolution("academy", 4, 30) },
+        { (BuildingCodes.Academy, 1), new Evolution(BuildingCodes.Academy, 2, 10) },
+        { (BuildingCodes.Academy, 2), new Evolution(BuildingCodes.Academy, 3, 20) },
+        { (BuildingCodes.Academy, 3), new Evolution(BuildingCodes.Academy, 4, 30) },
 
         // Atalaya
-        { ("atalaya", 1), new Evolution("atalaya", 2, 10) },
-        { ("atalaya", 2), new Evolution("atalaya", 3, 20) },
-        { ("atalaya", 3), new Evolution("atalaya", 4, 30) },
+        { (BuildingCodes.Atalaya, 1), new Evolution(BuildingCodes.Atalaya, 2, 10) },
+        { (BuildingCodes.Atalaya, 2), new Evolution(BuildingCodes.Atalaya, 3, 20) },
+        { (BuildingCodes.Atalaya, 3), new Evolution(BuildingCodes.Atalaya, 4, 30) },
 
         // Wall
-        { ("wall", 1), new Evolution("wall", 2, 10) },
-        { ("wall", 2), new Evolution("wall", 3, 20) },
-        { ("wall", 3), new Evolution("wall", 4, 30) },
+        { (BuildingCodes.Wall, 1), new Evolution(BuildingCodes.Wall, 2, 10) },
+        { (BuildingCodes.Wall, 2), new Evolution(BuildingCodes.Wall, 3, 20) },
+        { (BuildingCodes.Wall, 3), new Evolution(BuildingCodes.Wall, 4, 30) },
 
         // Lumbermill
-        { ("lumbermill", 1), new Evolution("lumbermill", 2, 10) },
-        { ("lumbermill", 2), new Evolution("lumbermill", 3, 20) },
+        { (BuildingCodes.Lumbermill, 1), new Evolution(BuildingCodes.Lumbermill, 2, 10) },
+        { (BuildingCodes.Lumbermill, 2), new Evolution(BuildingCodes.Lumbermill, 3, 20) },
 
         // Crono Extractor
-        { ("extractor", 1), new Evolution("extractor", 2, 10) },
-        { ("extractor", 2), new Evolution("extractor", 3, 20) },
-        { ("extractor", 3), new Evolution("extractor", 4, 30) },
+        { (BuildingCodes.Extractor, 1), new Evolution(BuildingCodes.Extractor, 2, 10) },
+        { (BuildingCodes.Extractor, 2), new Evolution(BuildingCodes.Extractor, 3, 20) },
+        { (BuildingCodes.Extractor, 3), new Evolution(BuildingCodes.Extractor, 4, 30) },
 
         // Mine
-        { ("mine", 1), new Evolution("mine", 2, 10) },
-        { ("mine", 2), new Evolution("mine", 3, 20) },
-        { ("mine", 3), new Evolution("mine", 4, 30) }
+        { (BuildingCodes.Mine, 1), new Evolution(BuildingCodes.Mine, 2, 10) },
+        { (BuildingCodes.Mine, 2), new Evolution(BuildingCodes.Mine, 3, 20) },
+        { (BuildingCodes.Mine, 3), new Evolution(BuildingCodes.Mine, 4, 30) }
     };
 
     public static bool TryGetEvolution(string building, int level, out Evolution evo)

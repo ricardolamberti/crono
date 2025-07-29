@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using GameConstants;
 
 public class BasicEnemyAI
 {
@@ -57,8 +58,8 @@ public class BasicEnemyAI
 
     void UpdateBuildPhase()
     {
-        bool hasTownhall = HasBuilding("townhall");
-        bool hasMine = HasBuilding("mine");
+        bool hasTownhall = HasBuilding(BuildingCodes.Townhall);
+        bool hasMine = HasBuilding(BuildingCodes.Mine);
 
         if (!hasTownhall)
             currentPhase = BuildPhase.NeedTownhall;
@@ -85,7 +86,7 @@ public class BasicEnemyAI
         if (bestLocation.x >= 0)
         {
             Debug.Log($"AI {ownerId}: Construyendo townhall en {bestLocation}");
-            idleWorker.AssignBuildTask(bestLocation, "townhall");
+            idleWorker.AssignBuildTask(bestLocation, BuildingCodes.Townhall);
         }
     }
 
@@ -100,7 +101,7 @@ public class BasicEnemyAI
         if (mineLocation.x >= 0)
         {
             Debug.Log($"AI {ownerId}: Construyendo mina en {mineLocation}");
-            idleWorker.AssignBuildTask(mineLocation, "mine");
+            idleWorker.AssignBuildTask(mineLocation, BuildingCodes.Mine);
         }
     }
 
@@ -118,8 +119,8 @@ public class BasicEnemyAI
 
     Vector2Int FindOptimalTownhallLocation()
     {
-        var forestCells = MapState.cellMap.Where(kvp => 
-            kvp.Value.terrain == "forest" && 
+        var forestCells = MapState.cellMap.Where(kvp =>
+            kvp.Value.terrain == TerrainTypes.Forest &&
             string.IsNullOrEmpty(kvp.Value.building)).ToList();
 
         Vector2Int bestLocation = new(-1, -1);
@@ -190,8 +191,8 @@ public class BasicEnemyAI
         var townhallPos = FindMyTownhallPosition();
         if (townhallPos.x < 0) return new(-1, -1);
 
-        var mountainCells = MapState.cellMap.Where(kvp => 
-            kvp.Value.terrain == "mountain" && 
+        var mountainCells = MapState.cellMap.Where(kvp =>
+            kvp.Value.terrain == TerrainTypes.Mountain &&
             string.IsNullOrEmpty(kvp.Value.building)).ToList();
 
         Vector2Int bestLocation = new(-1, -1);
@@ -214,8 +215,8 @@ public class BasicEnemyAI
 
     Vector2Int FindMyTownhallPosition()
     {
-        var townhall = MapState.cellMap.FirstOrDefault(kvp => 
-            kvp.Value.building == "townhall" && kvp.Value.owner == ownerId);
+        var townhall = MapState.cellMap.FirstOrDefault(kvp =>
+            kvp.Value.building == BuildingCodes.Townhall && kvp.Value.owner == ownerId);
         
         return townhall.Key != default ? townhall.Key : new(-1, -1);
     }

@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using static DTO;
+using GameConstants;
 
 public class GameTimeManager : MonoBehaviour
 {
@@ -55,13 +56,13 @@ public class GameTimeManager : MonoBehaviour
 
             switch (cell.building)
             {
-                case "farm":
+                case BuildingCodes.Farm:
                     farmCount++;
                     break;
-                case "mine":
+                case BuildingCodes.Mine:
                     mineCount++;
                     break;
-                case "lumbermill":
+                case BuildingCodes.Lumbermill:
                     lumberCount++;
                     break;
                 default:
@@ -149,21 +150,21 @@ public class GameTimeManager : MonoBehaviour
         {
             int effective = Mathf.Min(goldWorkers, mineCount * workersPerBuilding);
             float groups = effective / (float)workersPerBuilding;
-            total += ResourceProductionMatrix.GetFlow("mine").Scale(groups);
+            total += ResourceProductionMatrix.GetFlow(BuildingCodes.Mine).Scale(groups);
         }
 
         if (lumberCount > 0)
         {
             int effective = Mathf.Min(woodWorkers, lumberCount * workersPerBuilding);
             float groups = effective / (float)workersPerBuilding;
-            total += ResourceProductionMatrix.GetFlow("lumbermill").Scale(groups);
+            total += ResourceProductionMatrix.GetFlow(BuildingCodes.Lumbermill).Scale(groups);
         }
 
         if (farmCount > 0)
         {
             int effective = Mathf.Min(foodWorkers, farmCount * workersPerBuilding);
             float groups = effective / (float)workersPerBuilding;
-            total += ResourceProductionMatrix.GetFlow("farm").Scale(groups);
+            total += ResourceProductionMatrix.GetFlow(BuildingCodes.Farm).Scale(groups);
         }
 
         GameState.playerResources.AddFlow(total);

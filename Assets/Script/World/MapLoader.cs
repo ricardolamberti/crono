@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.Networking;
 using static MapGenerator;
+using GameConstants;
 using static DTO;
 using Unity.VisualScripting.Antlr3.Runtime.Tree;
 
@@ -113,74 +114,74 @@ public class MapLoader : MonoBehaviour
     void Start()
     {
         terrainSprites = new Dictionary<string, Sprite> {
-            { "forest", forestSprite },
-            { "mountain", mountainSprite },
-            { "water", waterSprite }
+            { TerrainTypes.Forest, forestSprite },
+            { TerrainTypes.Mountain, mountainSprite },
+            { TerrainTypes.Water, waterSprite }
         };
         buildingSprites = new Dictionary<string, Sprite>
         {
-            { "hut_1", hutSprite },
-            { "hut_2", hutSprite2 },
-            { "hut_3", hutSprite3 },
-            { "hut_4", hutSprite4 },
+            { $"{BuildingCodes.Hut}_1", hutSprite },
+            { $"{BuildingCodes.Hut}_2", hutSprite2 },
+            { $"{BuildingCodes.Hut}_3", hutSprite3 },
+            { $"{BuildingCodes.Hut}_4", hutSprite4 },
 
-            { "dock_1", dockSprite },
-            { "dock_2", dockSprite2 },
-            { "dock_3", dockSprite3 },
-            { "dock_4", dockSprite4 },
+            { $"{BuildingCodes.Dock}_1", dockSprite },
+            { $"{BuildingCodes.Dock}_2", dockSprite2 },
+            { $"{BuildingCodes.Dock}_3", dockSprite3 },
+            { $"{BuildingCodes.Dock}_4", dockSprite4 },
             
-            { "atalaya_1", atalayaSprite },
-            { "atalaya_2", atalayaSprite2 },
-            { "atalaya_3", atalayaSprite3 },
-            { "atalaya_4", atalayaSprite4 },
+            { $"{BuildingCodes.Atalaya}_1", atalayaSprite },
+            { $"{BuildingCodes.Atalaya}_2", atalayaSprite2 },
+            { $"{BuildingCodes.Atalaya}_3", atalayaSprite3 },
+            { $"{BuildingCodes.Atalaya}_4", atalayaSprite4 },
 
-            { "barracks_1", barracksSprite },
-            { "barracks_2", barracksSprite2 },
-            { "barracks_3", barracksSprite3 },
-            { "barracks_4", barracksSprite4 },
+            { $"{BuildingCodes.Barracks}_1", barracksSprite },
+            { $"{BuildingCodes.Barracks}_2", barracksSprite2 },
+            { $"{BuildingCodes.Barracks}_3", barracksSprite3 },
+            { $"{BuildingCodes.Barracks}_4", barracksSprite4 },
 
-            { "mine_1", mineSprite },
-            { "mine_2", mineSprite2 },
-            { "mine_3", mineSprite3 },
-            { "mine_4", mineSprite4 },
+            { $"{BuildingCodes.Mine}_1", mineSprite },
+            { $"{BuildingCodes.Mine}_2", mineSprite2 },
+            { $"{BuildingCodes.Mine}_3", mineSprite3 },
+            { $"{BuildingCodes.Mine}_4", mineSprite4 },
 
-            { "advanced_mine_1", mineSprite },
-            { "advanced_mine_2", mineSprite2 },
-            { "advanced_mine_3", mineSprite3 },
-            { "advanced_mine_4", mineSprite4 },
+            { $"{BuildingCodes.AdvancedMine}_1", mineSprite },
+            { $"{BuildingCodes.AdvancedMine}_2", mineSprite2 },
+            { $"{BuildingCodes.AdvancedMine}_3", mineSprite3 },
+            { $"{BuildingCodes.AdvancedMine}_4", mineSprite4 },
 
-            { "farm_1", farmSprite },
-            { "farm_2", farmSprite2 },
-            { "farm_3", farmSprite3 },
-            { "farm_4", farmSprite4 },
+            { $"{BuildingCodes.Farm}_1", farmSprite },
+            { $"{BuildingCodes.Farm}_2", farmSprite2 },
+            { $"{BuildingCodes.Farm}_3", farmSprite3 },
+            { $"{BuildingCodes.Farm}_4", farmSprite4 },
 
-            { "lumbermill_1", sawmillSprite },
-            { "lumbermill_2", sawmillSprite2 },
-            { "lumbermill_3", sawmillSprite3 },
-            { "lumbermill_4", sawmillSprite4 },
+            { $"{BuildingCodes.Lumbermill}_1", sawmillSprite },
+            { $"{BuildingCodes.Lumbermill}_2", sawmillSprite2 },
+            { $"{BuildingCodes.Lumbermill}_3", sawmillSprite3 },
+            { $"{BuildingCodes.Lumbermill}_4", sawmillSprite4 },
 
-            { "academy_1", academySprite },
-            { "academy_2", academySprite2 },
-            { "academy_3", academySprite3 },
-            { "academy_4", academySprite4 },
+            { $"{BuildingCodes.Academy}_1", academySprite },
+            { $"{BuildingCodes.Academy}_2", academySprite2 },
+            { $"{BuildingCodes.Academy}_3", academySprite3 },
+            { $"{BuildingCodes.Academy}_4", academySprite4 },
 
-            { "extractor_1", extractorSprite },
-            { "extractor_2", extractorSprite2 },
-            { "extractor_3", extractorSprite3 },
-            { "extractor_4", extractorSprite4 },
+            { $"{BuildingCodes.Extractor}_1", extractorSprite },
+            { $"{BuildingCodes.Extractor}_2", extractorSprite2 },
+            { $"{BuildingCodes.Extractor}_3", extractorSprite3 },
+            { $"{BuildingCodes.Extractor}_4", extractorSprite4 },
 
-            { "airport_1", airportSprite },
-            { "airport_2", airportSprite2 },
+            { $"{BuildingCodes.Airport}_1", airportSprite },
+            { $"{BuildingCodes.Airport}_2", airportSprite2 },
           
-            { "townhall_1", defaultBuildingSprite },
-            { "townhall_2", defaultBuildingSprite2 },
-            { "townhall_3", defaultBuildingSprite3 },
-            { "townhall_4", defaultBuildingSprite4 },
+            { $"{BuildingCodes.Townhall}_1", defaultBuildingSprite },
+            { $"{BuildingCodes.Townhall}_2", defaultBuildingSprite2 },
+            { $"{BuildingCodes.Townhall}_3", defaultBuildingSprite3 },
+            { $"{BuildingCodes.Townhall}_4", defaultBuildingSprite4 },
 
-             { "wall_1", wallSprite },
-            { "wall_2", wallSprite2 },
-            { "wall_3", wallSprite3 },
-            { "wall_4", wallSprite4 }
+             { $"{BuildingCodes.Wall}_1", wallSprite },
+            { $"{BuildingCodes.Wall}_2", wallSprite2 },
+            { $"{BuildingCodes.Wall}_3", wallSprite3 },
+            { $"{BuildingCodes.Wall}_4", wallSprite4 }
 
 
          };
@@ -515,7 +516,7 @@ public class MapLoader : MonoBehaviour
         if (!MapState.cellMap.TryGetValue(pos, out var cell))
             return;
 
-        if (cell.building == "townhall")
+        if (cell.building == BuildingCodes.Townhall)
         {
             Debug.LogWarning("No se puede destruir la casa central.");
             return;

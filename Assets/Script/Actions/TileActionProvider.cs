@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using UnityEngine;
 using static DTO;
+using GameConstants;
 
 [RequireComponent(typeof(TileClickHandler))]
 public class TileActionProvider : MonoBehaviour, IActionProposer
@@ -10,9 +11,9 @@ public class TileActionProvider : MonoBehaviour, IActionProposer
 
     static readonly System.Collections.Generic.Dictionary<string, string[]> terrainBuildings = new()
     {
-        { "mountain", new[] { "mine" } },
-        { "water", new[] { "dock" } },
-        { "forest", new[] { "hut", "lumbermill", "farm", "academy", "barracks", "wall", "atalaya", "airport" } }
+        { TerrainTypes.Mountain, new[] { BuildingCodes.Mine } },
+        { TerrainTypes.Water, new[] { BuildingCodes.Dock } },
+        { TerrainTypes.Forest, new[] { BuildingCodes.Hut, BuildingCodes.Lumbermill, BuildingCodes.Farm, BuildingCodes.Academy, BuildingCodes.Barracks, BuildingCodes.Wall, BuildingCodes.Atalaya, BuildingCodes.Airport } }
     };
 
     void Awake()
@@ -54,7 +55,7 @@ public class TileActionProvider : MonoBehaviour, IActionProposer
                 }
             }
 
-            if (cell.building != "townhall")
+            if (cell.building != BuildingCodes.Townhall)
             {
                 player.AddAction(new ControlPanelAction("Derrumbar", () => {
                     MapLoader.instance.DemolishBuilding(new Vector2Int(cell.x, cell.y));
@@ -92,12 +93,12 @@ public class TileActionProvider : MonoBehaviour, IActionProposer
 
         if (terrainBuildings.TryGetValue(cell.terrain, out var options))
         {
-            if (cell.terrain == "forest" && !TownhallExists())
+            if (cell.terrain == TerrainTypes.Forest && !TownhallExists())
             {
                 player.AddAction(new ControlPanelAction("Construir casa central", () => {
                     var worker = FindFreeWorker();
                     if (worker != null)
-                        ActionManager.Instance.Enqueue(new BuildAction(worker, new Vector2Int(cell.x, cell.y), "townhall"));
+                        ActionManager.Instance.Enqueue(new BuildAction(worker, new Vector2Int(cell.x, cell.y), BuildingCodes.Townhall));
                     else
                         Debug.Log("No hay obreros disponibles.");
                 }));
@@ -111,7 +112,7 @@ public class TileActionProvider : MonoBehaviour, IActionProposer
 
         if (cell.resources?.crono > 0)
         {
-            TryBuild("Construir extractor de crono", "extractor");
+            TryBuild("Construir extractor de crono", BuildingCodes.Extractor);
         }
     }
 
@@ -143,6 +144,6 @@ public class TileActionProvider : MonoBehaviour, IActionProposer
     bool TownhallExists()
     {
         return MapState.cellMap.Values.Any(c =>
-            c.building == "townhall" && c.owner == "player1");
+            c.building == BuildingCodes.Townhall && c.owner == "player1");
     }
 }

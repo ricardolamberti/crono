@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using static Character;
 using static DTO;
+using GameConstants;
 
 
 public class ControlPanel : MonoBehaviour
@@ -109,7 +110,7 @@ public class ControlPanel : MonoBehaviour
     bool TownhallExists()
     {
         return MapState.cellMap.Values.Any(c =>
-            c.building == "townhall" && c.owner == "player1");
+            c.building == BuildingCodes.Townhall && c.owner == "player1");
     }
     public void ShowBuildOptionsForTile(GameObject tileObject)
     {

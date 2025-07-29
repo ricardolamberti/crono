@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using static DTO;
+using GameConstants;
 
 /// <summary>
 /// Definiciones de todas las construcciones y sus evoluciones.
@@ -9,7 +10,7 @@ using static DTO;
 #region Townhall
 public class TownhallLevel1 : Building
 {
-    public override string Code => "townhall";
+    public override string Code => BuildingCodes.Townhall;
     public override int Level => 1;
     public override BuildRequirement Cost => new BuildRequirement { wood = 0, gold = 0 };
     public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "nuevo obrero" );
@@ -40,7 +41,7 @@ public class TownhallLevel4 : TownhallLevel3
 #region Barracks
 public class BarracksLevel1 : Building
 {
-    public override string Code => "barracks";
+    public override string Code => BuildingCodes.Barracks;
     public override int Level => 1;
     public override BuildRequirement Cost => new BuildRequirement { wood = 30, gold = 10 };
     public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "nuevo soldado" );
@@ -71,7 +72,7 @@ public class BarracksLevel4 : BarracksLevel3
 #region Airport
 public class AirportLevel1 : Building
 {
-    public override string Code => "airport";
+    public override string Code => BuildingCodes.Airport;
     public override int Level => 1;
     public override BuildRequirement Cost => new BuildRequirement { wood = 40, gold = 20 };
     public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "nuevo avion" );
@@ -88,7 +89,7 @@ public class AirportLevel2 : AirportLevel1
 #region Dock
 public class DockLevel1 : Building
 {
-    public override string Code => "dock";
+    public override string Code => BuildingCodes.Dock;
     public override int Level => 1;
     public override BuildRequirement Cost => new BuildRequirement { wood = 25, gold = 10 };
     public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "nuevo pesquero" );
@@ -119,7 +120,7 @@ public class DockLevel4 : DockLevel3
 #region Hut
 public class HutLevel1 : Building
 {
-    public override string Code => "hut";
+    public override string Code => BuildingCodes.Hut;
     public override int Level => 1;
     public override BuildRequirement Cost => new BuildRequirement { wood = 10 };
     public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "otorga 4 lugares" );
@@ -150,7 +151,7 @@ public class HutLevel4 : HutLevel3
 #region Farm
 public class FarmLevel1 : Building
 {
-    public override string Code => "farm";
+    public override string Code => BuildingCodes.Farm;
     public override int Level => 1;
     public override BuildRequirement Cost => new BuildRequirement { wood = 20 };
     public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "genera 4 de comida" );
@@ -181,7 +182,7 @@ public class FarmLevel4 : FarmLevel3
 #region Academy
 public class AcademyLevel1 : Building
 {
-    public override string Code => "academy";
+    public override string Code => BuildingCodes.Academy;
     public override int Level => 1;
     public override BuildRequirement Cost => new BuildRequirement { wood = 30, gold = 20 };
     public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "nuevo aprendiz" );
@@ -212,7 +213,7 @@ public class AcademyLevel4 : AcademyLevel3
 #region Atalaya
 public class AtalayaLevel1 : Building
 {
-    public override string Code => "atalaya";
+    public override string Code => BuildingCodes.Atalaya;
     public override int Level => 1;
     public override BuildRequirement Cost => new BuildRequirement { wood = 20 };
     public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "Defensa 4 disparos por segundo" );
@@ -243,7 +244,7 @@ public class AtalayaLevel4 : AtalayaLevel3
 #region Wall
 public class WallLevel1 : Building
 {
-    public override string Code => "wall";
+    public override string Code => BuildingCodes.Wall;
     public override int Level => 1;
     public override BuildRequirement Cost => new BuildRequirement { wood = 10 };
     public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "resistencia 10" );
@@ -274,7 +275,7 @@ public class WallLevel4 : WallLevel3
 #region Sawmill
 public class SawmillLevel1 : Building
 {
-    public override string Code => "lumbermill";
+    public override string Code => BuildingCodes.Lumbermill;
     public override int Level => 1;
     public override BuildRequirement Cost => new BuildRequirement { wood = 15, gold = 5 };
     public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "potencia madera por 5" );
@@ -304,7 +305,7 @@ public class SawmillLevel4 : SawmillLevel3
 #region CronoExtractor
 public class CronoExtractorLevel1 : Building
 {
-    public override string Code => "extractor";
+    public override string Code => BuildingCodes.Extractor;
     public override int Level => 1;
     public override BuildRequirement Cost => new BuildRequirement { gold = 20, wood = 20, sciencePoints = 10 };
     public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "Nuevo hechicero", "Asistencia futuro" );
@@ -335,7 +336,7 @@ public class CronoExtractorLevel4 : CronoExtractorLevel3
 #region Mine
 public class MineLevel1 : Building
 {
-    public override string Code => "mine";
+    public override string Code => BuildingCodes.Mine;
     public override int Level => 1;
     public override BuildRequirement Cost => new BuildRequirement { wood = 15, gold = 5 };
     public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "");
