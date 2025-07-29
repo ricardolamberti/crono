@@ -39,9 +39,9 @@ public class TileActionProvider : MonoBehaviour, IActionProposer
                     break;
             }
 
-            if (BuildingEvolutionMatrix.TryGetEvolution(cell.building, out var evo))
+            if (BuildingEvolutionMatrix.TryGetEvolution(cell.building, cell.level, out var evo))
             {
-                if (GameState.playerResources.science >= evo.requiredScience)
+                if (ControlPanel.Instance.freeResource || GameState.playerResources.science >= evo.requiredScience)
                 {
                     player.AddAction(new ControlPanelAction($"Mejorar a {evo.next}", () =>
                     {

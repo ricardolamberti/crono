@@ -30,6 +30,7 @@ public class MapLoader : MonoBehaviour
     public Sprite academySprite;
     public Sprite extractorSprite;
     public Sprite dockSprite;
+    public Sprite atalayaSprite;
 
     public Sprite hutSprite2;
     public Sprite barracksSprite2;
@@ -40,6 +41,7 @@ public class MapLoader : MonoBehaviour
     public Sprite academySprite2;
     public Sprite extractorSprite2;
     public Sprite dockSprite2;
+    public Sprite atalayaSprite2;
 
     public Sprite hutSprite3;
     public Sprite barracksSprite3;
@@ -50,6 +52,7 @@ public class MapLoader : MonoBehaviour
     public Sprite academySprite3;
     public Sprite extractorSprite3;
     public Sprite dockSprite3;
+    public Sprite atalayaSprite3;
 
     public Sprite hutSprite4;
     public Sprite barracksSprite4;
@@ -60,7 +63,10 @@ public class MapLoader : MonoBehaviour
     public Sprite academySprite4;
     public Sprite extractorSprite4;
     public Sprite dockSprite4;
-   
+    public Sprite atalayaSprite4;
+
+    public Sprite airportSprite;
+    public Sprite airportSprite2;
 
     public Sprite iconGold;
     public Sprite iconWood;
@@ -118,6 +124,11 @@ public class MapLoader : MonoBehaviour
             { "dock_2", dockSprite2 },
             { "dock_3", dockSprite3 },
             { "dock_4", dockSprite4 },
+            
+            { "atalaya_1", atalayaSprite },
+            { "atalaya_2", atalayaSprite2 },
+            { "atalaya_3", atalayaSprite3 },
+            { "atalaya_4", atalayaSprite4 },
 
             { "barracks_1", barracksSprite },
             { "barracks_2", barracksSprite2 },
@@ -154,11 +165,9 @@ public class MapLoader : MonoBehaviour
             { "extractor_3", extractorSprite3 },
             { "extractor_4", extractorSprite4 },
 
-            { "house_1", hutSprite },
-            { "house_2", hutSprite2 },
-            { "house_3", hutSprite3 },
-            { "house_4", hutSprite4 },
-
+            { "airport_1", airportSprite },
+            { "airport_2", airportSprite2 },
+          
             { "townhall_1", defaultBuildingSprite },
             { "townhall_2", defaultBuildingSprite2 },
             { "townhall_3", defaultBuildingSprite3 },
