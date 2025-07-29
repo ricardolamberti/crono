@@ -87,7 +87,7 @@ public void AssignBuildTask(Vector2Int pos, string building)
         currentPath = null;
         taskTarget = GetGridPosition(); // o el pos adyacente exacto
 
-        MapLoader.instance.ShowConstructionPreview(pos, building);
+        MapLoader.instance.ShowConstructionPreview(pos, building, level:1);
         Debug.Log($"{name} ya está al lado de {pos}, construyendo {building}");
         return;
     }
@@ -107,7 +107,7 @@ public void AssignBuildTask(Vector2Int pos, string building)
         currentTask = Task.Build;
         taskTarget = lastReachable;
 
-        MapLoader.instance.ShowConstructionPreview(pos, building);
+        MapLoader.instance.ShowConstructionPreview(pos, building, level:1);
         SetPath(path);
         Debug.Log($"{name} va a construir {building} en {pos} desde {lastReachable}");
     }
@@ -240,7 +240,7 @@ public void AssignBuildTask(Vector2Int pos, string building)
         if (selector != null)
             selector.SetActive(value);
     }
-    void BuildAt(Vector2Int pos, string building)
+    void BuildAt(Vector2Int pos, string building, int level = 1)
     {
 
         if (MapState.cellMap.TryGetValue(pos, out var cell))
@@ -251,12 +251,13 @@ public void AssignBuildTask(Vector2Int pos, string building)
                 return;
             }
             cell.building = building;
+            cell.level = level;
             cell.owner = owner;
             GameState.IncrementBuilding(building);
-            var buildingObj = BuildingFactory.Create(building);
+            var buildingObj = BuildingFactory.Create(building, level);
             if (buildingObj != null)
                 MapState.buildings[pos] = buildingObj;
-            MapLoader.instance.DrawBuilding(pos, building); // <- 🔥 Dibuja en el tile
+            MapLoader.instance.DrawBuilding(pos, building, level); // <- 🔥 Dibuja en el tile
             Debug.Log($"{name} construyó {building} en {pos}");
             MapLoader.instance.ClearConstructionPreview(pos);
 
@@ -291,7 +292,7 @@ public void AssignBuildTask(Vector2Int pos, string building)
 
         if (!moving && currentTask == Task.Build && (currentPath == null || currentPath.Count==0))
         {
-            BuildAt(buildTarget, buildingToConstruct);
+            BuildAt(buildTarget, buildingToConstruct, 1);
             currentTask = Task.None;
             return;
         }
@@ -323,7 +324,7 @@ public void AssignBuildTask(Vector2Int pos, string building)
                     animator.SetWalking(false);
                 if (currentTask == Task.Build && (currentPath == null|| currentPath.Count==0))
                 {
-                    BuildAt(buildTarget, buildingToConstruct);
+                    BuildAt(buildTarget, buildingToConstruct, 1);
                     currentTask = Task.None;
                 }
                 else

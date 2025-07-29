@@ -79,17 +79,59 @@ public class MapLoader : MonoBehaviour
         };
         buildingSprites = new Dictionary<string, Sprite>
         {
-            { "hut", hutSprite },
-            { "dock", dockSprite },
-            { "barracks", barracksSprite },
-            { "mine", mineSprite },
-            { "advanced_mine", mineSprite },
-            { "farm", farmSprite },
-            { "lumbermill", sawmillSprite },
-            { "academy", academySprite },
-            { "extractor", extractorSprite },
-            { "house", hutSprite },
-            { "townhall", defaultBuildingSprite }
+            { "hut_1", hutSprite },
+            { "hut_2", hutSprite },
+            { "hut_3", hutSprite },
+            { "hut_4", hutSprite },
+
+            { "dock_1", dockSprite },
+            { "dock_2", dockSprite },
+            { "dock_3", dockSprite },
+            { "dock_4", dockSprite },
+
+            { "barracks_1", barracksSprite },
+            { "barracks_2", barracksSprite },
+            { "barracks_3", barracksSprite },
+            { "barracks_4", barracksSprite },
+
+            { "mine_1", mineSprite },
+            { "mine_2", mineSprite },
+            { "mine_3", mineSprite },
+            { "mine_4", mineSprite },
+            { "advanced_mine_1", mineSprite },
+            { "advanced_mine_2", mineSprite },
+            { "advanced_mine_3", mineSprite },
+            { "advanced_mine_4", mineSprite },
+
+            { "farm_1", farmSprite },
+            { "farm_2", farmSprite },
+            { "farm_3", farmSprite },
+            { "farm_4", farmSprite },
+
+            { "lumbermill_1", sawmillSprite },
+            { "lumbermill_2", sawmillSprite },
+            { "lumbermill_3", sawmillSprite },
+            { "lumbermill_4", sawmillSprite },
+
+            { "academy_1", academySprite },
+            { "academy_2", academySprite },
+            { "academy_3", academySprite },
+            { "academy_4", academySprite },
+
+            { "extractor_1", extractorSprite },
+            { "extractor_2", extractorSprite },
+            { "extractor_3", extractorSprite },
+            { "extractor_4", extractorSprite },
+
+            { "house_1", hutSprite },
+            { "house_2", hutSprite },
+            { "house_3", hutSprite },
+            { "house_4", hutSprite },
+
+            { "townhall_1", defaultBuildingSprite },
+            { "townhall_2", defaultBuildingSprite },
+            { "townhall_3", defaultBuildingSprite },
+            { "townhall_4", defaultBuildingSprite }
          };
 
 
@@ -118,6 +160,8 @@ public class MapLoader : MonoBehaviour
         MapState.cellMap.Clear();
         foreach (var cell in wrapper.cells)
         {
+            if (cell.level <= 0)
+                cell.level = 1;
             Vector2Int coord = new(cell.x, cell.y);
             MapState.cellMap[coord] = cell;
         }
@@ -127,7 +171,7 @@ public class MapLoader : MonoBehaviour
         PlayerManager.Instance?.InitializePlayers();
         yield return null;
     }
-    public void ShowConstructionPreview(Vector2Int pos, string building)
+    public void ShowConstructionPreview(Vector2Int pos, string building, int level = 1)
     {
         if (!tiles.TryGetValue(pos, out var tile)) return;
 
@@ -138,7 +182,8 @@ public class MapLoader : MonoBehaviour
         preview.transform.localRotation = Quaternion.Euler(-32, 0, 32);
 
         var renderer = preview.AddComponent<SpriteRenderer>();
-        renderer.sprite = buildingSprites.ContainsKey(building) ? buildingSprites[building] : defaultBuildingSprite;
+        string key = $"{building}_{level}";
+        renderer.sprite = buildingSprites.ContainsKey(key) ? buildingSprites[key] : defaultBuildingSprite;
         renderer.color = new Color(1f, 1f, 1f, 0.4f); // semitransparente
         renderer.sortingOrder = 8;
 
@@ -196,9 +241,9 @@ public class MapLoader : MonoBehaviour
             tile.AddComponent<TileActionProvider>();
 
             ApplyTerrain(tile, cell.terrain);
-            ApplyBuilding(tile, cell.building);
+            ApplyBuilding(tile, cell.building, cell.level);
 
-            var buildingObj = BuildingFactory.Create(cell.building);
+            var buildingObj = BuildingFactory.Create(cell.building, cell.level);
             if (buildingObj != null)
                 MapState.buildings[coord] = buildingObj;
 
@@ -260,7 +305,7 @@ public class MapLoader : MonoBehaviour
             spriteRenderer.sprite = defaultSprite;
        
     }
-    void ApplyBuilding(GameObject tile, string building)
+    void ApplyBuilding(GameObject tile, string building, int level)
     {
         if (string.IsNullOrEmpty(building)) return;
 
@@ -271,7 +316,8 @@ public class MapLoader : MonoBehaviour
         buildingIcon.transform.localRotation = Quaternion.Euler(-90, -30, 40);
         buildingIcon.tag = building;
         var renderer = buildingIcon.AddComponent<SpriteRenderer>();
-        renderer.sprite = buildingSprites.ContainsKey(building) ? buildingSprites[building] : defaultBuildingSprite;
+        string key = $"{building}_{level}";
+        renderer.sprite = buildingSprites.ContainsKey(key) ? buildingSprites[key] : defaultBuildingSprite;
         renderer.sortingOrder = 10;
 
     }
@@ -308,7 +354,7 @@ public class MapLoader : MonoBehaviour
             );
         }
     }
-    public void DrawBuilding(Vector2Int pos, string building)
+    public void DrawBuilding(Vector2Int pos, string building, int level)
     {
         if (!tiles.TryGetValue(pos, out var tile)) return;
 
@@ -319,10 +365,11 @@ public class MapLoader : MonoBehaviour
         buildingIcon.transform.localRotation = Quaternion.Euler(-32, 0, 32);
 
         var renderer = buildingIcon.AddComponent<SpriteRenderer>();
-        renderer.sprite = buildingSprites.ContainsKey(building) ? buildingSprites[building] : defaultBuildingSprite;
+        string key = $"{building}_{level}";
+        renderer.sprite = buildingSprites.ContainsKey(key) ? buildingSprites[key] : defaultBuildingSprite;
         renderer.sortingOrder = 10;
 
-        var obj = BuildingFactory.Create(building);
+        var obj = BuildingFactory.Create(building, level);
         if (obj != null)
             MapState.buildings[pos] = obj;
     }
@@ -443,16 +490,17 @@ public class MapLoader : MonoBehaviour
         Debug.Log($"Edificio en {pos} ha sido demolido.");
     }
 
-    public void UpgradeBuilding(Vector2Int pos, string newBuilding)
+    public void UpgradeBuilding(Vector2Int pos, string newBuilding, int level)
     {
         if (!MapState.cellMap.TryGetValue(pos, out var cell))
             return;
 
         string old = cell.building;
         cell.building = newBuilding;
+        cell.level = level;
         GameState.DecrementBuilding(old);
         GameState.IncrementBuilding(newBuilding);
-        MapState.buildings[pos] = BuildingFactory.Create(newBuilding);
+        MapState.buildings[pos] = BuildingFactory.Create(newBuilding, level);
 
         if (tiles.TryGetValue(pos, out var tile))
         {
@@ -466,7 +514,7 @@ public class MapLoader : MonoBehaviour
             }
         }
 
-        DrawBuilding(pos, newBuilding);
+        DrawBuilding(pos, newBuilding, level);
         Debug.Log($"Edificio en {pos} actualizado de {old} a {newBuilding}");
     }
 
