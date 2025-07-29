@@ -104,35 +104,6 @@ public class ControlPanel : MonoBehaviour
 
 
     }
-    void SpawnWorkerNear(MapCellDTO cell, Character.Type type )
-    {
-        var req = BuildRules.TakeRequirements(type);
-        if (!freeResource)
-        {
-            if (!GameState.playerResources.HasEnough(req))
-            {
-                Debug.Log($"No hay recursos suficientes para construir {type}");
-                return;
-            }
-        }
-
-
-        Vector2Int basePos = new(cell.x, cell.y);
-        foreach (var dir in new[] {
-        Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right })
-        {
-            Vector2Int target = basePos + dir;
-            if (MapState.cellMap.TryGetValue(target, out var targetCell)
-                && string.IsNullOrEmpty(targetCell.building)
-                && MapLoader.instance.IsPositionFree(target))
-            {
-                ActionManager.Instance.Enqueue(new SpawnCharacterAction(target, type, "player1"));
-                return;
-            }
-        }
-
-        Debug.Log("No hay espacio disponible junto al townhall.");
-    }
  
 
     bool TownhallExists()

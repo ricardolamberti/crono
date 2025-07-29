@@ -23,5 +23,5 @@ public abstract class Building
     /// <summary>
     /// Acciones habilitadas en este nivel.
     /// </summary>
-    public abstract IReadOnlyList<string> Actions { get; }
+    public abstract IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell);
 }
