@@ -20,8 +20,7 @@ public class MapLoader : MonoBehaviour
     public Sprite waterSprite;
     public Sprite defaultSprite;
 
-    private Dictionary<string, Sprite> terrainSprites;
-
+  
     public Sprite hutSprite;
     public Sprite barracksSprite;
     public Sprite mineSprite;
@@ -32,9 +31,37 @@ public class MapLoader : MonoBehaviour
     public Sprite extractorSprite;
     public Sprite dockSprite;
 
-    private Dictionary<string, Sprite> buildingSprites;
+    public Sprite hutSprite2;
+    public Sprite barracksSprite2;
+    public Sprite mineSprite2;
+    public Sprite farmSprite2;
+    public Sprite sawmillSprite2;
+    public Sprite defaultBuildingSprite2;
+    public Sprite academySprite2;
+    public Sprite extractorSprite2;
+    public Sprite dockSprite2;
 
+    public Sprite hutSprite3;
+    public Sprite barracksSprite3;
+    public Sprite mineSprite3;
+    public Sprite farmSprite3;
+    public Sprite sawmillSprite3;
+    public Sprite defaultBuildingSprite3;
+    public Sprite academySprite3;
+    public Sprite extractorSprite3;
+    public Sprite dockSprite3;
+
+    public Sprite hutSprite4;
+    public Sprite barracksSprite4;
+    public Sprite mineSprite4;
+    public Sprite farmSprite4;
+    public Sprite sawmillSprite4;
+    public Sprite defaultBuildingSprite4;
+    public Sprite academySprite4;
+    public Sprite extractorSprite4;
+    public Sprite dockSprite4;
    
+
     public Sprite iconGold;
     public Sprite iconWood;
     public Sprite iconCrono;
@@ -45,8 +72,7 @@ public class MapLoader : MonoBehaviour
     public Sprite scientistSprite;
     public Sprite warriorSprite;
 
-    private Dictionary<Vector2Int, GameObject> tiles = new();
-
+   
     public Sprite[] workerNorthSprites;
     public Sprite[] workerSouthSprites;
     public Sprite[] workerEastSprites;
@@ -63,6 +89,10 @@ public class MapLoader : MonoBehaviour
     public Sprite[] warriorWestSprites;
 
     public static MapLoader instance;
+    
+    private Dictionary<string, Sprite> buildingSprites;
+    private Dictionary<string, Sprite> terrainSprites;
+    private Dictionary<Vector2Int, GameObject> tiles = new();
 
     void Awake()
     {
@@ -80,58 +110,59 @@ public class MapLoader : MonoBehaviour
         buildingSprites = new Dictionary<string, Sprite>
         {
             { "hut_1", hutSprite },
-            { "hut_2", hutSprite },
-            { "hut_3", hutSprite },
-            { "hut_4", hutSprite },
+            { "hut_2", hutSprite2 },
+            { "hut_3", hutSprite3 },
+            { "hut_4", hutSprite4 },
 
             { "dock_1", dockSprite },
-            { "dock_2", dockSprite },
-            { "dock_3", dockSprite },
-            { "dock_4", dockSprite },
+            { "dock_2", dockSprite2 },
+            { "dock_3", dockSprite3 },
+            { "dock_4", dockSprite4 },
 
             { "barracks_1", barracksSprite },
-            { "barracks_2", barracksSprite },
-            { "barracks_3", barracksSprite },
-            { "barracks_4", barracksSprite },
+            { "barracks_2", barracksSprite2 },
+            { "barracks_3", barracksSprite3 },
+            { "barracks_4", barracksSprite4 },
 
             { "mine_1", mineSprite },
-            { "mine_2", mineSprite },
-            { "mine_3", mineSprite },
-            { "mine_4", mineSprite },
+            { "mine_2", mineSprite2 },
+            { "mine_3", mineSprite3 },
+            { "mine_4", mineSprite4 },
+
             { "advanced_mine_1", mineSprite },
-            { "advanced_mine_2", mineSprite },
-            { "advanced_mine_3", mineSprite },
-            { "advanced_mine_4", mineSprite },
+            { "advanced_mine_2", mineSprite2 },
+            { "advanced_mine_3", mineSprite3 },
+            { "advanced_mine_4", mineSprite4 },
 
             { "farm_1", farmSprite },
-            { "farm_2", farmSprite },
-            { "farm_3", farmSprite },
-            { "farm_4", farmSprite },
+            { "farm_2", farmSprite2 },
+            { "farm_3", farmSprite3 },
+            { "farm_4", farmSprite4 },
 
             { "lumbermill_1", sawmillSprite },
-            { "lumbermill_2", sawmillSprite },
-            { "lumbermill_3", sawmillSprite },
-            { "lumbermill_4", sawmillSprite },
+            { "lumbermill_2", sawmillSprite2 },
+            { "lumbermill_3", sawmillSprite3 },
+            { "lumbermill_4", sawmillSprite4 },
 
             { "academy_1", academySprite },
-            { "academy_2", academySprite },
-            { "academy_3", academySprite },
-            { "academy_4", academySprite },
+            { "academy_2", academySprite2 },
+            { "academy_3", academySprite3 },
+            { "academy_4", academySprite4 },
 
             { "extractor_1", extractorSprite },
-            { "extractor_2", extractorSprite },
-            { "extractor_3", extractorSprite },
-            { "extractor_4", extractorSprite },
+            { "extractor_2", extractorSprite2 },
+            { "extractor_3", extractorSprite3 },
+            { "extractor_4", extractorSprite4 },
 
             { "house_1", hutSprite },
-            { "house_2", hutSprite },
-            { "house_3", hutSprite },
-            { "house_4", hutSprite },
+            { "house_2", hutSprite2 },
+            { "house_3", hutSprite3 },
+            { "house_4", hutSprite4 },
 
             { "townhall_1", defaultBuildingSprite },
-            { "townhall_2", defaultBuildingSprite },
-            { "townhall_3", defaultBuildingSprite },
-            { "townhall_4", defaultBuildingSprite }
+            { "townhall_2", defaultBuildingSprite2 },
+            { "townhall_3", defaultBuildingSprite3 },
+            { "townhall_4", defaultBuildingSprite4 }
          };
 
 

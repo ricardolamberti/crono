@@ -73,7 +73,7 @@ public class CameraController : MonoBehaviour
     // 🟢 Centrar cámara en una celda manteniendo rotación
     public void FocusOnCell(Vector2Int cell)
     {
-        Vector3 worldPos = new Vector3(cell.x * tileSize, 0, cell.y * tileSize);
+        Vector3 worldPos = GridUtils.GridToWorld(cell);
 
         Vector3 camPos = cam.transform.position;
         Vector3 target = new Vector3(worldPos.x, camPos.y, worldPos.z);

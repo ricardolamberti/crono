@@ -53,7 +53,7 @@ public class TileActionProvider : MonoBehaviour, IActionProposer
                         }
                         GameState.playerResources.Consume(req);
                         GameState.playerResources.science -= evo.requiredScience;
-                        MapLoader.instance.UpgradeBuilding(new Vector2Int(cell.x, cell.y), evo.next);
+                        MapLoader.instance.UpgradeBuilding(new Vector2Int(cell.x, cell.y), evo.next, evo.level);
                         GameEvents.RaiseSelection(gameObject);
                     }));
                 }
