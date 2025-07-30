@@ -257,6 +257,10 @@ public class WallLevel1 : Building
     public override string Code => BuildingCodes.Wall;
     public override int Level => 1;
     public override BuildRequirement Cost => new BuildRequirement { wood = 10 };
+
+    public override bool ShouldRotate => false;
+    public override string SpriteKey => $"{Code}_{Level}_{(Orientation == Orientation.Horizontal ? "H" : "V")}";
+
     public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "resistencia 10" );
 }
 
