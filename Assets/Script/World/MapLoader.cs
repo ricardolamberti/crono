@@ -72,9 +72,10 @@ public class MapLoader : MonoBehaviour
     public Sprite atalayaSprite4;
     public Sprite wallSprite4;
 
-    public Sprite bridgeSprite;
-    public Sprite bridgeSprite2;
-    public Sprite bridgeSprite3;
+    // Sprites for bridges. Horizontal corresponds to the normal orientation
+    // while vertical is the inverted version used instead of rotating the sprite
+    public Sprite bridgeHorizontalSprite;
+    public Sprite bridgeVerticalSprite;
 
     public Sprite airportSprite;
     public Sprite airportSprite2;
@@ -176,9 +177,8 @@ public class MapLoader : MonoBehaviour
             { $"{BuildingCodes.Extractor}_3", extractorSprite3 },
             { $"{BuildingCodes.Extractor}_4", extractorSprite4 },
 
-            { $"{BuildingCodes.Bridge}_1", bridgeSprite },
-            { $"{BuildingCodes.Bridge}_2", bridgeSprite2 },
-            { $"{BuildingCodes.Bridge}_3", bridgeSprite3 },
+            { $"{BuildingCodes.Bridge}_H", bridgeHorizontalSprite },
+            { $"{BuildingCodes.Bridge}_V", bridgeVerticalSprite },
 
             { $"{BuildingCodes.Airport}_1", airportSprite },
             { $"{BuildingCodes.Airport}_2", airportSprite2 },
@@ -242,10 +242,13 @@ public class MapLoader : MonoBehaviour
         preview.transform.localPosition = new Vector3(-0.5f, .7f, -0.25f);
         preview.transform.localScale = Vector3.one * 0.35f;
         float yRot = orientation == Orientation.Horizontal ? 0f : 90f;
+        if (building == BuildingCodes.Bridge) yRot = 0f; // don't rotate bridge
         preview.transform.localRotation = Quaternion.Euler(-32, yRot, 32);
 
         var renderer = preview.AddComponent<SpriteRenderer>();
-        string key = $"{building}_{level}";
+        string key = building == BuildingCodes.Bridge
+            ? $"{building}_{(orientation == Orientation.Horizontal ? "H" : "V")}"
+            : $"{building}_{level}";
         renderer.sprite = buildingSprites.ContainsKey(key) ? buildingSprites[key] : defaultBuildingSprite;
         renderer.color = new Color(1f, 1f, 1f, 0.4f); // semitransparente
         renderer.sortingOrder = 8;
@@ -379,10 +382,13 @@ public class MapLoader : MonoBehaviour
         buildingIcon.transform.localPosition = new Vector3(0, 1f, -0.25f);
         buildingIcon.transform.localScale = Vector3.one * 0.45f;
         float yRot = orientation == Orientation.Horizontal ? 0f : 90f;
+        if (building == BuildingCodes.Bridge) yRot = 0f; // don't rotate bridge
         buildingIcon.transform.localRotation = Quaternion.Euler(-90, yRot - 30f, 40);
         buildingIcon.tag = building;
         var renderer = buildingIcon.AddComponent<SpriteRenderer>();
-        string key = $"{building}_{level}";
+        string key = building == BuildingCodes.Bridge
+            ? $"{building}_{(orientation == Orientation.Horizontal ? "H" : "V")}"
+            : $"{building}_{level}";
         renderer.sprite = buildingSprites.ContainsKey(key) ? buildingSprites[key] : defaultBuildingSprite;
         renderer.sortingOrder = 10;
 
@@ -429,10 +435,13 @@ public class MapLoader : MonoBehaviour
         buildingIcon.transform.localPosition = new Vector3(-0.5f, .7f, -0.25f);
         buildingIcon.transform.localScale = Vector3.one * 0.35f;
         float yRot = orientation == Orientation.Horizontal ? 0f : 90f;
+        if (building == BuildingCodes.Bridge) yRot = 0f; // don't rotate bridge
         buildingIcon.transform.localRotation = Quaternion.Euler(-32, yRot, 32);
 
         var renderer = buildingIcon.AddComponent<SpriteRenderer>();
-        string key = $"{building}_{level}";
+        string key = building == BuildingCodes.Bridge
+            ? $"{building}_{(orientation == Orientation.Horizontal ? "H" : "V")}"
+            : $"{building}_{level}";
         renderer.sprite = buildingSprites.ContainsKey(key) ? buildingSprites[key] : defaultBuildingSprite;
         renderer.sortingOrder = 10;
 
@@ -449,7 +458,15 @@ public class MapLoader : MonoBehaviour
             if (child.name.StartsWith("Building_"))
             {
                 float yRot = orientation == Orientation.Horizontal ? 0f : 90f;
+                if (child.tag == BuildingCodes.Bridge) yRot = 0f; // don't rotate bridge
                 child.localRotation = Quaternion.Euler(-32, yRot, 32);
+
+                if (child.tag == BuildingCodes.Bridge && child.TryGetComponent<SpriteRenderer>(out var rend))
+                {
+                    string key = $"{child.tag}_{(orientation == Orientation.Horizontal ? "H" : "V")}";
+                    if (buildingSprites.ContainsKey(key))
+                        rend.sprite = buildingSprites[key];
+                }
                 break;
             }
         }
