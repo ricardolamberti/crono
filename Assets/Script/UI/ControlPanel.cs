@@ -68,7 +68,16 @@ public class ControlPanel : MonoBehaviour
             title.text = character.name;
             buttons.Clear();
             character.ProvideInfo(GamePlayer.Instance);
-            character.ProposeActions(GamePlayer.Instance);
+
+            if (!string.IsNullOrEmpty(character.owner) && character.owner != "player1")
+            {
+                GamePlayer.Instance.AddAction(new ControlPanelAction("Atacar", () => Debug.Log("Atacando...")));
+            }
+            else
+            {
+                character.ProposeActions(GamePlayer.Instance);
+            }
+
             foreach (var infoItem in GamePlayer.Instance.GetInfo())
             {
                 AddInfoLabel(infoItem);

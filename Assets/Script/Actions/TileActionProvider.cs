@@ -28,6 +28,12 @@ public class TileActionProvider : MonoBehaviour, IActionProposer
 
         if (!string.IsNullOrEmpty(cell.building))
         {
+            if (!string.IsNullOrEmpty(cell.owner) && cell.owner != "player1")
+            {
+                player.AddAction(new ControlPanelAction("Atacar", () => Debug.Log("Atacando...")));
+                return;
+            }
+
             Vector2Int posCell = new(cell.x, cell.y);
             if (MapState.buildings.TryGetValue(posCell, out var building))
             {
