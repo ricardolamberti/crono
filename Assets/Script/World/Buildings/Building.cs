@@ -31,6 +31,17 @@ public abstract class Building
     public Orientation Orientation { get; set; } = Orientation.Horizontal;
 
     /// <summary>
+    /// Indicates if the sprite should rotate when the orientation changes.
+    /// Bridges don't rotate so they override this.
+    /// </summary>
+    public virtual bool ShouldRotate => true;
+
+    /// <summary>
+    /// Key used to pick the sprite for this building.
+    /// </summary>
+    public virtual string SpriteKey => $"{Code}_{Level}";
+
+    /// <summary>
     /// Acciones habilitadas en este nivel.
     /// </summary>
     public abstract IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell);

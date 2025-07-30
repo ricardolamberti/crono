@@ -380,6 +380,8 @@ public class BridgeLevel1 : Building
     public override string Code => BuildingCodes.Bridge;
     public override int Level => 1;
     public override BuildRequirement Cost => new BuildRequirement { wood = 10 };
+    public override bool ShouldRotate => false;
+    public override string SpriteKey => $"{Code}_{(Orientation == Orientation.Horizontal ? "H" : "V")}";
     public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell);
 }
 
