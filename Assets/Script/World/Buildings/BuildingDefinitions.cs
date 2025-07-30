@@ -13,6 +13,7 @@ public class TownhallLevel1 : Building
     public override string Code => BuildingCodes.Townhall;
     public override int Level => 1;
     public override BuildRequirement Cost => new BuildRequirement { wood = 0, gold = 0 };
+    public override int VisibilityRadius => 5;
     public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "nuevo obrero" );
 }
 
@@ -20,6 +21,7 @@ public class TownhallLevel2 : TownhallLevel1
 {
     public override int Level => 2;
     public override BuildRequirement Cost => new BuildRequirement { wood = 50, gold = 50 };
+    public override int VisibilityRadius => 5;
     public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "nuevo obrero", "nuevo marino" );
 }
 
@@ -27,6 +29,7 @@ public class TownhallLevel3 : TownhallLevel2
 {
     public override int Level => 3;
     public override BuildRequirement Cost => new BuildRequirement { wood = 100, gold = 100 };
+    public override int VisibilityRadius => 5;
     public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "nuevo obrero", "nuevo marino", "nuevo espia", "nuevo experto" );
 }
 
@@ -34,6 +37,7 @@ public class TownhallLevel4 : TownhallLevel3
 {
     public override int Level => 4;
     public override BuildRequirement Cost => new BuildRequirement { wood = 150, gold = 150 };
+    public override int VisibilityRadius => 5;
     public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "nuevo obrero", "nuevo marino", "nuevo espia", "nuevo experto" );
 }
 #endregion
@@ -75,6 +79,7 @@ public class AirportLevel1 : Building
     public override string Code => BuildingCodes.Airport;
     public override int Level => 1;
     public override BuildRequirement Cost => new BuildRequirement { wood = 40, gold = 20 };
+    public override int VisibilityRadius => 6;
     public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "nuevo avion" );
 }
 
@@ -82,6 +87,7 @@ public class AirportLevel2 : AirportLevel1
 {
     public override int Level => 2;
     public override BuildRequirement Cost => new BuildRequirement { wood = 80, gold = 40 };
+    public override int VisibilityRadius => 6;
     public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "nuevo avion", "nuevo bombardero" );
 }
 #endregion
@@ -216,6 +222,7 @@ public class AtalayaLevel1 : Building
     public override string Code => BuildingCodes.Atalaya;
     public override int Level => 1;
     public override BuildRequirement Cost => new BuildRequirement { wood = 20 };
+    public override int VisibilityRadius => 3 + Level;
     public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "Defensa 4 disparos por segundo" );
 }
 
@@ -223,6 +230,7 @@ public class AtalayaLevel2 : AtalayaLevel1
 {
     public override int Level => 2;
     public override BuildRequirement Cost => new BuildRequirement { wood = 40 };
+    public override int VisibilityRadius => 3 + Level;
     public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "Defensa 8 disparos por segundo" );
 }
 
@@ -230,6 +238,7 @@ public class AtalayaLevel3 : AtalayaLevel2
 {
     public override int Level => 3;
     public override BuildRequirement Cost => new BuildRequirement { wood = 60 };
+    public override int VisibilityRadius => 3 + Level;
     public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "Defensa 16 disparos por segundo" );
 }
 
@@ -237,6 +246,7 @@ public class AtalayaLevel4 : AtalayaLevel3
 {
     public override int Level => 4;
     public override BuildRequirement Cost => new BuildRequirement { wood = 80 };
+    public override int VisibilityRadius => 3 + Level;
     public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "Defensa 32 disparos por segundo" );
 }
 #endregion
