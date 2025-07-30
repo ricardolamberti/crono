@@ -463,7 +463,8 @@ public class MapLoader : MonoBehaviour
         var fogRenderer = fogObj.AddComponent<SpriteRenderer>();
         fogRenderer.sprite = baseRenderer.sprite;
         fogRenderer.color = new Color(0, 0, 0, 1f);
-        fogRenderer.sortingOrder = baseRenderer.sortingOrder + 5;
+        // Ensure fog covers buildings and other objects on the tile
+        fogRenderer.sortingOrder = 11;
         fogRenderer.sortingLayerID = baseRenderer.sortingLayerID;
 
         var fog = tile.AddComponent<FogTile>();
