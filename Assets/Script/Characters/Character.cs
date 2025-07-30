@@ -3,6 +3,8 @@ using UnityEngine;
 using static DTO;
 using GameConstants;
 
+// Orientation is used for directional buildings like bridges or walls
+
 public class Character : MonoBehaviour, IActionProposer, IInfoProvider
 {
     public enum Type { Worker, Scientist, Warrior }
@@ -88,7 +90,8 @@ public void AssignBuildTask(Vector2Int pos, string building)
         currentPath = null;
         taskTarget = GetGridPosition(); // o el pos adyacente exacto
 
-        MapLoader.instance.ShowConstructionPreview(pos, building, level:1);
+        Orientation orient = DetermineOrientation(pos, building);
+        MapLoader.instance.ShowConstructionPreview(pos, building, level:1, orientation:orient);
         Debug.Log($"{name} ya está al lado de {pos}, construyendo {building}");
         return;
     }
@@ -108,7 +111,8 @@ public void AssignBuildTask(Vector2Int pos, string building)
         currentTask = Task.Build;
         taskTarget = lastReachable;
 
-        MapLoader.instance.ShowConstructionPreview(pos, building, level:1);
+        Orientation orient = DetermineOrientation(pos, building);
+        MapLoader.instance.ShowConstructionPreview(pos, building, level:1, orientation:orient);
         SetPath(path);
         Debug.Log($"{name} va a construir {building} en {pos} desde {lastReachable}");
     }
@@ -241,6 +245,44 @@ public void AssignBuildTask(Vector2Int pos, string building)
         if (selector != null)
             selector.SetActive(value);
     }
+
+    Orientation DetermineOrientation(Vector2Int pos, string building)
+    {
+        bool horiz = false;
+        bool vert = false;
+        Vector2Int[] horizDirs = { Vector2Int.left, Vector2Int.right };
+        foreach (var d in horizDirs)
+        {
+            Vector2Int n = pos + d;
+            if (MapState.cellMap.TryGetValue(n, out var cell) && cell.building == building)
+                horiz = true;
+        }
+        Vector2Int[] vertDirs = { Vector2Int.up, Vector2Int.down };
+        foreach (var d in vertDirs)
+        {
+            Vector2Int n = pos + d;
+            if (MapState.cellMap.TryGetValue(n, out var cell) && cell.building == building)
+                vert = true;
+        }
+        if (vert && !horiz) return Orientation.Vertical;
+        return Orientation.Horizontal;
+    }
+
+    void AdjustNeighbours(Vector2Int pos, string building, Orientation orientation)
+    {
+        Vector2Int[] dirs = orientation == Orientation.Horizontal ?
+            new[] { Vector2Int.left, Vector2Int.right } :
+            new[] { Vector2Int.up, Vector2Int.down };
+        foreach (var d in dirs)
+        {
+            Vector2Int n = pos + d;
+            if (MapState.buildings.TryGetValue(n, out var b) && b.Code == building)
+            {
+                b.Orientation = orientation;
+                MapLoader.instance.UpdateBuildingOrientation(n, orientation);
+            }
+        }
+    }
     void BuildAt(Vector2Int pos, string building, int level = 1)
     {
 
@@ -261,10 +303,15 @@ public void AssignBuildTask(Vector2Int pos, string building)
                 cell.resources.wood = 0;
             }
             GameState.IncrementBuilding(building);
+            Orientation orient = DetermineOrientation(pos, building);
             var buildingObj = BuildingFactory.Create(building, level);
             if (buildingObj != null)
+            {
+                buildingObj.Orientation = orient;
                 MapState.buildings[pos] = buildingObj;
-            MapLoader.instance.DrawBuilding(pos, building, level); // <- 🔥 Dibuja en el tile
+            }
+            MapLoader.instance.DrawBuilding(pos, building, level, orient); // <- 🔥 Dibuja en el tile
+            AdjustNeighbours(pos, building, orient);
             if (buildingObj != null &&
                 (PlayerManager.Instance == null || PlayerManager.Instance.IsHumanPlayer(owner)))
                 MapLoader.instance.RevealRadius(pos, buildingObj.VisibilityRadius);

@@ -6,6 +6,8 @@ using UnityEngine.Networking;
 using static MapGenerator;
 using GameConstants;
 using static DTO;
+
+// Orientation enum used for bridges/walls
 using Unity.VisualScripting.Antlr3.Runtime.Tree;
 
 
@@ -231,7 +233,7 @@ public class MapLoader : MonoBehaviour
         PlayerManager.Instance?.InitializePlayers();
         yield return null;
     }
-    public void ShowConstructionPreview(Vector2Int pos, string building, int level = 1)
+    public void ShowConstructionPreview(Vector2Int pos, string building, int level = 1, Orientation orientation = Orientation.Horizontal)
     {
         if (!tiles.TryGetValue(pos, out var tile)) return;
 
@@ -239,7 +241,8 @@ public class MapLoader : MonoBehaviour
         preview.transform.SetParent(tile.transform);
         preview.transform.localPosition = new Vector3(-0.5f, .7f, -0.25f);
         preview.transform.localScale = Vector3.one * 0.35f;
-        preview.transform.localRotation = Quaternion.Euler(-32, 0, 32);
+        float yRot = orientation == Orientation.Horizontal ? 0f : 90f;
+        preview.transform.localRotation = Quaternion.Euler(-32, yRot, 32);
 
         var renderer = preview.AddComponent<SpriteRenderer>();
         string key = $"{building}_{level}";
@@ -367,7 +370,7 @@ public class MapLoader : MonoBehaviour
             spriteRenderer.sprite = defaultSprite;
        
     }
-    void ApplyBuilding(GameObject tile, string building, int level)
+    void ApplyBuilding(GameObject tile, string building, int level, Orientation orientation = Orientation.Horizontal)
     {
         if (string.IsNullOrEmpty(building)) return;
 
@@ -375,7 +378,8 @@ public class MapLoader : MonoBehaviour
         buildingIcon.transform.SetParent(tile.transform);
         buildingIcon.transform.localPosition = new Vector3(0, 1f, -0.25f);
         buildingIcon.transform.localScale = Vector3.one * 0.45f;
-        buildingIcon.transform.localRotation = Quaternion.Euler(-90, -30, 40);
+        float yRot = orientation == Orientation.Horizontal ? 0f : 90f;
+        buildingIcon.transform.localRotation = Quaternion.Euler(-90, yRot - 30f, 40);
         buildingIcon.tag = building;
         var renderer = buildingIcon.AddComponent<SpriteRenderer>();
         string key = $"{building}_{level}";
@@ -416,7 +420,7 @@ public class MapLoader : MonoBehaviour
             );
         }
     }
-    public void DrawBuilding(Vector2Int pos, string building, int level)
+    public void DrawBuilding(Vector2Int pos, string building, int level, Orientation orientation = Orientation.Horizontal)
     {
         if (!tiles.TryGetValue(pos, out var tile)) return;
 
@@ -424,7 +428,8 @@ public class MapLoader : MonoBehaviour
         buildingIcon.transform.SetParent(tile.transform);
         buildingIcon.transform.localPosition = new Vector3(-0.5f, .7f, -0.25f);
         buildingIcon.transform.localScale = Vector3.one * 0.35f;
-        buildingIcon.transform.localRotation = Quaternion.Euler(-32, 0, 32);
+        float yRot = orientation == Orientation.Horizontal ? 0f : 90f;
+        buildingIcon.transform.localRotation = Quaternion.Euler(-32, yRot, 32);
 
         var renderer = buildingIcon.AddComponent<SpriteRenderer>();
         string key = $"{building}_{level}";
@@ -434,6 +439,20 @@ public class MapLoader : MonoBehaviour
         var obj = BuildingFactory.Create(building, level);
         if (obj != null)
             MapState.buildings[pos] = obj;
+    }
+
+    public void UpdateBuildingOrientation(Vector2Int pos, Orientation orientation)
+    {
+        if (!tiles.TryGetValue(pos, out var tile)) return;
+        foreach (Transform child in tile.transform)
+        {
+            if (child.name.StartsWith("Building_"))
+            {
+                float yRot = orientation == Orientation.Horizontal ? 0f : 90f;
+                child.localRotation = Quaternion.Euler(-32, yRot, 32);
+                break;
+            }
+        }
     }
 
 
@@ -609,7 +628,12 @@ public class MapLoader : MonoBehaviour
         cell.level = level;
         GameState.DecrementBuilding(old);
         GameState.IncrementBuilding(newBuilding);
+        Orientation orient = Orientation.Horizontal;
+        if (MapState.buildings.TryGetValue(pos, out var existing))
+            orient = existing.Orientation;
         MapState.buildings[pos] = BuildingFactory.Create(newBuilding, level);
+        if (MapState.buildings[pos] != null)
+            MapState.buildings[pos].Orientation = orient;
 
         if (tiles.TryGetValue(pos, out var tile))
         {
@@ -623,7 +647,7 @@ public class MapLoader : MonoBehaviour
             }
         }
 
-        DrawBuilding(pos, newBuilding, level);
+        DrawBuilding(pos, newBuilding, level, orient);
         if (MapState.buildings.TryGetValue(pos, out var b) &&
             (PlayerManager.Instance == null || PlayerManager.Instance.IsHumanPlayer(cell.owner)))
             RevealRadius(pos, b.VisibilityRadius);
