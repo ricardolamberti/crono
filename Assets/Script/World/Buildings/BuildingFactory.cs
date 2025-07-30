@@ -64,6 +64,10 @@ public static class BuildingFactory
         { (GameConstants.BuildingCodes.Extractor, 2), () => new CronoExtractorLevel2() },
         { (GameConstants.BuildingCodes.Extractor, 3), () => new CronoExtractorLevel3() },
         { (GameConstants.BuildingCodes.Extractor, 4), () => new CronoExtractorLevel4() },
+
+        { (GameConstants.BuildingCodes.Bridge, 1), () => new BridgeLevel1() },
+        { (GameConstants.BuildingCodes.Bridge, 2), () => new BridgeLevel2() },
+        { (GameConstants.BuildingCodes.Bridge, 3), () => new BridgeLevel3() },
     };
 
     public static Building Create(string code, int level = 1)

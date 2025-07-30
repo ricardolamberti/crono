@@ -373,3 +373,25 @@ public class MineLevel4 : MineLevel3
     public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "");
 }
 #endregion
+
+#region Bridge
+public class BridgeLevel1 : Building
+{
+    public override string Code => BuildingCodes.Bridge;
+    public override int Level => 1;
+    public override BuildRequirement Cost => new BuildRequirement { wood = 10 };
+    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell);
+}
+
+public class BridgeLevel2 : BridgeLevel1
+{
+    public override int Level => 2;
+    public override BuildRequirement Cost => new BuildRequirement { wood = 20 };
+}
+
+public class BridgeLevel3 : BridgeLevel2
+{
+    public override int Level => 3;
+    public override BuildRequirement Cost => new BuildRequirement { wood = 30 };
+}
+#endregion

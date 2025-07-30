@@ -57,7 +57,7 @@ public static class Pathfinder
                 Vector2Int nextPos = current.pos + dir;
                 if (closed.Contains(nextPos)) continue;
                 if (!cellMap.TryGetValue(nextPos, out var cell)) continue;
-                if (!IsWalkable(cell.terrain)) continue;
+                if (!IsWalkable(cell.terrain, cell.building)) continue;
 
                 int moveCost = (dir.x == 0 || dir.y == 0) ? 10 : 14; // 10: ortogonal, 14: diagonal (aprox √2 * 10)
                 int gCost = current.gCost + moveCost;
@@ -107,8 +107,12 @@ public static class Pathfinder
         return 10 * (dx + dy) + (14 - 2 * 10) * Mathf.Min(dx, dy);
     }
 
-    public static bool IsWalkable(string terrain) =>
-        terrain != TerrainTypes.Water && terrain != TerrainTypes.Mountain;
+    public static bool IsWalkable(string terrain, string building = null)
+    {
+        if (building == BuildingCodes.Bridge)
+            return true;
+        return terrain != TerrainTypes.Water && terrain != TerrainTypes.Mountain;
+    }
 
     // ✅ 8 direcciones (N, S, E, O, NE, NW, SE, SW)
     private static readonly List<Vector2Int> Directions = new()

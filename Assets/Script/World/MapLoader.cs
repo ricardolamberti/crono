@@ -70,6 +70,10 @@ public class MapLoader : MonoBehaviour
     public Sprite atalayaSprite4;
     public Sprite wallSprite4;
 
+    public Sprite bridgeSprite;
+    public Sprite bridgeSprite2;
+    public Sprite bridgeSprite3;
+
     public Sprite airportSprite;
     public Sprite airportSprite2;
 
@@ -169,6 +173,10 @@ public class MapLoader : MonoBehaviour
             { $"{BuildingCodes.Extractor}_2", extractorSprite2 },
             { $"{BuildingCodes.Extractor}_3", extractorSprite3 },
             { $"{BuildingCodes.Extractor}_4", extractorSprite4 },
+
+            { $"{BuildingCodes.Bridge}_1", bridgeSprite },
+            { $"{BuildingCodes.Bridge}_2", bridgeSprite2 },
+            { $"{BuildingCodes.Bridge}_3", bridgeSprite3 },
 
             { $"{BuildingCodes.Airport}_1", airportSprite },
             { $"{BuildingCodes.Airport}_2", airportSprite2 },

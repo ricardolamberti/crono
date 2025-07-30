@@ -56,6 +56,9 @@ public static class BuildRules
             wood = 20,
             sciencePoints = 10
         }},
+        { BuildingCodes.Bridge, new BuildRequirement {
+            wood = 10
+        }},
         { BuildingCodes.House, new BuildRequirement {
             wood = 20,
             gold = 5
