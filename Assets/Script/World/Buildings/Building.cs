@@ -22,6 +22,11 @@ public abstract class Building
     public abstract BuildRequirement Cost { get; }
 
     /// <summary>
+    /// Radio de visibilidad que despeja la construcción.
+    /// </summary>
+    public virtual int VisibilityRadius => 2;
+
+    /// <summary>
     /// Acciones habilitadas en este nivel.
     /// </summary>
     public abstract IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell);
