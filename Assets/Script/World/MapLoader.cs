@@ -233,22 +233,20 @@ public class MapLoader : MonoBehaviour
         PlayerManager.Instance?.InitializePlayers();
         yield return null;
     }
-    public void ShowConstructionPreview(Vector2Int pos, string building, int level = 1, Orientation orientation = Orientation.Horizontal)
+    public void ShowConstructionPreview(Vector2Int pos, Building building)
     {
+        if (building == null) return;
         if (!tiles.TryGetValue(pos, out var tile)) return;
 
-        GameObject preview = new GameObject($"Preview_{building}");
+        GameObject preview = new GameObject($"Preview_{building.Code}");
         preview.transform.SetParent(tile.transform);
         preview.transform.localPosition = new Vector3(-0.5f, .7f, -0.25f);
         preview.transform.localScale = Vector3.one * 0.35f;
-        float yRot = orientation == Orientation.Horizontal ? 0f : 90f;
-        if (building == BuildingCodes.Bridge) yRot = 0f; // don't rotate bridge
+        float yRot = building.ShouldRotate ? (building.Orientation == Orientation.Horizontal ? 0f : 90f) : 0f;
         preview.transform.localRotation = Quaternion.Euler(-32, yRot, 32);
 
         var renderer = preview.AddComponent<SpriteRenderer>();
-        string key = building == BuildingCodes.Bridge
-            ? $"{building}_{(orientation == Orientation.Horizontal ? "H" : "V")}"
-            : $"{building}_{level}";
+        string key = building.SpriteKey;
         renderer.sprite = buildingSprites.ContainsKey(key) ? buildingSprites[key] : defaultBuildingSprite;
         renderer.color = new Color(1f, 1f, 1f, 0.4f); // semitransparente
         renderer.sortingOrder = 8;
@@ -307,13 +305,14 @@ public class MapLoader : MonoBehaviour
             tile.AddComponent<TileActionProvider>();
 
             ApplyTerrain(tile, cell.terrain);
-            ApplyBuilding(tile, cell.building, cell.level);
-
-            AddFog(tile, coord);
-
             var buildingObj = BuildingFactory.Create(cell.building, cell.level);
             if (buildingObj != null)
+            {
+                ApplyBuilding(tile, buildingObj);
                 MapState.buildings[coord] = buildingObj;
+            }
+
+            AddFog(tile, coord);
 
             tiles[coord] = tile;
 
@@ -373,22 +372,19 @@ public class MapLoader : MonoBehaviour
             spriteRenderer.sprite = defaultSprite;
        
     }
-    void ApplyBuilding(GameObject tile, string building, int level, Orientation orientation = Orientation.Horizontal)
+    void ApplyBuilding(GameObject tile, Building building)
     {
-        if (string.IsNullOrEmpty(building)) return;
+        if (building == null) return;
 
-        GameObject buildingIcon = new GameObject($"Building_{building}");
+        GameObject buildingIcon = new GameObject($"Building_{building.Code}");
         buildingIcon.transform.SetParent(tile.transform);
         buildingIcon.transform.localPosition = new Vector3(0, 1f, -0.25f);
         buildingIcon.transform.localScale = Vector3.one * 0.45f;
-        float yRot = orientation == Orientation.Horizontal ? 0f : 90f;
-        if (building == BuildingCodes.Bridge) yRot = 0f; // don't rotate bridge
+        float yRot = building.ShouldRotate ? (building.Orientation == Orientation.Horizontal ? 0f : 90f) : 0f;
         buildingIcon.transform.localRotation = Quaternion.Euler(-90, yRot - 30f, 40);
-        buildingIcon.tag = building;
+        buildingIcon.tag = building.Code;
         var renderer = buildingIcon.AddComponent<SpriteRenderer>();
-        string key = building == BuildingCodes.Bridge
-            ? $"{building}_{(orientation == Orientation.Horizontal ? "H" : "V")}"
-            : $"{building}_{level}";
+        string key = building.SpriteKey;
         renderer.sprite = buildingSprites.ContainsKey(key) ? buildingSprites[key] : defaultBuildingSprite;
         renderer.sortingOrder = 10;
 
@@ -426,44 +422,43 @@ public class MapLoader : MonoBehaviour
             );
         }
     }
-    public void DrawBuilding(Vector2Int pos, string building, int level, Orientation orientation = Orientation.Horizontal)
+    public void DrawBuilding(Vector2Int pos, Building building)
     {
+        if (building == null) return;
         if (!tiles.TryGetValue(pos, out var tile)) return;
 
-        GameObject buildingIcon = new GameObject($"Building_{building}");
+        GameObject buildingIcon = new GameObject($"Building_{building.Code}");
         buildingIcon.transform.SetParent(tile.transform);
         buildingIcon.transform.localPosition = new Vector3(-0.5f, .7f, -0.25f);
         buildingIcon.transform.localScale = Vector3.one * 0.35f;
-        float yRot = orientation == Orientation.Horizontal ? 0f : 90f;
-        if (building == BuildingCodes.Bridge) yRot = 0f; // don't rotate bridge
+        float yRot = building.ShouldRotate ? (building.Orientation == Orientation.Horizontal ? 0f : 90f) : 0f;
         buildingIcon.transform.localRotation = Quaternion.Euler(-32, yRot, 32);
 
         var renderer = buildingIcon.AddComponent<SpriteRenderer>();
-        string key = building == BuildingCodes.Bridge
-            ? $"{building}_{(orientation == Orientation.Horizontal ? "H" : "V")}"
-            : $"{building}_{level}";
+        string key = building.SpriteKey;
         renderer.sprite = buildingSprites.ContainsKey(key) ? buildingSprites[key] : defaultBuildingSprite;
         renderer.sortingOrder = 10;
-
-        var obj = BuildingFactory.Create(building, level);
-        if (obj != null)
-            MapState.buildings[pos] = obj;
     }
 
     public void UpdateBuildingOrientation(Vector2Int pos, Orientation orientation)
     {
         if (!tiles.TryGetValue(pos, out var tile)) return;
+
+        MapState.buildings.TryGetValue(pos, out var building);
+        if (building != null)
+            building.Orientation = orientation;
+
         foreach (Transform child in tile.transform)
         {
             if (child.name.StartsWith("Building_"))
             {
-                float yRot = orientation == Orientation.Horizontal ? 0f : 90f;
-                if (child.tag == BuildingCodes.Bridge) yRot = 0f; // don't rotate bridge
+                float yRot = (building != null && !building.ShouldRotate) ? 0f :
+                    (orientation == Orientation.Horizontal ? 0f : 90f);
                 child.localRotation = Quaternion.Euler(-32, yRot, 32);
 
-                if (child.tag == BuildingCodes.Bridge && child.TryGetComponent<SpriteRenderer>(out var rend))
+                if (building != null && !building.ShouldRotate && child.TryGetComponent<SpriteRenderer>(out var rend))
                 {
-                    string key = $"{child.tag}_{(orientation == Orientation.Horizontal ? "H" : "V")}";
+                    string key = building.SpriteKey;
                     if (buildingSprites.ContainsKey(key))
                         rend.sprite = buildingSprites[key];
                 }
@@ -635,22 +630,22 @@ public class MapLoader : MonoBehaviour
         Debug.Log($"Edificio en {pos} ha sido demolido.");
     }
 
-    public void UpgradeBuilding(Vector2Int pos, string newBuilding, int level)
+    public void UpgradeBuilding(Vector2Int pos, Building newBuilding)
     {
+        if (newBuilding == null) return;
         if (!MapState.cellMap.TryGetValue(pos, out var cell))
             return;
 
         string old = cell.building;
-        cell.building = newBuilding;
-        cell.level = level;
+        cell.building = newBuilding.Code;
+        cell.level = newBuilding.Level;
         GameState.DecrementBuilding(old);
-        GameState.IncrementBuilding(newBuilding);
+        GameState.IncrementBuilding(newBuilding.Code);
         Orientation orient = Orientation.Horizontal;
         if (MapState.buildings.TryGetValue(pos, out var existing))
             orient = existing.Orientation;
-        MapState.buildings[pos] = BuildingFactory.Create(newBuilding, level);
-        if (MapState.buildings[pos] != null)
-            MapState.buildings[pos].Orientation = orient;
+        newBuilding.Orientation = orient;
+        MapState.buildings[pos] = newBuilding;
 
         if (tiles.TryGetValue(pos, out var tile))
         {
@@ -664,11 +659,11 @@ public class MapLoader : MonoBehaviour
             }
         }
 
-        DrawBuilding(pos, newBuilding, level, orient);
+        DrawBuilding(pos, newBuilding);
         if (MapState.buildings.TryGetValue(pos, out var b) &&
             (PlayerManager.Instance == null || PlayerManager.Instance.IsHumanPlayer(cell.owner)))
             RevealRadius(pos, b.VisibilityRadius);
-        Debug.Log($"Edificio en {pos} actualizado de {old} a {newBuilding}");
+        Debug.Log($"Edificio en {pos} actualizado de {old} a {newBuilding.Code}");
     }
 
 

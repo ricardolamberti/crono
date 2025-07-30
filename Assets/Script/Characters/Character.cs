@@ -91,7 +91,12 @@ public void AssignBuildTask(Vector2Int pos, string building)
         taskTarget = GetGridPosition(); // o el pos adyacente exacto
 
         Orientation orient = DetermineOrientation(pos, building);
-        MapLoader.instance.ShowConstructionPreview(pos, building, level:1, orientation:orient);
+        var previewBuilding = BuildingFactory.Create(building);
+        if (previewBuilding != null)
+        {
+            previewBuilding.Orientation = orient;
+            MapLoader.instance.ShowConstructionPreview(pos, previewBuilding);
+        }
         Debug.Log($"{name} ya está al lado de {pos}, construyendo {building}");
         return;
     }
@@ -112,7 +117,12 @@ public void AssignBuildTask(Vector2Int pos, string building)
         taskTarget = lastReachable;
 
         Orientation orient = DetermineOrientation(pos, building);
-        MapLoader.instance.ShowConstructionPreview(pos, building, level:1, orientation:orient);
+        var previewBuilding2 = BuildingFactory.Create(building);
+        if (previewBuilding2 != null)
+        {
+            previewBuilding2.Orientation = orient;
+            MapLoader.instance.ShowConstructionPreview(pos, previewBuilding2);
+        }
         SetPath(path);
         Debug.Log($"{name} va a construir {building} en {pos} desde {lastReachable}");
     }
@@ -309,8 +319,8 @@ public void AssignBuildTask(Vector2Int pos, string building)
             {
                 buildingObj.Orientation = orient;
                 MapState.buildings[pos] = buildingObj;
+                MapLoader.instance.DrawBuilding(pos, buildingObj); // <- 🔥 Dibuja en el tile
             }
-            MapLoader.instance.DrawBuilding(pos, building, level, orient); // <- 🔥 Dibuja en el tile
             AdjustNeighbours(pos, building, orient);
             if (buildingObj != null &&
                 (PlayerManager.Instance == null || PlayerManager.Instance.IsHumanPlayer(owner)))
