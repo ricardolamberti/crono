@@ -10,7 +10,21 @@ public class BasicEnemyAI
     private float timer = 0f;
     private readonly float decisionInterval = 3f;
     
-    private enum BuildPhase { NeedTownhall, NeedMine, Established }
+    private enum BuildPhase
+    {
+        NeedTownhall,
+        NeedMine,
+        NeedFarm,
+        NeedLumbermill,
+        NeedHut,
+        NeedBarracks,
+        NeedSoldiers,
+        NeedTowers,
+        NeedAcademy,
+        NeedExtraHut,
+        Established
+    }
+
     private BuildPhase currentPhase = BuildPhase.NeedTownhall;
 
     public BasicEnemyAI(string owner, Vector2Int spawn)
@@ -43,6 +57,30 @@ public class BasicEnemyAI
             case BuildPhase.NeedMine:
                 BuildGoldMine();
                 break;
+            case BuildPhase.NeedFarm:
+                BuildFarm();
+                break;
+            case BuildPhase.NeedLumbermill:
+                BuildLumbermill();
+                break;
+            case BuildPhase.NeedHut:
+                BuildHut();
+                break;
+            case BuildPhase.NeedBarracks:
+                BuildBarracks();
+                break;
+            case BuildPhase.NeedSoldiers:
+                RecruitSoldiers();
+                break;
+            case BuildPhase.NeedTowers:
+                BuildAtalaya();
+                break;
+            case BuildPhase.NeedAcademy:
+                BuildAcademy();
+                break;
+            case BuildPhase.NeedExtraHut:
+                BuildHut();
+                break;
             case BuildPhase.Established:
                 ManageEstablishedBase();
                 break;
@@ -60,11 +98,35 @@ public class BasicEnemyAI
     {
         bool hasTownhall = HasBuilding(BuildingCodes.Townhall);
         bool hasMine = HasBuilding(BuildingCodes.Mine);
+        bool hasFarm = HasBuilding(BuildingCodes.Farm);
+        bool hasLumber = HasBuilding(BuildingCodes.Lumbermill);
+        bool hasHut = HasBuilding(BuildingCodes.Hut);
+        bool hasBarracks = HasBuilding(BuildingCodes.Barracks);
+        bool hasAcademy = HasBuilding(BuildingCodes.Academy);
+        int warriorCount = CountMyWarriors();
+        int towerCount = CountBuildings(BuildingCodes.Atalaya);
+        int hutCount = CountBuildings(BuildingCodes.Hut);
 
         if (!hasTownhall)
             currentPhase = BuildPhase.NeedTownhall;
         else if (!hasMine)
             currentPhase = BuildPhase.NeedMine;
+        else if (!hasFarm)
+            currentPhase = BuildPhase.NeedFarm;
+        else if (!hasLumber)
+            currentPhase = BuildPhase.NeedLumbermill;
+        else if (!hasHut)
+            currentPhase = BuildPhase.NeedHut;
+        else if (!hasBarracks)
+            currentPhase = BuildPhase.NeedBarracks;
+        else if (warriorCount < 10)
+            currentPhase = BuildPhase.NeedSoldiers;
+        else if (towerCount < 2)
+            currentPhase = BuildPhase.NeedTowers;
+        else if (!hasAcademy)
+            currentPhase = BuildPhase.NeedAcademy;
+        else if (hutCount < 2)
+            currentPhase = BuildPhase.NeedExtraHut;
         else
             currentPhase = BuildPhase.Established;
     }
@@ -107,13 +169,23 @@ public class BasicEnemyAI
 
     void ManageEstablishedBase()
     {
-        foreach (var c in GetMyCharacters())
+        var workers = GetMyCharacters()
+            .Where(c => c.characterType == Character.Type.Worker)
+            .ToArray();
+        int index = 0;
+        foreach (var w in workers)
         {
-            if (c.currentTask == Character.Task.None)
+            if (w.currentTask != Character.Task.None) continue;
+
+            switch (index % 3)
             {
-                c.gatherTask = Character.GatherTask.Gold;
-                c.PlanGatherRoute();
+                case 0: w.gatherTask = Character.GatherTask.Gold; break;
+                case 1: w.gatherTask = Character.GatherTask.Wood; break;
+                default: w.gatherTask = Character.GatherTask.Food; break;
             }
+
+            w.PlanGatherRoute();
+            index++;
         }
     }
 
@@ -217,7 +289,152 @@ public class BasicEnemyAI
     {
         var townhall = MapState.cellMap.FirstOrDefault(kvp =>
             kvp.Value.building == BuildingCodes.Townhall && kvp.Value.owner == ownerId);
-        
+
         return townhall.Key != default ? townhall.Key : new(-1, -1);
+    }
+
+    int CountMyWarriors()
+    {
+        return GetMyCharacters().Count(c => c.characterType == Character.Type.Warrior);
+    }
+
+    int CountBuildings(string code)
+    {
+        return MapState.cellMap.Values.Count(c => c.building == code && c.owner == ownerId);
+    }
+
+    Character GetIdleWorker()
+    {
+        return GetMyCharacters().FirstOrDefault(c =>
+            c.currentTask == Character.Task.None && c.characterType == Character.Type.Worker);
+    }
+
+    Vector2Int FindNearestEmptyCell(Vector2Int origin, string terrain)
+    {
+        int best = int.MaxValue;
+        Vector2Int bestPos = new(-1, -1);
+        foreach (var kvp in MapState.cellMap)
+        {
+            if (kvp.Value.terrain != terrain) continue;
+            if (!string.IsNullOrEmpty(kvp.Value.building)) continue;
+
+            int dist = Mathf.Abs(kvp.Key.x - origin.x) + Mathf.Abs(kvp.Key.y - origin.y);
+            if (dist < best)
+            {
+                best = dist;
+                bestPos = kvp.Key;
+            }
+        }
+        return bestPos;
+    }
+
+    Vector2Int FindAdjacentFreeCell(Vector2Int basePos)
+    {
+        foreach (var dir in new[] { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right })
+        {
+            Vector2Int target = basePos + dir;
+            if (MapLoader.instance != null && MapLoader.instance.IsPositionFree(target))
+                return target;
+        }
+        return new(-1, -1);
+    }
+
+    void BuildFarm()
+    {
+        var worker = GetIdleWorker();
+        if (worker == null) return;
+
+        Vector2Int town = FindMyTownhallPosition();
+        Vector2Int pos = FindNearestEmptyCell(town, TerrainTypes.Forest);
+        if (pos.x >= 0)
+        {
+            Debug.Log($"AI {ownerId}: Construyendo granja en {pos}");
+            worker.AssignBuildTask(pos, BuildingCodes.Farm);
+        }
+    }
+
+    void BuildLumbermill()
+    {
+        var worker = GetIdleWorker();
+        if (worker == null) return;
+
+        Vector2Int town = FindMyTownhallPosition();
+        Vector2Int pos = FindNearestEmptyCell(town, TerrainTypes.Forest);
+        if (pos.x >= 0)
+        {
+            Debug.Log($"AI {ownerId}: Construyendo aserradero en {pos}");
+            worker.AssignBuildTask(pos, BuildingCodes.Lumbermill);
+        }
+    }
+
+    void BuildHut()
+    {
+        var worker = GetIdleWorker();
+        if (worker == null) return;
+
+        Vector2Int town = FindMyTownhallPosition();
+        Vector2Int pos = FindNearestEmptyCell(town, TerrainTypes.Forest);
+        if (pos.x >= 0)
+        {
+            Debug.Log($"AI {ownerId}: Construyendo hut en {pos}");
+            worker.AssignBuildTask(pos, BuildingCodes.Hut);
+        }
+    }
+
+    void BuildBarracks()
+    {
+        var worker = GetIdleWorker();
+        if (worker == null) return;
+
+        Vector2Int town = FindMyTownhallPosition();
+        Vector2Int pos = FindNearestEmptyCell(town, TerrainTypes.Forest);
+        if (pos.x >= 0)
+        {
+            Debug.Log($"AI {ownerId}: Construyendo barraca en {pos}");
+            worker.AssignBuildTask(pos, BuildingCodes.Barracks);
+        }
+    }
+
+    void RecruitSoldiers()
+    {
+        if (CountMyWarriors() >= 10) return;
+
+        Vector2Int town = FindMyTownhallPosition();
+        Vector2Int spawn = FindAdjacentFreeCell(town);
+        if (spawn.x >= 0)
+        {
+            Debug.Log($"AI {ownerId}: Reclutando soldado en {spawn}");
+            MapLoader.instance.SpawnCharacter(spawn, Character.Type.Warrior, ownerId);
+        }
+    }
+
+    void BuildAtalaya()
+    {
+        if (CountBuildings(BuildingCodes.Atalaya) >= 2) return;
+
+        var worker = GetIdleWorker();
+        if (worker == null) return;
+
+        Vector2Int town = FindMyTownhallPosition();
+        Vector2Int pos = FindNearestEmptyCell(town, TerrainTypes.Forest);
+        if (pos.x >= 0)
+        {
+            Debug.Log($"AI {ownerId}: Construyendo atalaya en {pos}");
+            worker.AssignBuildTask(pos, BuildingCodes.Atalaya);
+        }
+    }
+
+    void BuildAcademy()
+    {
+        var worker = GetIdleWorker();
+        if (worker == null) return;
+
+        Vector2Int town = FindMyTownhallPosition();
+        Vector2Int pos = FindNearestEmptyCell(town, TerrainTypes.Forest);
+        if (pos.x >= 0)
+        {
+            Debug.Log($"AI {ownerId}: Construyendo academia en {pos}");
+            worker.AssignBuildTask(pos, BuildingCodes.Academy);
+        }
     }
 }
