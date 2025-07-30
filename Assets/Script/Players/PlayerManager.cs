@@ -67,6 +67,15 @@ public class PlayerManager : MonoBehaviour
         foreach (var p in players)
             p.Initialize();
 
+        foreach (var kv in MapState.cellMap)
+        {
+            if (!string.IsNullOrEmpty(kv.Value.building) && IsHumanPlayer(kv.Value.owner))
+            {
+                if (MapState.buildings.TryGetValue(kv.Key, out var b))
+                    MapLoader.instance?.RevealRadius(kv.Key, b.VisibilityRadius);
+            }
+        }
+
         FindObjectOfType<CameraController>().FocusOnCell(Player1Spawn);
     }
 

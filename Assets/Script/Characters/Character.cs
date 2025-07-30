@@ -265,7 +265,8 @@ public void AssignBuildTask(Vector2Int pos, string building)
             if (buildingObj != null)
                 MapState.buildings[pos] = buildingObj;
             MapLoader.instance.DrawBuilding(pos, building, level); // <- 🔥 Dibuja en el tile
-            if (buildingObj != null)
+            if (buildingObj != null &&
+                (PlayerManager.Instance == null || PlayerManager.Instance.IsHumanPlayer(owner)))
                 MapLoader.instance.RevealRadius(pos, buildingObj.VisibilityRadius);
             Debug.Log($"{name} construyó {building} en {pos}");
             MapLoader.instance.ClearConstructionPreview(pos);

@@ -616,7 +616,8 @@ public class MapLoader : MonoBehaviour
         }
 
         DrawBuilding(pos, newBuilding, level);
-        if (MapState.buildings.TryGetValue(pos, out var b))
+        if (MapState.buildings.TryGetValue(pos, out var b) &&
+            (PlayerManager.Instance == null || PlayerManager.Instance.IsHumanPlayer(cell.owner)))
             RevealRadius(pos, b.VisibilityRadius);
         Debug.Log($"Edificio en {pos} actualizado de {old} a {newBuilding}");
     }
