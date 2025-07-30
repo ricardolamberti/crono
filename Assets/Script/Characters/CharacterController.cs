@@ -50,7 +50,7 @@ public class CharacterController : MonoBehaviour
                 }
                 if (actionMode == ActionMode.Move && currentActionCharacter != null)
                 {
-                    var path = Pathfinder.FindPath(currentActionCharacter.GetGridPosition(), gridPos, MapState.cellMap);
+                    var path = Pathfinder.FindPath(currentActionCharacter.GetGridPosition(), gridPos, MapState.cellMap, currentActionCharacter.owner);
                     if (path != null)
                         currentActionCharacter.SetPath(path);
                     ResetMode();
@@ -126,7 +126,7 @@ public class CharacterController : MonoBehaviour
         selectedCharacter.CancelCurrentTask();
 
         // Mover personaje
-        List<Vector2Int> path = Pathfinder.FindPath(selectedCharacter.GetGridPosition(), gridPos, MapState.cellMap);
+        List<Vector2Int> path = Pathfinder.FindPath(selectedCharacter.GetGridPosition(), gridPos, MapState.cellMap, selectedCharacter.owner);
         if (path != null)
             selectedCharacter.SetPath(path);
 

@@ -16,7 +16,8 @@ public static class Pathfinder
     public static List<Vector2Int> FindPath(
         Vector2Int start,
         Vector2Int target,
-        Dictionary<Vector2Int, MapCellDTO> cellMap)
+        Dictionary<Vector2Int, MapCellDTO> cellMap,
+        string actorId)
     {
         var open = new List<Node>();
         var closed = new HashSet<Vector2Int>();
@@ -57,7 +58,7 @@ public static class Pathfinder
                 Vector2Int nextPos = current.pos + dir;
                 if (closed.Contains(nextPos)) continue;
                 if (!cellMap.TryGetValue(nextPos, out var cell)) continue;
-                if (!IsWalkable(cell.terrain, cell.building)) continue;
+                if (!IsWalkable(cell.terrain, cell.building, cell.owner, actorId)) continue;
 
                 int moveCost = (dir.x == 0 || dir.y == 0) ? 10 : 14; // 10: ortogonal, 14: diagonal (aprox √2 * 10)
                 int gCost = current.gCost + moveCost;
@@ -107,10 +108,12 @@ public static class Pathfinder
         return 10 * (dx + dy) + (14 - 2 * 10) * Mathf.Min(dx, dy);
     }
 
-    public static bool IsWalkable(string terrain, string building = null)
+    public static bool IsWalkable(string terrain, string building = null, string cellOwner = null, string actorId = null)
     {
         if (building == BuildingCodes.Bridge)
             return true;
+        if (building == BuildingCodes.Wall && !string.IsNullOrEmpty(cellOwner) && cellOwner != actorId)
+            return false;
         return terrain != TerrainTypes.Water && terrain != TerrainTypes.Mountain;
     }
 
