@@ -13,6 +13,7 @@ namespace GameConstants
         public const string Wall = "wall";
         public const string Lumbermill = "lumbermill";
         public const string Extractor = "extractor";
+        public const string Bridge = "bridge";
         public const string Mine = "mine";
         public const string AdvancedMine = "advanced_mine";
         public const string CronoExtractor = "crono_extractor";

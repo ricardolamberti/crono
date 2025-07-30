@@ -12,7 +12,7 @@ public class TileActionProvider : MonoBehaviour, IActionProposer
     static readonly System.Collections.Generic.Dictionary<string, string[]> terrainBuildings = new()
     {
         { TerrainTypes.Mountain, new[] { BuildingCodes.Mine } },
-        { TerrainTypes.Water, new[] { BuildingCodes.Dock } },
+        { TerrainTypes.Water, new[] { BuildingCodes.Dock, BuildingCodes.Bridge } },
         { TerrainTypes.Forest, new[] { BuildingCodes.Hut, BuildingCodes.Lumbermill, BuildingCodes.Farm, BuildingCodes.Academy, BuildingCodes.Barracks, BuildingCodes.Wall, BuildingCodes.Atalaya, BuildingCodes.Airport } }
     };
 

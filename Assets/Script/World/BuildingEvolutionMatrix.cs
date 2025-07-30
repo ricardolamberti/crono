@@ -75,7 +75,11 @@ public static class BuildingEvolutionMatrix
         // Mine
         { (BuildingCodes.Mine, 1), new Evolution(BuildingCodes.Mine, 2, 10) },
         { (BuildingCodes.Mine, 2), new Evolution(BuildingCodes.Mine, 3, 20) },
-        { (BuildingCodes.Mine, 3), new Evolution(BuildingCodes.Mine, 4, 30) }
+        { (BuildingCodes.Mine, 3), new Evolution(BuildingCodes.Mine, 4, 30) },
+
+        // Bridge
+        { (BuildingCodes.Bridge, 1), new Evolution(BuildingCodes.Bridge, 2, 10) },
+        { (BuildingCodes.Bridge, 2), new Evolution(BuildingCodes.Bridge, 3, 20) }
     };
 
     public static bool TryGetEvolution(string building, int level, out Evolution evo)

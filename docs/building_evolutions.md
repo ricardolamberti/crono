@@ -48,3 +48,6 @@ Este documento detalla las acciones habilitadas en cada nivel de las distintas c
 | Extractor Crono | 2 | Nuevo hechicero, Asistencia futuro, Misiones pasado |
 | Extractor Crono | 3 | Nuevo hechicero, Asistencia futuro, Misiones pasado, proteccion |
 | Extractor Crono | 4 | Nuevo hechicero, Asistencia futuro, Misiones pasado, proteccion, envio tabla |
+| Puente | 1 | transitable |
+| Puente | 2 | transitable |
+| Puente | 3 | transitable |
