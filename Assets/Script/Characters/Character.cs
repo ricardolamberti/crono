@@ -163,10 +163,19 @@ public void AssignBuildTask(Vector2Int pos, string building)
             return;
         }
 
-    
+        Vector2Int next = currentPath.Peek();
+        if (!MapState.cellMap.TryGetValue(next, out var cell) ||
+            !Pathfinder.IsWalkable(cell.terrain, cell.building, cell.owner, owner))
+        {
+            AbortGatherRoute();
+            PlanGatherRoute();
+            return;
+        }
+
+        currentPath.Dequeue();
+
         animator.SetWalking(true);
 
-        Vector2Int next = currentPath.Dequeue();
         MoveTo(GridUtils.GridToWorld(next));
     }
 
@@ -448,6 +457,15 @@ public void AssignBuildTask(Vector2Int pos, string building)
         currentPath = null;
         moving = false;
         gatherRoute = null;
+    }
+
+    void AbortGatherRoute()
+    {
+        currentTask = Task.None;
+        currentPath = null;
+        gatherRoute = null;
+        moving = false;
+        animator?.SetWalking(false);
     }
 
     public void ProposeActions(GamePlayer player)
