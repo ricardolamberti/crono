@@ -35,6 +35,7 @@ public class MapLoader : MonoBehaviour
     public Sprite dockSprite;
     public Sprite atalayaSprite;
     public Sprite wallSprite;
+    public Sprite wallSpriteVertical;
 
     public Sprite hutSprite2;
     public Sprite barracksSprite2;
@@ -47,6 +48,7 @@ public class MapLoader : MonoBehaviour
     public Sprite dockSprite2;
     public Sprite atalayaSprite2;
     public Sprite wallSprite2;
+    public Sprite wallSprite2Vertical;
 
     public Sprite hutSprite3;
     public Sprite barracksSprite3;
@@ -59,6 +61,7 @@ public class MapLoader : MonoBehaviour
     public Sprite dockSprite3;
     public Sprite atalayaSprite3;
     public Sprite wallSprite3;
+    public Sprite wallSprite3Vertical;
 
     public Sprite hutSprite4;
     public Sprite barracksSprite4;
@@ -71,6 +74,7 @@ public class MapLoader : MonoBehaviour
     public Sprite dockSprite4;
     public Sprite atalayaSprite4;
     public Sprite wallSprite4;
+    public Sprite wallSprite4Vertical;
 
     // Sprites for bridges. Horizontal corresponds to the normal orientation
     // while vertical is the inverted version used instead of rotating the sprite
@@ -188,10 +192,14 @@ public class MapLoader : MonoBehaviour
             { $"{BuildingCodes.Townhall}_3", defaultBuildingSprite3 },
             { $"{BuildingCodes.Townhall}_4", defaultBuildingSprite4 },
 
-             { $"{BuildingCodes.Wall}_1", wallSprite },
-            { $"{BuildingCodes.Wall}_2", wallSprite2 },
-            { $"{BuildingCodes.Wall}_3", wallSprite3 },
-            { $"{BuildingCodes.Wall}_4", wallSprite4 }
+             { $"{BuildingCodes.Wall}_1_H", wallSprite },
+            { $"{BuildingCodes.Wall}_1_V", wallSpriteVertical },
+            { $"{BuildingCodes.Wall}_2_H", wallSprite2 },
+            { $"{BuildingCodes.Wall}_2_V", wallSprite2Vertical },
+            { $"{BuildingCodes.Wall}_3_H", wallSprite3 },
+            { $"{BuildingCodes.Wall}_3_V", wallSprite3Vertical },
+            { $"{BuildingCodes.Wall}_4_H", wallSprite4 },
+            { $"{BuildingCodes.Wall}_4_V", wallSprite4Vertical }
 
 
          };
