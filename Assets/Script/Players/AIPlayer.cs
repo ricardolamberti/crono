@@ -11,10 +11,7 @@ public class AIPlayer : Player
 
     public override void Initialize()
     {
-        if (MapLoader.instance != null)
-        {
-            MapLoader.instance.SpawnCharacter(SpawnPosition, Character.Type.Worker, Id);
-        }
+        base.Initialize();
     }
 
     public override void Update()

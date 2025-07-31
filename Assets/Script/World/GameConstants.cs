@@ -17,6 +17,7 @@ namespace GameConstants
         public const string Mine = "mine";
         public const string AdvancedMine = "advanced_mine";
         public const string CronoExtractor = "crono_extractor";
+        public const string TemporalBreach = "temporal_breach";
         public const string House = "house";
     }
 

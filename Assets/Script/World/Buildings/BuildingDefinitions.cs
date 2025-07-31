@@ -410,3 +410,14 @@ public class BridgeLevel3 : BridgeLevel2
     public override BuildRequirement Cost => new BuildRequirement { wood = 30 };
 }
 #endregion
+
+#region TemporalBreach
+public class TemporalBreach : Building
+{
+    public override string Code => BuildingCodes.TemporalBreach;
+    public override int Level => 1;
+    public override BuildRequirement Cost => new BuildRequirement();
+    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) 
+        => BuildingActionHelper.FromLabels(cell, "pedir recursos");
+}
+#endregion

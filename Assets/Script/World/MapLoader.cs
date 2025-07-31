@@ -222,6 +222,8 @@ public class MapLoader : MonoBehaviour
 
             { $"{BuildingCodes.Airport}_1", airportSprite },
             { $"{BuildingCodes.Airport}_2", airportSprite2 },
+
+            { $"{BuildingCodes.TemporalBreach}_1", defaultBuildingSprite },
           
             { $"{BuildingCodes.Townhall}_1", defaultBuildingSprite },
             { $"{BuildingCodes.Townhall}_2", defaultBuildingSprite2 },
@@ -499,6 +501,28 @@ public class MapLoader : MonoBehaviour
         {
             var tower = buildingIcon.AddComponent<TowerAttack>();
             tower.Initialize(pos);
+        }
+    }
+
+    public void PlaceBuilding(Vector2Int pos, string code, string owner, int level = 1)
+    {
+        if (!MapState.cellMap.TryGetValue(pos, out var cell))
+            return;
+
+        if (!string.IsNullOrEmpty(cell.building))
+            return;
+
+        cell.building = code;
+        cell.level = level;
+        cell.owner = owner;
+        GameState.IncrementBuilding(code);
+
+        var buildingObj = BuildingFactory.Create(code, level);
+        if (buildingObj != null)
+        {
+            MapState.buildings[pos] = buildingObj;
+            DrawBuilding(pos, buildingObj);
+            RevealRadius(pos, buildingObj.VisibilityRadius);
         }
     }
 

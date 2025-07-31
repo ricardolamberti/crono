@@ -16,6 +16,8 @@ public static class BuildingActionHelper
                 yield return SpawnCharacter(label, cell, Character.Type.Scientist);
             else if (lower.Contains("soldado"))
                 yield return SpawnCharacter(label, cell, Character.Type.Warrior);
+            else if (lower.Contains("pedir recursos"))
+                yield return RequestResources(label);
             else
                 yield return NotImplemented(label);
         }
@@ -28,6 +30,16 @@ public static class BuildingActionHelper
     public static ControlPanelAction NotImplemented(string label)
     {
         return new ControlPanelAction(label, () => Debug.Log($"Acción '{label}' no implementada."));
+    }
+
+    public static ControlPanelAction RequestResources(string label)
+    {
+        return new ControlPanelAction(label, () =>
+        {
+            GameState.playerResources.gold += 10;
+            GameState.playerResources.wood += 10;
+            Debug.Log("Recursos otorgados");
+        });
     }
 
     public static void SpawnCharacterNear(MapCellDTO cell, Character.Type type)
