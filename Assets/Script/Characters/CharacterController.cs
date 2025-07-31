@@ -58,7 +58,10 @@ public class CharacterController : MonoBehaviour
                 }
                 if (actionMode == ActionMode.Attack && currentActionCharacter != null)
                 {
-                    Debug.Log($"{currentActionCharacter.name} atacaría a {hit.collider.name}");
+                    if (hit.collider.TryGetComponent(out Character targetChar))
+                        currentActionCharacter.StartAttack(targetChar.gameObject);
+                    else if (hit.collider.TryGetComponent(out StructureHealth targetStruct))
+                        currentActionCharacter.StartAttack(targetStruct.gameObject);
                     ResetMode();
                     return;
                 }

@@ -150,6 +150,13 @@ public class MapLoader : MonoBehaviour
         };
     }
 
+    public Sprite GetWeaponSprite(WeaponType type)
+    {
+        if (weaponSpriteMap != null && weaponSpriteMap.TryGetValue(type, out var s))
+            return s;
+        return null;
+    }
+
 
     void Start()
     {
@@ -429,6 +436,12 @@ public class MapLoader : MonoBehaviour
         var pos = new Vector2Int(Mathf.RoundToInt(tile.transform.position.x), Mathf.RoundToInt(tile.transform.position.z));
         health.Initialize(pos, building.MaxResistance);
 
+        if (building.Code == BuildingCodes.Atalaya)
+        {
+            var tower = buildingIcon.AddComponent<TowerAttack>();
+            tower.Initialize(pos);
+        }
+
     }
 
     void DrawTrees(GameObject tile, int treeCount)
@@ -482,6 +495,11 @@ public class MapLoader : MonoBehaviour
 
         var health = buildingIcon.AddComponent<StructureHealth>();
         health.Initialize(pos, building.MaxResistance);
+        if (building.Code == BuildingCodes.Atalaya)
+        {
+            var tower = buildingIcon.AddComponent<TowerAttack>();
+            tower.Initialize(pos);
+        }
     }
 
     public void UpdateBuildingOrientation(Vector2Int pos, Orientation orientation)

@@ -25,7 +25,7 @@ public class Character : MonoBehaviour, IActionProposer, IInfoProvider
     private int stepIndex = 0;
     private float stepDuration = 0.3f;
     private CharacterAnimator animator;
-    public enum Task { None, Move, Build }
+    public enum Task { None, Move, Build, Attack }
     public Task currentTask = Task.None;
     public Vector2Int taskTarget;
     public Vector2Int buildTarget;
@@ -40,6 +40,10 @@ public class Character : MonoBehaviour, IActionProposer, IInfoProvider
     public GatherTask gatherTask = GatherTask.Food;
 
     private List<Vector2Int> gatherRoute;
+
+    private GameObject attackTarget;
+    private float attackTimer = 0f;
+    private float attackInterval = 1f;
 
     public void LoadSprites(Dictionary<string, Sprite[]> loaded)
     {
@@ -173,6 +177,86 @@ public void AssignBuildTask(Vector2Int pos, string building)
         gatherRoute = route;
         SetPath(route);
         currentTask = Task.Move;
+    }
+
+    public void StartAttack(GameObject target)
+    {
+        if (target == null) return;
+        CancelCurrentTask();
+        attackTarget = target;
+        currentTask = Task.Attack;
+        attackTimer = 0f;
+        MoveOrChaseTarget();
+    }
+
+    void MoveOrChaseTarget()
+    {
+        if (attackTarget == null) return;
+        Vector2Int targetPos = GridUtils.WorldToGrid(attackTarget.transform.position);
+        int range = GetAttackRange();
+        if (Vector2Int.Distance(GetGridPosition(), targetPos) > range)
+        {
+            var path = Pathfinder.FindPath(GetGridPosition(), targetPos, MapState.cellMap, owner);
+            if (path != null && path.Count > 0)
+            {
+                path.RemoveAt(path.Count - 1); // no entrar en la casilla del objetivo
+                SetPath(path);
+            }
+        }
+    }
+
+    int GetAttackRange()
+    {
+        if (role is WarriorRole wr && wr.Stats.weapon != WeaponType.None)
+            return 3;
+        return 1;
+    }
+
+    int GetAttackDamage()
+    {
+        if (role is WarriorRole wr)
+        {
+            return wr.Stats.weapon != WeaponType.None ? wr.Stats.longRangeDamage : wr.Stats.shortRangeDamage;
+        }
+        return 1;
+    }
+
+    IEnumerator ShootProjectile(Vector3 targetPos, WeaponType weapon)
+    {
+        if (MapLoader.instance == null) yield break;
+        Sprite s = MapLoader.instance.GetWeaponSprite(weapon);
+        if (s == null) yield break;
+        GameObject proj = new GameObject("Projectile");
+        var sr = proj.AddComponent<SpriteRenderer>();
+        sr.sprite = s;
+        sr.sortingOrder = 12;
+        proj.transform.position = transform.position + new Vector3(0f, 0.6f, 0f);
+        Vector3 start = proj.transform.position;
+        Vector3 end = targetPos + new Vector3(0f, 0.6f, 0f);
+        float t = 0f;
+        while (t < 1f)
+        {
+            proj.transform.position = Vector3.Lerp(start, end, t);
+            t += Time.deltaTime * 5f;
+            yield return null;
+        }
+        Destroy(proj);
+    }
+
+    IEnumerator PerformAttack()
+    {
+        if (attackTarget == null) yield break;
+        Vector3 targetPos = attackTarget.transform.position;
+        WeaponType wtype = WeaponType.None;
+        if (role is WarriorRole wr)
+            wtype = wr.Stats.weapon;
+        if (wtype != WeaponType.None)
+            yield return ShootProjectile(targetPos, wtype);
+
+        if (attackTarget.TryGetComponent(out HealthComponent hc))
+            hc.TakeDamage(GetAttackDamage());
+        else if (attackTarget.TryGetComponent(out StructureHealth sh))
+            sh.TakeDamage(GetAttackDamage());
     }
 
     void MoveToNext()
@@ -399,6 +483,24 @@ public void AssignBuildTask(Vector2Int pos, string building)
             SetPath(gatherRoute);
         }
 
+        if (!moving && currentTask == Task.Attack)
+        {
+            MoveOrChaseTarget();
+            if (attackTarget != null)
+            {
+                Vector2Int tpos = GridUtils.WorldToGrid(attackTarget.transform.position);
+                if (Vector2Int.Distance(GetGridPosition(), tpos) <= GetAttackRange())
+                {
+                    attackTimer += Time.deltaTime;
+                    if (attackTimer >= attackInterval)
+                    {
+                        attackTimer = 0f;
+                        StartCoroutine(PerformAttack());
+                    }
+                }
+            }
+        }
+
         if (moving)
         {
             Vector3 dir = (targetPosition - transform.position).normalized;
@@ -497,6 +599,7 @@ public void AssignBuildTask(Vector2Int pos, string building)
         currentPath = null;
         moving = false;
         gatherRoute = null;
+        attackTarget = null;
     }
 
     void AbortGatherRoute()
