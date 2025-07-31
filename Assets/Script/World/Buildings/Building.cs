@@ -34,7 +34,7 @@ public abstract class Building
     /// Indicates if the sprite should rotate when the orientation changes.
     /// Bridges don't rotate so they override this.
     /// </summary>
-    public virtual bool ShouldRotate => true;
+    public virtual bool ShouldRotate => false;
 
     /// <summary>
     /// Key used to pick the sprite for this building.
