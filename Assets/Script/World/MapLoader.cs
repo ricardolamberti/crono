@@ -483,10 +483,10 @@ public class MapLoader : MonoBehaviour
 
         GameObject buildingIcon = new GameObject($"Building_{building.Code}");
         buildingIcon.transform.SetParent(tile.transform);
-        buildingIcon.transform.localPosition = new Vector3(-0.5f, .7f, -0.25f);
+        buildingIcon.transform.localPosition = new Vector3(-0.9f, .8f, -0.25f);
         buildingIcon.transform.localScale = Vector3.one * 0.35f;
-        float yRot = building.ShouldRotate ? (building.Orientation == Orientation.Horizontal ? 0f : 90f) : 0f;
-        buildingIcon.transform.localRotation = Quaternion.Euler(-32, yRot, 32);
+        float yRot = building.ShouldRotate ? (building.Orientation == Orientation.Horizontal ? -10f : 90f) : -10f;
+        buildingIcon.transform.localRotation = Quaternion.Euler(-60, yRot, 35);
 
         var renderer = buildingIcon.AddComponent<SpriteRenderer>();
         string key = building.SpriteKey;

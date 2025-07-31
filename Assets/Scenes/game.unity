@@ -997,9 +997,9 @@ MonoBehaviour:
     - {fileID: 1490954961, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
     - {fileID: 375906505, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
     - {fileID: -198031234, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
-  arrowWeaponSprite: {fileID: 0}
-  bulletWeaponSprite: {fileID: 0}
-  rayWeaponSprite: {fileID: 0}
+  arrowWeaponSprite: {fileID: 21300000, guid: cc2cee5b1446ead4d90a0449b823304b, type: 3}
+  bulletWeaponSprite: {fileID: 21300000, guid: cc2cee5b1446ead4d90a0449b823304b, type: 3}
+  rayWeaponSprite: {fileID: 21300000, guid: cc2cee5b1446ead4d90a0449b823304b, type: 3}
   treeSprites:
   - {fileID: -1488921459, guid: c8cda923bc4504441a08c8d6042385f2, type: 3}
   - {fileID: -414263750, guid: c8cda923bc4504441a08c8d6042385f2, type: 3}
