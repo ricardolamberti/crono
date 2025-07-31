@@ -110,6 +110,19 @@ public class MapLoader : MonoBehaviour
     public Sprite[] warriorEastSprites;
     public Sprite[] warriorWestSprites;
 
+    public DirectionalSprites soldadoRasoSprites;
+    public DirectionalSprites arqueroSprites;
+    public DirectionalSprites tanqueSprites;
+    public DirectionalSprites eliteSprites;
+    public DirectionalSprites destructorSprites;
+
+    public Sprite arrowWeaponSprite;
+    public Sprite bulletWeaponSprite;
+    public Sprite rayWeaponSprite;
+
+    private Dictionary<WarriorClass, DirectionalSprites> warriorSpriteMap;
+    private Dictionary<WeaponType, Sprite> weaponSpriteMap;
+
     public static MapLoader instance;
     
     private Dictionary<string, Sprite> buildingSprites;
@@ -119,6 +132,22 @@ public class MapLoader : MonoBehaviour
     void Awake()
     {
         instance = this;
+
+        warriorSpriteMap = new Dictionary<WarriorClass, DirectionalSprites>
+        {
+            { WarriorClass.SoldadoRaso, soldadoRasoSprites },
+            { WarriorClass.Arquero, arqueroSprites },
+            { WarriorClass.Tanque, tanqueSprites },
+            { WarriorClass.Elite, eliteSprites },
+            { WarriorClass.Destructor, destructorSprites }
+        };
+
+        weaponSpriteMap = new Dictionary<WeaponType, Sprite>
+        {
+            { WeaponType.Arrow, arrowWeaponSprite },
+            { WeaponType.Bullet, bulletWeaponSprite },
+            { WeaponType.Ray, rayWeaponSprite }
+        };
     }
 
 
@@ -590,13 +619,29 @@ public class MapLoader : MonoBehaviour
         {
             go.tag = "Soldier";
             animator.spriteRenderer = renderer;
-            animator.northSprites = warriorNorthSprites;
-            animator.southSprites = warriorSouthSprites;
-            animator.eastSprites = warriorEastSprites;
-            animator.westSprites = warriorWestSprites;
             var wr = go.AddComponent<WarriorRole>();
             wr.warriorClass = WarriorClass.SoldadoRaso;
             role = wr;
+
+            if (warriorSpriteMap != null && warriorSpriteMap.TryGetValue(wr.warriorClass, out var set))
+            {
+                animator.northSprites = set.north;
+                animator.southSprites = set.south;
+                animator.eastSprites = set.east;
+                animator.westSprites = set.west;
+            }
+            else
+            {
+                animator.northSprites = warriorNorthSprites;
+                animator.southSprites = warriorSouthSprites;
+                animator.eastSprites = warriorEastSprites;
+                animator.westSprites = warriorWestSprites;
+            }
+
+            if (weaponSpriteMap != null && weaponSpriteMap.TryGetValue(wr.Stats.weapon, out var ws))
+            {
+                character.SetWeaponSprite(ws);
+            }
         }
         character.LoadSprites(new Dictionary<string, Sprite[]>
             {

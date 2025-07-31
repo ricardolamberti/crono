@@ -17,6 +17,7 @@ public class Character : MonoBehaviour, IActionProposer, IInfoProvider
     private float moveSpeed = 2f;
 
     public SpriteRenderer spriteRenderer;
+    public SpriteRenderer weaponRenderer;
 
     public Dictionary<string, Sprite[]> animations = new();
     public string direction = "south";
@@ -28,6 +29,8 @@ public class Character : MonoBehaviour, IActionProposer, IInfoProvider
     public Task currentTask = Task.None;
     public Vector2Int taskTarget;
     public Vector2Int buildTarget;
+
+    public int level = 1;
 
     public string buildingToConstruct = "";
     public enum ControlMode { Automatic, Manual }
@@ -55,6 +58,15 @@ public class Character : MonoBehaviour, IActionProposer, IInfoProvider
         if (spriteRenderer == null)
             spriteRenderer = GetComponent<SpriteRenderer>();
 
+        if (weaponRenderer == null)
+        {
+            var weaponObj = new GameObject("Weapon");
+            weaponObj.transform.SetParent(transform);
+            weaponObj.transform.localPosition = new Vector3(0f, 0.6f, 0f);
+            weaponRenderer = weaponObj.AddComponent<SpriteRenderer>();
+            weaponRenderer.sortingOrder = 2;
+        }
+
         animator = GetComponent<CharacterAnimator>();
 
         SetIdleSprite();
@@ -69,6 +81,15 @@ public class Character : MonoBehaviour, IActionProposer, IInfoProvider
 
         if (spriteRenderer == null)
             spriteRenderer = GetComponent<SpriteRenderer>();
+
+        if (weaponRenderer == null)
+        {
+            var weaponObj = new GameObject("Weapon");
+            weaponObj.transform.SetParent(transform);
+            weaponObj.transform.localPosition = new Vector3(0f, 0.6f, 0f);
+            weaponRenderer = weaponObj.AddComponent<SpriteRenderer>();
+            weaponRenderer.sortingOrder = 2;
+        }
 
         animator = GetComponent<CharacterAnimator>();
 
@@ -433,12 +454,31 @@ public void AssignBuildTask(Vector2Int pos, string building)
         if (spriteRenderer != null && animations.ContainsKey(direction))
             spriteRenderer.sprite = animations[direction][0];
 
+        if (weaponRenderer != null)
+            weaponRenderer.sprite = null;
+
         if (animator != null)
             animator.SetWalking(false);
     }
     public Vector2Int GetGridPosition()
     {
         return GridUtils.WorldToGrid(transform.position);
+    }
+
+    public void SetWeaponSprite(Sprite sprite)
+    {
+        if (weaponRenderer != null)
+            weaponRenderer.sprite = sprite;
+    }
+
+    public void SetLevel(int value)
+    {
+        level = Mathf.Max(1, value);
+    }
+
+    public void LevelUp()
+    {
+        level += 1;
     }
     public void SetControlMode(ControlMode mode)
     {
@@ -479,6 +519,7 @@ public void AssignBuildTask(Vector2Int pos, string building)
         player.AddInfo(new InfoItem($"Tipo: {typeName}", "detail"));
         player.AddInfo(new InfoItem($"Control: {controlMode}", "detail"));
         player.AddInfo(new InfoItem($"Dueño: {owner}", "detail"));
+        player.AddInfo(new InfoItem($"Nivel: {level}", "detail"));
 
         if (TryGetComponent(out HealthComponent health))
         {
