@@ -396,6 +396,10 @@ public class MapLoader : MonoBehaviour
         renderer.sprite = buildingSprites.ContainsKey(key) ? buildingSprites[key] : defaultBuildingSprite;
         renderer.sortingOrder = 10;
 
+        var health = buildingIcon.AddComponent<StructureHealth>();
+        var pos = new Vector2Int(Mathf.RoundToInt(tile.transform.position.x), Mathf.RoundToInt(tile.transform.position.z));
+        health.Initialize(pos, building.MaxResistance);
+
     }
 
     void DrawTrees(GameObject tile, int treeCount)
@@ -446,6 +450,9 @@ public class MapLoader : MonoBehaviour
         string key = building.SpriteKey;
         renderer.sprite = buildingSprites.ContainsKey(key) ? buildingSprites[key] : defaultBuildingSprite;
         renderer.sortingOrder = 10;
+
+        var health = buildingIcon.AddComponent<StructureHealth>();
+        health.Initialize(pos, building.MaxResistance);
     }
 
     public void UpdateBuildingOrientation(Vector2Int pos, Orientation orientation)
@@ -587,7 +594,9 @@ public class MapLoader : MonoBehaviour
             animator.southSprites = warriorSouthSprites;
             animator.eastSprites = warriorEastSprites;
             animator.westSprites = warriorWestSprites;
-            role = go.AddComponent<WarriorRole>();
+            var wr = go.AddComponent<WarriorRole>();
+            wr.warriorClass = WarriorClass.SoldadoRaso;
+            role = wr;
         }
         character.LoadSprites(new Dictionary<string, Sprite[]>
             {

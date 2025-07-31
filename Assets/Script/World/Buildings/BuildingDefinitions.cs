@@ -223,6 +223,8 @@ public class AtalayaLevel1 : Building
     public override int Level => 1;
     public override BuildRequirement Cost => new BuildRequirement { wood = 20 };
     public override int VisibilityRadius => 3 + Level;
+    public override int RangedDamage => 4;
+    public override WeaponType RangedWeapon => WeaponType.Arrow;
     public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "Defensa 4 disparos por segundo" );
 }
 
@@ -231,6 +233,7 @@ public class AtalayaLevel2 : AtalayaLevel1
     public override int Level => 2;
     public override BuildRequirement Cost => new BuildRequirement { wood = 40 };
     public override int VisibilityRadius => 3 + Level;
+    public override int RangedDamage => 8;
     public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "Defensa 8 disparos por segundo" );
 }
 
@@ -239,6 +242,7 @@ public class AtalayaLevel3 : AtalayaLevel2
     public override int Level => 3;
     public override BuildRequirement Cost => new BuildRequirement { wood = 60 };
     public override int VisibilityRadius => 3 + Level;
+    public override int RangedDamage => 16;
     public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "Defensa 16 disparos por segundo" );
 }
 
@@ -247,6 +251,7 @@ public class AtalayaLevel4 : AtalayaLevel3
     public override int Level => 4;
     public override BuildRequirement Cost => new BuildRequirement { wood = 80 };
     public override int VisibilityRadius => 3 + Level;
+    public override int RangedDamage => 32;
     public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "Defensa 32 disparos por segundo" );
 }
 #endregion
@@ -257,6 +262,7 @@ public class WallLevel1 : Building
     public override string Code => BuildingCodes.Wall;
     public override int Level => 1;
     public override BuildRequirement Cost => new BuildRequirement { wood = 10 };
+    public override int MaxResistance => 10;
 
     public override bool ShouldRotate => false;
     public override string SpriteKey => $"{Code}_{Level}_{(Orientation == Orientation.Horizontal ? "H" : "V")}";
@@ -268,6 +274,7 @@ public class WallLevel2 : WallLevel1
 {
     public override int Level => 2;
     public override BuildRequirement Cost => new BuildRequirement { wood = 20 };
+    public override int MaxResistance => 20;
     public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "resistencia 20" );
 }
 
@@ -275,6 +282,7 @@ public class WallLevel3 : WallLevel2
 {
     public override int Level => 3;
     public override BuildRequirement Cost => new BuildRequirement { wood = 30 };
+    public override int MaxResistance => 30;
     public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "resistencia 30" );
 }
 
@@ -282,6 +290,7 @@ public class WallLevel4 : WallLevel3
 {
     public override int Level => 4;
     public override BuildRequirement Cost => new BuildRequirement { wood = 40 };
+    public override int MaxResistance => 40;
     public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "resistencia 40" );
 }
 #endregion

@@ -42,6 +42,26 @@ public abstract class Building
     public virtual string SpriteKey => $"{Code}_{Level}";
 
     /// <summary>
+    /// Hit points for the structure. If it reaches 0 the building is destroyed.
+    /// </summary>
+    public virtual int MaxResistance => 10;
+
+    /// <summary>
+    /// Damage dealt at long range. Non combat buildings can return 0.
+    /// </summary>
+    public virtual int RangedDamage => 0;
+
+    /// <summary>
+    /// Type of projectile used by the structure.
+    /// </summary>
+    public virtual WeaponType RangedWeapon => WeaponType.Arrow;
+
+    /// <summary>
+    /// Range for the long distance attack.
+    /// </summary>
+    public virtual int AttackRange => 3;
+
+    /// <summary>
     /// Acciones habilitadas en este nivel.
     /// </summary>
     public abstract IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell);
