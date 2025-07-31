@@ -514,8 +514,7 @@ public class MapLoader : MonoBehaviour
         {
             if (child.name.StartsWith("Building_"))
             {
-                float yRot = (building != null && !building.ShouldRotate) ? 0f :
-                    (orientation == Orientation.Horizontal ? 0f : 90f);
+                float yRot = (building != null && !building.ShouldRotate) ? 0f :(orientation == Orientation.Horizontal ? 0f : 90f);
                 child.localRotation = Quaternion.Euler(-32, yRot, 32);
 
                 if (building != null && !building.ShouldRotate && child.TryGetComponent<SpriteRenderer>(out var rend))
