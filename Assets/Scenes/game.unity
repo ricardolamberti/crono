@@ -912,6 +912,94 @@ MonoBehaviour:
   - {fileID: -1340127470, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
   - {fileID: -1863310492, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
   - {fileID: 1291912294, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+  soldadoRasoSprites:
+    north:
+    - {fileID: 321498602, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: 1769965952, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: 320080586, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    south:
+    - {fileID: 1745431306, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: -1789570123, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: -463580550, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    east:
+    - {fileID: -141734767, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: 4995223, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: 252599384, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    west:
+    - {fileID: -1639518841, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: 1249187667, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: -1676839833, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+  arqueroSprites:
+    north:
+    - {fileID: 1073000670, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: 2088440166, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: 2136900228, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    south:
+    - {fileID: -309974351, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: -1922563264, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: -547758941, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    east:
+    - {fileID: -947855627, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: -1432272365, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: 445482215, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    west:
+    - {fileID: 563909890, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: 1947613602, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: 1009405168, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+  tanqueSprites:
+    north:
+    - {fileID: 1011502378, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: 2037655124, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: 1634547432, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    south:
+    - {fileID: -1963016186, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: 1327190823, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: 44557685, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    east:
+    - {fileID: -1315830535, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: 1704256697, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: 258749708, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    west:
+    - {fileID: 739907800, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: 739907800, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: 440698487, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+  eliteSprites:
+    north:
+    - {fileID: -1146325917, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: 477912563, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: -2048885289, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    south:
+    - {fileID: 1316558887, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: 724139196, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: -1446026966, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    east:
+    - {fileID: 1908875206, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: 1889731191, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: 2053344478, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    west:
+    - {fileID: -1340127470, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: -1863310492, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: 1291912294, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+  destructorSprites:
+    north:
+    - {fileID: 1135083526, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: -674185064, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: -1610019563, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    south:
+    - {fileID: -765382535, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: 814666221, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: -985753611, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    east:
+    - {fileID: 182264363, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: -1807105520, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: -790226298, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    west:
+    - {fileID: 1490954961, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: 375906505, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: -198031234, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+  arrowWeaponSprite: {fileID: 0}
+  bulletWeaponSprite: {fileID: 0}
+  rayWeaponSprite: {fileID: 0}
   treeSprites:
   - {fileID: -1488921459, guid: c8cda923bc4504441a08c8d6042385f2, type: 3}
   - {fileID: -414263750, guid: c8cda923bc4504441a08c8d6042385f2, type: 3}
