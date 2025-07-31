@@ -1,4 +1,5 @@
 using UnityEngine;
+using GameConstants;
 
 public abstract class Player
 {
@@ -17,6 +18,7 @@ public abstract class Player
         {
             MapLoader.instance.SpawnCharacter(SpawnPosition, Character.Type.Worker, Id);
             MapLoader.instance.RevealRadius(SpawnPosition, 1);
+            MapLoader.instance.PlaceBuilding(SpawnPosition, GameConstants.BuildingCodes.TemporalBreach, Id);
         }
     }
 

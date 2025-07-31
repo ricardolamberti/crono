@@ -68,6 +68,8 @@ public static class BuildingFactory
         { (GameConstants.BuildingCodes.Bridge, 1), () => new BridgeLevel1() },
         { (GameConstants.BuildingCodes.Bridge, 2), () => new BridgeLevel2() },
         { (GameConstants.BuildingCodes.Bridge, 3), () => new BridgeLevel3() },
+
+        { (GameConstants.BuildingCodes.TemporalBreach, 1), () => new TemporalBreach() },
     };
 
     public static Building Create(string code, int level = 1)

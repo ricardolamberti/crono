@@ -51,3 +51,4 @@ Este documento detalla las acciones habilitadas en cada nivel de las distintas c
 | Puente | 1 | transitable |
 | Puente | 2 | transitable |
 | Puente | 3 | transitable |
+| Brecha temporal | 1 | pedir recursos |
