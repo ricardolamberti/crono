@@ -84,6 +84,8 @@ public class MapLoader : MonoBehaviour
     public Sprite airportSprite;
     public Sprite airportSprite2;
 
+    public Sprite temporalBreachSprite;
+
     public Sprite iconGold;
     public Sprite iconWood;
     public Sprite iconCrono;
@@ -223,7 +225,7 @@ public class MapLoader : MonoBehaviour
             { $"{BuildingCodes.Airport}_1", airportSprite },
             { $"{BuildingCodes.Airport}_2", airportSprite2 },
 
-            { $"{BuildingCodes.TemporalBreach}_1", defaultBuildingSprite },
+            { $"{BuildingCodes.TemporalBreach}_1", temporalBreachSprite },
           
             { $"{BuildingCodes.Townhall}_1", defaultBuildingSprite },
             { $"{BuildingCodes.Townhall}_2", defaultBuildingSprite2 },

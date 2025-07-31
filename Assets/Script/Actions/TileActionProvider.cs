@@ -62,7 +62,7 @@ public class TileActionProvider : MonoBehaviour, IActionProposer
                 }
             }
 
-            if (cell.building != BuildingCodes.Townhall)
+            if (cell.building != BuildingCodes.Townhall && cell.building != BuildingCodes.TemporalBreach)
             {
                 player.AddAction(new ControlPanelAction("Derrumbar", () => {
                     MapLoader.instance.DemolishBuilding(new Vector2Int(cell.x, cell.y));
