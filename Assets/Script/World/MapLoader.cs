@@ -522,6 +522,11 @@ public class MapLoader : MonoBehaviour
             var tower = buildingIcon.AddComponent<TowerAttack>();
             tower.Initialize(pos);
         }
+        if (building.Code == BuildingCodes.TemporalBreach)
+        {
+            var breach = buildingIcon.AddComponent<TimeBreach>();
+            breach.Initialize(pos);
+        }
     }
 
     public void PlaceBuilding(Vector2Int pos, string code, string owner, int level = 1)
