@@ -21,6 +21,18 @@
                 <ui:VisualElement class="resource-icon crono-icon" />
                 <ui:Label name="CronoLabel" text="0" />
             </ui:VisualElement>
+            <ui:VisualElement class="resource-box">
+                <ui:VisualElement class="resource-icon worker-icon" />
+                <ui:Label name="WorkerLabel" text="0/0" />
+            </ui:VisualElement>
+            <ui:VisualElement class="resource-box">
+                <ui:VisualElement class="resource-icon soldier-icon" />
+                <ui:Label name="SoldierLabel" text="0/0" />
+            </ui:VisualElement>
+            <ui:VisualElement class="resource-box">
+                <ui:VisualElement class="resource-icon scientist-icon" />
+                <ui:Label name="ScientistLabel" text="0/0" />
+            </ui:VisualElement>
         </ui:VisualElement>
         <ui:VisualElement name="buttons" class="panel-column buttons-panel" />
         <ui:VisualElement name="info" class="panel-column info-panel" />

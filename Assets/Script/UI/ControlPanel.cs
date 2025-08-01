@@ -23,6 +23,9 @@ public class ControlPanel : MonoBehaviour
     private Label woodLabel;
     private Label foodLabel;
     private Label cronoLabel;
+    private Label workerLabel;
+    private Label soldierLabel;
+    private Label scientistLabel;
     private Label dateLabel;
     public bool freeResource = false;
 
@@ -38,6 +41,9 @@ public class ControlPanel : MonoBehaviour
         woodLabel = root.Q<Label>("WoodLabel");
         foodLabel = root.Q<Label>("FoodLabel");
         cronoLabel = root.Q<Label>("CronoLabel");
+        workerLabel = root.Q<Label>("WorkerLabel");
+        soldierLabel = root.Q<Label>("SoldierLabel");
+        scientistLabel = root.Q<Label>("ScientistLabel");
         dateLabel = uiDocument.rootVisualElement.Q<Label>("DateLabel");
         if (resourceInfo != null)
         {
@@ -202,6 +208,14 @@ public class ControlPanel : MonoBehaviour
         if (woodLabel != null) woodLabel.text = res.wood.ToString();
         if (foodLabel != null) foodLabel.text = res.food.ToString();
         if (cronoLabel != null) cronoLabel.text = res.crono.ToString();
+        var characters = GameObject.FindObjectsOfType<Character>();
+        int workers = characters.Count(c => c.characterType == Character.Type.Worker);
+        int soldiers = characters.Count(c => c.characterType == Character.Type.Warrior);
+        int scientists = characters.Count(c => c.characterType == Character.Type.Scientist);
+        int totalHousing = workers + soldiers + scientists + res.freeHousing;
+        if (workerLabel != null) workerLabel.text = $"{workers}/{totalHousing}";
+        if (soldierLabel != null) soldierLabel.text = $"{soldiers}/{soldiers + res.barracksUnits}";
+        if (scientistLabel != null) scientistLabel.text = $"{scientists}/{scientists + res.academicUnits}";
     }
 
     void UpdateDateLabel(int month, int year)
