@@ -198,10 +198,10 @@ public class ControlPanel : MonoBehaviour
     {
         if (GameState.playerResources == null) return;
         var res = GameState.playerResources;
-        if (goldLabel != null) goldLabel.text = $"Oro: {res.gold}";
-        if (woodLabel != null) woodLabel.text = $"Madera: {res.wood}";
-        if (foodLabel != null) foodLabel.text = $"Comida: {res.food}";
-        if (cronoLabel != null) cronoLabel.text = $"Crono: {res.crono}";
+        if (goldLabel != null) goldLabel.text = res.gold.ToString();
+        if (woodLabel != null) woodLabel.text = res.wood.ToString();
+        if (foodLabel != null) foodLabel.text = res.food.ToString();
+        if (cronoLabel != null) cronoLabel.text = res.crono.ToString();
     }
 
     void UpdateDateLabel(int month, int year)
