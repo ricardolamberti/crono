@@ -61,5 +61,8 @@ public static class SaveSystem
         GameTimeManager.CurrentYear = data.year;
         GameTimeManager.CurrentMonth = data.month;
         Debug.Log($"Game loaded from {path}");
+
+        if (MapLoader.instance != null)
+            MapLoader.instance.ReloadFromState();
     }
 }

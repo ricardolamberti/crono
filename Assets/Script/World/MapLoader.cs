@@ -386,6 +386,24 @@ public class MapLoader : MonoBehaviour
         Camera.main.transform.LookAt(center); // Apunta al centro del mapa
 
     }
+
+    public void ReloadFromState()
+    {
+        if (mapParent == null) return;
+
+        foreach (Transform child in mapParent)
+        {
+            Destroy(child.gameObject);
+        }
+
+        tiles.Clear();
+        MapState.buildings.Clear();
+
+        var cells = new List<MapCellDTO>(MapState.cellMap.Values);
+        GenerateGrid(cells);
+        CenterCamera(cells);
+        PlayerManager.Instance?.InitializePlayers();
+    }
     public bool IsPositionFree(Vector2Int pos)
     {
         // 1. Que exista el tile
