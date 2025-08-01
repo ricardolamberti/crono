@@ -3,6 +3,7 @@ using UnityEngine;
 using static DTO;
 using GameConstants;
 using System.Collections;
+using System.Linq;
 
 // Orientation is used for directional buildings like bridges or walls
 
@@ -164,6 +165,14 @@ public void AssignBuildTask(Vector2Int pos, string building)
     {
         currentPath = new Queue<Vector2Int>(path);
         MoveToNext();
+        TimelineManager.Instance?.RecordEvent(
+            name,
+            "path_set",
+            new Dictionary<string, string>
+            {
+                {"path", string.Join(";", path.Select(p => $"{p.x},{p.y}"))}
+            }
+        );
     }
 
     public void SetGatherRoute(List<Vector2Int> route)
@@ -187,6 +196,11 @@ public void AssignBuildTask(Vector2Int pos, string building)
         attackTarget = target;
         currentTask = Task.Attack;
         attackTimer = 0f;
+        TimelineManager.Instance?.RecordEvent(
+            name,
+            "start_attack",
+            new Dictionary<string, string> { { "target", target.name } }
+        );
         MoveOrChaseTarget();
     }
 
@@ -442,6 +456,19 @@ public void AssignBuildTask(Vector2Int pos, string building)
                 MapLoader.instance.RevealRadius(pos, buildingObj.VisibilityRadius);
             Debug.Log($"{name} construyó {building} en {pos}");
             MapLoader.instance.ClearConstructionPreview(pos);
+
+            var ev = TimelineManager.Instance?.RecordEvent(
+                name,
+                "build",
+                new Dictionary<string, string>
+                {
+                    {"building", building},
+                    {"x", pos.x.ToString()},
+                    {"y", pos.y.ToString()}
+                }
+            );
+            if (ev != null)
+                TimelineManager.Instance.RegisterObject($"building:{pos.x},{pos.y}", ev);
 
             if (building == BuildingCodes.Townhall)
             {
