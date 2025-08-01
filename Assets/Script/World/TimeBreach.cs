@@ -6,6 +6,42 @@ public class TimeBreach : MonoBehaviour
     public TimeRequestConfig workerConfig;
     public TimeRequestConfig[] soldierConfigs;
 
+    void Awake()
+    {
+        // Ensure default configs exist so the UI does not crash when
+        // the component is added dynamically by MapLoader.
+        if (resourceConfigs == null || resourceConfigs.Length == 0)
+        {
+            resourceConfigs = new[]
+            {
+                CreateConfig("gold"),
+                CreateConfig("wood"),
+                CreateConfig("food")
+            };
+        }
+
+        if (workerConfig == null)
+        {
+            workerConfig = CreateConfig("worker");
+        }
+
+        if (soldierConfigs == null || soldierConfigs.Length == 0)
+        {
+            soldierConfigs = new[] { CreateConfig("warrior") };
+        }
+    }
+
+    static TimeRequestConfig CreateConfig(string id)
+    {
+        var cfg = ScriptableObject.CreateInstance<TimeRequestConfig>();
+        cfg.id = id;
+        cfg.minFutureYears = 0;
+        cfg.maxFutureYears = 5;
+        cfg.baseCost = 1;
+        cfg.costFactor = 1f;
+        return cfg;
+    }
+
     private Vector2Int position;
     public Vector2Int Position => position;
 
