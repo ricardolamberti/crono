@@ -526,6 +526,21 @@ public class MapLoader : MonoBehaviour
             DrawBuilding(pos, buildingObj);
             RevealRadius(pos, buildingObj.VisibilityRadius);
         }
+
+        if (TimelineManager.Instance != null)
+        {
+            var ev = TimelineManager.Instance.RecordEvent(
+                owner,
+                "place_building",
+                new Dictionary<string, string>
+                {
+                    {"code", code},
+                    {"x", pos.x.ToString()},
+                    {"y", pos.y.ToString()}
+                }
+            );
+            TimelineManager.Instance.RegisterObject($"building:{pos.x},{pos.y}", ev);
+        }
     }
 
     public void UpdateBuildingOrientation(Vector2Int pos, Orientation orientation)
@@ -552,6 +567,17 @@ public class MapLoader : MonoBehaviour
                 break;
             }
         }
+
+        TimelineManager.Instance?.RecordEvent(
+            "system",
+            "update_orientation",
+            new Dictionary<string, string>
+            {
+                {"x", pos.x.ToString()},
+                {"y", pos.y.ToString()},
+                {"orientation", orientation.ToString()}
+            }
+        );
     }
 
 
@@ -702,6 +728,21 @@ public class MapLoader : MonoBehaviour
 
         go.transform.LookAt(Camera.main.transform);
         go.transform.rotation = Quaternion.Euler(0, go.transform.rotation.eulerAngles.y, 0);
+
+        if (TimelineManager.Instance != null)
+        {
+            var ev = TimelineManager.Instance.RecordEvent(
+                owner,
+                "spawn_character",
+                new Dictionary<string, string>
+                {
+                    {"type", type.ToString()},
+                    {"x", pos.x.ToString()},
+                    {"y", pos.y.ToString()}
+                }
+            );
+            TimelineManager.Instance.RegisterObject(go.GetInstanceID().ToString(), ev);
+        }
     }
 
     public void DemolishBuilding(Vector2Int pos)
@@ -733,6 +774,17 @@ public class MapLoader : MonoBehaviour
         }
 
         Debug.Log($"Edificio en {pos} ha sido demolido.");
+
+        TimelineManager.Instance?.RecordEvent(
+            "system",
+            "demolish_building",
+            new Dictionary<string, string>
+            {
+                {"code", oldBuilding},
+                {"x", pos.x.ToString()},
+                {"y", pos.y.ToString()}
+            }
+        );
     }
 
     public void UpgradeBuilding(Vector2Int pos, Building newBuilding)
@@ -769,6 +821,18 @@ public class MapLoader : MonoBehaviour
             (PlayerManager.Instance == null || PlayerManager.Instance.IsHumanPlayer(cell.owner)))
             RevealRadius(pos, b.VisibilityRadius);
         Debug.Log($"Edificio en {pos} actualizado de {old} a {newBuilding.Code}");
+
+        TimelineManager.Instance?.RecordEvent(
+            cell.owner,
+            "upgrade_building",
+            new Dictionary<string, string>
+            {
+                {"from", old},
+                {"to", newBuilding.Code},
+                {"x", pos.x.ToString()},
+                {"y", pos.y.ToString()}
+            }
+        );
     }
 
 
