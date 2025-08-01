@@ -22,10 +22,13 @@ public static class BuildingActionHelper
                 yield return SaveState(label);
             else if (lower.Contains("recuperar"))
                 yield return ShowLoadMenu(label);
+            else if (lower.Contains("pedir recursos"))
+                yield return ShowRequestResource(label);
             else
                 yield return NotImplemented(label);
         }
     }
+
     public static ControlPanelAction SpawnCharacter(string label, MapCellDTO cell, Character.Type type)
     {
         return new ControlPanelAction(label, () => SpawnCharacterNear(cell, type));
@@ -56,7 +59,14 @@ public static class BuildingActionHelper
         return new ControlPanelAction(label, () => ControlPanel.Instance.ShowLoadMenu());
     }
 
-    public static void SpawnCharacterNear(MapCellDTO cell, Character.Type type)
+    public static ControlPanelAction ShowRequestResource(string label)
+    {
+        return new ControlPanelAction(label, () => ControlPanel.Instance.ShowRequestResource());
+
+    }
+  
+
+public static void SpawnCharacterNear(MapCellDTO cell, Character.Type type)
     {
         var req = BuildRules.TakeRequirements(type);
         if (!ControlPanel.Instance.freeResource)

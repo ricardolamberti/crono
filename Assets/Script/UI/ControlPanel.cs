@@ -65,14 +65,7 @@ public class ControlPanel : MonoBehaviour
         info.Clear();
         resourceInfo?.Clear();
         GamePlayer.Instance.Clear();
-        var breach = selected.GetComponentInChildren<TimeBreach>();
-        if (breach != null)
-        {
-            title.text = "Brecha Temporal";
-            buttons.Clear();
-            ShowBreachRoot(breach);
-            return;
-        }
+     
         var character = selected.GetComponent<Character>();
         if (character != null)
         {
@@ -176,7 +169,14 @@ public class ControlPanel : MonoBehaviour
 
         root.Insert(0, blocker); // al fondo para no cubrir los controles
     }
-
+    public void ShowRequestResource()
+    {
+        title.text = "Brecha Temporal";
+        buttons.Clear();
+        ShowBreachRoot(currentSelection.GetComponentInChildren<TimeBreach>());
+        return;
+        
+    }
     public void ShowLoadMenu()
     {
         buttons.Clear();
