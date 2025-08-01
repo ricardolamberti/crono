@@ -18,6 +18,10 @@ public static class BuildingActionHelper
                 yield return SpawnCharacter(label, cell, Character.Type.Warrior);
             else if (lower.Contains("pedir recursos"))
                 yield return RequestResources(label);
+            else if (lower.Contains("grabar estado"))
+                yield return SaveState(label);
+            else if (lower.Contains("recuperar"))
+                yield return ShowLoadMenu(label);
             else
                 yield return NotImplemented(label);
         }
@@ -40,6 +44,16 @@ public static class BuildingActionHelper
             GameState.playerResources.wood += 10;
             Debug.Log("Recursos otorgados");
         });
+    }
+
+    public static ControlPanelAction SaveState(string label)
+    {
+        return new ControlPanelAction(label, () => SaveSystem.SaveGame());
+    }
+
+    public static ControlPanelAction ShowLoadMenu(string label)
+    {
+        return new ControlPanelAction(label, () => ControlPanel.Instance.ShowLoadMenu());
     }
 
     public static void SpawnCharacterNear(MapCellDTO cell, Character.Type type)
