@@ -15,8 +15,8 @@ public class GameTimeManager : MonoBehaviour
     private float timer = 0f;
     private int currentCycle = 0;
 
-    public static int CurrentMonth { get; private set; } = 1;
-    public static int CurrentYear { get; private set; } = 1;
+    public static int CurrentMonth { get;  set; } = 1;
+    public static int CurrentYear { get;  set; } = 1;
 
     public static event System.Action<int, int> OnDateChanged;
 
