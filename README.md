@@ -4,6 +4,7 @@ This repository contains a Unity project. The C# scripts are organized under `As
 
 The game now includes a multi-level **Bridge** building that lets characters traverse water tiles.
 Characters now support levels and warriors can display a weapon sprite based on their class.
+A new **TimelineManager** provides deterministic event tracking and time travel support.
 
 ## Folder Structure
 
