@@ -92,6 +92,15 @@
     text-align: center;
 }
 .gold-icon { background-image: resource("Icons/gold"); }
-.wood-icon { background-image: resource("Icons/generic"); }
-.food-icon { background-image: resource("Icons/generic"); }
+.resources-panel {
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 110px;
+    gap: 4px;
+}
+.wood-icon { background-image: resource("Icons/wood"); }
+.food-icon { background-image: resource("Icons/food"); }
 .crono-icon { background-image: resource("Icons/crono"); }
+.worker-icon { background-image: resource("Icons/worker"); }
+.soldier-icon { background-image: resource("Icons/soldier"); }
+.scientist-icon { background-image: resource("Icons/scientist"); }
