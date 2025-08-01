@@ -65,6 +65,14 @@ public class ControlPanel : MonoBehaviour
         info.Clear();
         resourceInfo?.Clear();
         GamePlayer.Instance.Clear();
+        var breach = selected.GetComponentInChildren<TimeBreach>();
+        if (breach != null)
+        {
+            title.text = "Brecha Temporal";
+            buttons.Clear();
+            ShowBreachRoot(breach);
+            return;
+        }
         var character = selected.GetComponent<Character>();
         if (character != null)
         {
@@ -210,6 +218,60 @@ public class ControlPanel : MonoBehaviour
     void Patrol() { Debug.Log("Patrullando..."); }
     void Attack() { Debug.Log("Atacando..."); }
     void Heal() { Debug.Log("Curando..."); }
+
+    void ShowBreachRoot(TimeBreach breach)
+    {
+        buttons.Clear();
+        AddButton("Pedir Recurso", () => ShowBreachCategory(breach, "resource"));
+        AddButton("Pedir Obrero", () => ShowBreachWorker(breach));
+        AddButton("Pedir Soldado", () => ShowBreachCategory(breach, "soldier"));
+    }
+
+    void ShowBreachCategory(TimeBreach breach, string type)
+    {
+        buttons.Clear();
+        TimeRequestConfig[] configs = type == "resource" ? breach.resourceConfigs : breach.soldierConfigs;
+        if (configs == null) return;
+        foreach (var cfg in configs)
+        {
+            string label = cfg.id;
+            AddButton(label, () => ShowBreachSlider(breach, cfg));
+        }
+        AddButton("Volver", () => ShowBreachRoot(breach));
+    }
+
+    void ShowBreachWorker(TimeBreach breach)
+    {
+        ShowBreachSlider(breach, breach.workerConfig);
+    }
+
+    void ShowBreachSlider(TimeBreach breach, TimeRequestConfig config)
+    {
+        buttons.Clear();
+        var slider = new SliderInt(config.minFutureYears, config.maxFutureYears);
+        slider.value = config.minFutureYears;
+        slider.style.flexGrow = 1;
+
+        var label = new Label();
+        void UpdateText(int val)
+        {
+            int cost = breach.CalculateCost(config, val);
+            label.text = $"Pedido en {val} años - Costo: {cost} crono";
+        }
+        UpdateText(slider.value);
+        slider.RegisterValueChangedCallback(evt => UpdateText(evt.newValue));
+
+        var confirm = new Button(() =>
+        {
+            breach.MakeRequest(config, slider.value);
+            ShowBreachRoot(breach);
+        }) { text = "Confirmar" };
+
+        buttons.Add(slider);
+        buttons.Add(label);
+        buttons.Add(confirm);
+        AddButton("Volver", () => ShowBreachRoot(breach));
+    }
 }
 
 
