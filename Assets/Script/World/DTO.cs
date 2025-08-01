@@ -30,6 +30,28 @@ public class DTO
         public List<MapCellDTO> cells;
     }
 
+    [System.Serializable]
+    public struct Vec2IntDTO
+    {
+        public int x;
+        public int y;
+
+        public Vec2IntDTO(int x, int y)
+        {
+            this.x = x;
+            this.y = y;
+        }
+    }
+
+    [System.Serializable]
+    public class CharacterDTO
+    {
+        public int x;
+        public int y;
+        public string type;
+        public string owner;
+    }
+
    
     public List<Sprite> treeSprites;
     void DrawResourceIcon(GameObject tile, string resource, Sprite icon)
