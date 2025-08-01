@@ -68,3 +68,30 @@
     color: white;
     margin-bottom: 4px;
 }
+.resource-box {
+    width: 48px;
+    height: 60px;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid gray;
+    background-color: rgba(0, 0, 0, 0.4);
+    padding: 2px;
+    margin-bottom: 4px;
+}
+.resource-box .resource-icon {
+    width: 40px;
+    height: 40px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.resource-box .unity-label {
+    font-size: 12px;
+    color: white;
+    text-align: center;
+}
+.gold-icon { background-image: resource("Icons/gold"); }
+.wood-icon { background-image: resource("Icons/generic"); }
+.food-icon { background-image: resource("Icons/generic"); }
+.crono-icon { background-image: resource("Icons/crono"); }

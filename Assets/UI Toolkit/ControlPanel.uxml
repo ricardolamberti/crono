@@ -5,10 +5,22 @@
     </ui:VisualElement>
     <ui:VisualElement name="root" class="panel-root">
         <ui:VisualElement class="panel-column resources-panel">
-            <ui:Label name="GoldLabel" text="Oro: 0" />
-            <ui:Label name="WoodLabel" text="Madera: 0" />
-            <ui:Label name="FoodLabel" text="Comida: 0" />
-            <ui:Label name="CronoLabel" text="Crono: 0" />
+            <ui:VisualElement class="resource-box">
+                <ui:VisualElement class="resource-icon gold-icon" />
+                <ui:Label name="GoldLabel" text="0" />
+            </ui:VisualElement>
+            <ui:VisualElement class="resource-box">
+                <ui:VisualElement class="resource-icon wood-icon" />
+                <ui:Label name="WoodLabel" text="0" />
+            </ui:VisualElement>
+            <ui:VisualElement class="resource-box">
+                <ui:VisualElement class="resource-icon food-icon" />
+                <ui:Label name="FoodLabel" text="0" />
+            </ui:VisualElement>
+            <ui:VisualElement class="resource-box">
+                <ui:VisualElement class="resource-icon crono-icon" />
+                <ui:Label name="CronoLabel" text="0" />
+            </ui:VisualElement>
         </ui:VisualElement>
         <ui:VisualElement name="buttons" class="panel-column buttons-panel" />
         <ui:VisualElement name="info" class="panel-column info-panel" />
