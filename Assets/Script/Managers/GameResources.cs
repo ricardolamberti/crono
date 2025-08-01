@@ -1,3 +1,4 @@
+[System.Serializable]
 public class GameResources
 {
     public int gold = 100;

@@ -417,7 +417,8 @@ public class TemporalBreach : Building
     public override string Code => BuildingCodes.TemporalBreach;
     public override int Level => 1;
     public override BuildRequirement Cost => new BuildRequirement();
-    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) 
-        => BuildingActionHelper.FromLabels(cell, "pedir recursos");
+    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell)
+        => BuildingActionHelper.FromLabels(cell,
+            "pedir recursos", "grabar estado", "recuperar");
 }
 #endregion

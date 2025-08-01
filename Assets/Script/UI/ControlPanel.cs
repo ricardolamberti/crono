@@ -5,6 +5,7 @@ using UnityEngine.UIElements;
 using static Character;
 using static DTO;
 using GameConstants;
+using System.IO;
 
 
 public class ControlPanel : MonoBehaviour
@@ -16,6 +17,7 @@ public class ControlPanel : MonoBehaviour
     private VisualElement info;
     private VisualElement resourceInfo;
     public static ControlPanel Instance { get; private set; }
+    private GameObject currentSelection;
 
     private Label goldLabel;
     private Label woodLabel;
@@ -59,6 +61,7 @@ public class ControlPanel : MonoBehaviour
     }
     void UpdatePanel(GameObject selected)
     {
+        currentSelection = selected;
         info.Clear();
         resourceInfo?.Clear();
         GamePlayer.Instance.Clear();
@@ -164,6 +167,23 @@ public class ControlPanel : MonoBehaviour
         blocker.RegisterCallback<ClickEvent>(evt => evt.StopPropagation());
 
         root.Insert(0, blocker); // al fondo para no cubrir los controles
+    }
+
+    public void ShowLoadMenu()
+    {
+        buttons.Clear();
+        info.Clear();
+        title.text = "Cargar estado";
+        foreach (var file in SaveSystem.GetSavedFiles())
+        {
+            string path = file;
+            AddButton(Path.GetFileNameWithoutExtension(file), () =>
+            {
+                SaveSystem.LoadGame(path);
+                UpdatePanel(currentSelection);
+            });
+        }
+        AddButton("Cancelar", () => UpdatePanel(currentSelection));
     }
 
     void UpdateResourceLabels()
