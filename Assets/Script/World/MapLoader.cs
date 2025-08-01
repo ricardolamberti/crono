@@ -444,10 +444,10 @@ public class MapLoader : MonoBehaviour
 
         GameObject buildingIcon = new GameObject($"Building_{building.Code}");
         buildingIcon.transform.SetParent(tile.transform);
-        buildingIcon.transform.localPosition = new Vector3(0, 1f, -0.25f);
-        buildingIcon.transform.localScale = Vector3.one * 0.45f;
-        float yRot = building.ShouldRotate ? (building.Orientation == Orientation.Horizontal ? 0f : 90f) : 0f;
-        buildingIcon.transform.localRotation = Quaternion.Euler(-90, yRot - 30f, 40);
+        buildingIcon.transform.localPosition = new Vector3(-.9f, .8f, -0.25f);
+        buildingIcon.transform.localScale = Vector3.one * 0.35f;
+        float yRot = building.ShouldRotate ? (building.Orientation == Orientation.Horizontal ? -10f : 90f) : -10f;
+        buildingIcon.transform.localRotation = Quaternion.Euler(-60, yRot, 35);
         buildingIcon.tag = building.Code;
         var renderer = buildingIcon.AddComponent<SpriteRenderer>();
         string key = building.SpriteKey;
