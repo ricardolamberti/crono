@@ -134,24 +134,25 @@ public class TileActionProvider : MonoBehaviour, IActionProposer
     Character FindFreeWorker()
     {
         var all = GameObject.FindObjectsOfType<Character>();
+
+        // Primero buscar un obrero que no esté realizando ninguna tarea
         foreach (var c in all)
         {
-            if (c.role is WorkerRole &&
-                c.controlMode == Character.ControlMode.Automatic &&
-                c.currentTask == Character.Task.None)
+            if (c.role is WorkerRole && c.currentTask == Character.Task.None)
             {
                 return c;
             }
         }
+
+        // Si no hay obreros libres, tomar cualquiera en modo automático
         foreach (var c in all)
         {
-            if (c.role is WorkerRole &&
-                c.controlMode == Character.ControlMode.Manual &&
-                c.currentTask == Character.Task.None)
+            if (c.role is WorkerRole && c.controlMode == Character.ControlMode.Automatic)
             {
                 return c;
             }
         }
+
         return null;
     }
 
