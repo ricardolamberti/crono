@@ -8,6 +8,7 @@ using GameConstants;
 public class TileActionProvider : MonoBehaviour, IActionProposer
 {
     TileClickHandler handler;
+    static Sprite demolishIcon;
 
     static readonly System.Collections.Generic.Dictionary<string, string[]> terrainBuildings = new()
     {
@@ -19,6 +20,8 @@ public class TileActionProvider : MonoBehaviour, IActionProposer
     void Awake()
     {
         handler = GetComponent<TileClickHandler>();
+        if (demolishIcon == null)
+            demolishIcon = Resources.Load<Sprite>("Icons/bomb");
     }
 
     public void ProposeActions(GamePlayer player)
@@ -69,7 +72,7 @@ public class TileActionProvider : MonoBehaviour, IActionProposer
                 player.AddAction(new ControlPanelAction("Derrumbar", () => {
                     MapLoader.instance.DemolishBuilding(new Vector2Int(cell.x, cell.y));
                     GameEvents.RaiseSelection(gameObject);
-                }));
+                }, demolishIcon));
             }
             return;
         }
