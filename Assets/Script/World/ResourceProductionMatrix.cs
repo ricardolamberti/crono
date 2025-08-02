@@ -17,6 +17,18 @@ public static class ResourceProductionMatrix
         { "warrior", new ResourceFlow(food: -2) },
     };
 
+    public static readonly Dictionary<(string, int), float> levelMultipliers = new()
+    {
+        { (BuildingCodes.Lumbermill, 1), 1f },
+        { (BuildingCodes.Lumbermill, 2), 2f },
+        { (BuildingCodes.Lumbermill, 3), 3f },
+        { (BuildingCodes.Lumbermill, 4), 4f },
+        { (BuildingCodes.Farm, 1), 1f },
+        { (BuildingCodes.Farm, 2), 2f },
+        { (BuildingCodes.Farm, 3), 3f },
+        { (BuildingCodes.Farm, 4), 4f },
+    };
+
     public static ResourceFlow GetFlow(string code)
     {
         return production.TryGetValue(code, out var flow) ? flow : new ResourceFlow();
@@ -25,5 +37,10 @@ public static class ResourceProductionMatrix
     public static ResourceFlow GetFlow(CharacterRole role)
     {
         return GetFlow(role.Code);
+    }
+
+    public static float GetMultiplier(string code, int level)
+    {
+        return levelMultipliers.TryGetValue((code, level), out var mult) ? mult : 1f;
     }
 }
