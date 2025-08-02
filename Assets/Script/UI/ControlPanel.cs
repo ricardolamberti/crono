@@ -26,6 +26,7 @@ public class ControlPanel : MonoBehaviour
     private Label workerLabel;
     private Label soldierLabel;
     private Label scientistLabel;
+    private Label scienceLabel;
     private Label dateLabel;
     public bool freeResource = false;
 
@@ -44,6 +45,7 @@ public class ControlPanel : MonoBehaviour
         workerLabel = root.Q<Label>("WorkerLabel");
         soldierLabel = root.Q<Label>("SoldierLabel");
         scientistLabel = root.Q<Label>("ScientistLabel");
+        scienceLabel = root.Q<Label>("ScienceLabel");
         dateLabel = uiDocument.rootVisualElement.Q<Label>("DateLabel");
         if (resourceInfo != null)
         {
@@ -208,6 +210,7 @@ public class ControlPanel : MonoBehaviour
         if (woodLabel != null) woodLabel.text = res.wood.ToString();
         if (foodLabel != null) foodLabel.text = res.food.ToString();
         if (cronoLabel != null) cronoLabel.text = res.crono.ToString();
+        if (scienceLabel != null) scienceLabel.text = res.science.ToString();
         var characters = GameObject.FindObjectsOfType<Character>();
         int workers = characters.Count(c => c.characterType == Character.Type.Worker);
         int soldiers = characters.Count(c => c.characterType == Character.Type.Warrior);
