@@ -48,6 +48,8 @@ public class GameTimeManager : MonoBehaviour
         int farmCount = 0;
         int mineCount = 0;
         int lumberCount = 0;
+        float farmMultiplier = 0f;
+        float lumberMultiplier = 0f;
 
         foreach (var cell in MapState.cellMap.Values)
         {
@@ -58,12 +60,14 @@ public class GameTimeManager : MonoBehaviour
             {
                 case BuildingCodes.Farm:
                     farmCount++;
+                    farmMultiplier += ResourceProductionMatrix.GetMultiplier(BuildingCodes.Farm, cell.level);
                     break;
                 case BuildingCodes.Mine:
                     mineCount++;
                     break;
                 case BuildingCodes.Lumbermill:
                     lumberCount++;
+                    lumberMultiplier += ResourceProductionMatrix.GetMultiplier(BuildingCodes.Lumbermill, cell.level);
                     break;
                 default:
                     total += ResourceProductionMatrix.GetFlow(cell.building);
@@ -157,14 +161,16 @@ public class GameTimeManager : MonoBehaviour
         {
             int effective = Mathf.Min(woodWorkers, lumberCount * workersPerBuilding);
             float groups = effective / (float)workersPerBuilding;
-            total += ResourceProductionMatrix.GetFlow(BuildingCodes.Lumbermill).Scale(groups);
+            float avgMultiplier = lumberMultiplier / lumberCount;
+            total += ResourceProductionMatrix.GetFlow(BuildingCodes.Lumbermill).Scale(groups * avgMultiplier);
         }
 
         if (farmCount > 0)
         {
             int effective = Mathf.Min(foodWorkers, farmCount * workersPerBuilding);
             float groups = effective / (float)workersPerBuilding;
-            total += ResourceProductionMatrix.GetFlow(BuildingCodes.Farm).Scale(groups);
+            float avgMultiplier = farmMultiplier / farmCount;
+            total += ResourceProductionMatrix.GetFlow(BuildingCodes.Farm).Scale(groups * avgMultiplier);
         }
 
         GameState.playerResources.AddFlow(total);
