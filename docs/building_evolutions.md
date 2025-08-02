@@ -18,29 +18,29 @@ Este documento detalla las acciones habilitadas en cada nivel de las distintas c
 | Puerto | 2 | nuevo pesquero, nuevo mercante |
 | Puerto | 3 | nuevo pesquero, nuevo mercante, nuevo patrulla |
 | Puerto | 4 | nuevo pesquero, nuevo mercante, nuevo patrulla, nuevo portavion |
-| Hut | 1 | otorga 4 lugares |
-| Hut | 2 | otorga 8 lugares |
-| Hut | 3 | otorga 16 lugares |
-| Hut | 4 | otorga 32 lugares |
-| Farm | 1 | genera 4 de comida |
-| Farm | 2 | genera 8 de comida |
-| Farm | 3 | genera 16 de comida |
-| Farm | 4 | genera 32 de comida |
+| Hut | 1 | capacidad para 4 habitantes |
+| Hut | 2 | capacidad para 8 habitantes |
+| Hut | 3 | capacidad para 16 habitantes |
+| Hut | 4 | capacidad para 32 habitantes |
+| Farm | 1 | aumenta la recolección de comida en 4 |
+| Farm | 2 | aumenta la recolección de comida en 8 |
+| Farm | 3 | aumenta la recolección de comida en 16 |
+| Farm | 4 | aumenta la recolección de comida en 32 |
 | Academy | 1 | nuevo aprendiz |
 | Academy | 2 | nuevo aprendiz, nuevo medico |
 | Academy | 3 | nuevo aprendiz, nuevo medico, nuevo erudito |
 | Academy | 4 | nuevo aprendiz, nuevo medico, nuevo erudito, nuevo cientifico |
-| Atalaya | 1 | Defensa 4 disparos por segundo |
-| Atalaya | 2 | Defensa 8 disparos por segundo |
-| Atalaya | 3 | Defensa 16 disparos por segundo |
-| Atalaya | 4 | Defensa 32 disparos por segundo |
-| Muro de protección | 1 | resistencia 10 |
-| Muro de protección | 2 | resistencia 20 |
-| Muro de protección | 3 | resistencia 30 |
-| Muro de protección | 4 | resistencia 40 |
-| Aserradero | 1 | potencia madera por 5 |
-| Aserradero | 2 | potencia madera por 15 |
-| Aserradero | 3 | potencia madera por 30 |
+| Atalaya | 1 | dispara 4 veces por segundo |
+| Atalaya | 2 | dispara 8 veces por segundo |
+| Atalaya | 3 | dispara 16 veces por segundo |
+| Atalaya | 4 | dispara 32 veces por segundo |
+| Muro de protección | 1 | resistencia de 10 |
+| Muro de protección | 2 | resistencia de 20 |
+| Muro de protección | 3 | resistencia de 30 |
+| Muro de protección | 4 | resistencia de 40 |
+| Aserradero | 1 | aumenta la recolección de madera en 5 |
+| Aserradero | 2 | aumenta la recolección de madera en 15 |
+| Aserradero | 3 | aumenta la recolección de madera en 30 |
 | Mina | 1 | genera 4 de oro |
 | Mina | 2 | genera 8 de oro |
 | Mina | 3 | genera 16 de oro |
