@@ -129,28 +129,28 @@ public class HutLevel1 : Building
     public override string Code => BuildingCodes.Hut;
     public override int Level => 1;
     public override BuildRequirement Cost => new BuildRequirement { wood = 10 };
-    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "capacidad para 4 habitantes" );
+    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "" );
 }
 
 public class HutLevel2 : HutLevel1
 {
     public override int Level => 2;
     public override BuildRequirement Cost => new BuildRequirement { wood = 20 };
-    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "capacidad para 8 habitantes" );
+    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell,  "" );
 }
 
 public class HutLevel3 : HutLevel2
 {
     public override int Level => 3;
     public override BuildRequirement Cost => new BuildRequirement { wood = 30 };
-    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "capacidad para 16 habitantes" );
+    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "" );
 }
 
 public class HutLevel4 : HutLevel3
 {
     public override int Level => 4;
     public override BuildRequirement Cost => new BuildRequirement { wood = 40 };
-    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "capacidad para 32 habitantes" );
+    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "" );
 }
 #endregion
 
@@ -160,28 +160,28 @@ public class FarmLevel1 : Building
     public override string Code => BuildingCodes.Farm;
     public override int Level => 1;
     public override BuildRequirement Cost => new BuildRequirement { wood = 20 };
-    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "aumenta la recolección de comida en 4" );
+    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "" );
 }
 
 public class FarmLevel2 : FarmLevel1
 {
     public override int Level => 2;
     public override BuildRequirement Cost => new BuildRequirement { wood = 40 };
-    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "aumenta la recolección de comida en 8" );
+    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "" );
 }
 
 public class FarmLevel3 : FarmLevel2
 {
     public override int Level => 3;
     public override BuildRequirement Cost => new BuildRequirement { wood = 60 };
-    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "aumenta la recolección de comida en 16" );
+    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "" );
 }
 
 public class FarmLevel4 : FarmLevel3
 {
     public override int Level => 4;
     public override BuildRequirement Cost => new BuildRequirement { wood = 80 };
-    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "aumenta la recolección de comida en 32" );
+    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "" );
 }
 #endregion
 
@@ -225,7 +225,7 @@ public class AtalayaLevel1 : Building
     public override int VisibilityRadius => 3 + Level;
     public override int RangedDamage => 4;
     public override WeaponType RangedWeapon => WeaponType.Arrow;
-    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "dispara 4 veces por segundo" );
+    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "" );
 }
 
 public class AtalayaLevel2 : AtalayaLevel1
@@ -234,7 +234,7 @@ public class AtalayaLevel2 : AtalayaLevel1
     public override BuildRequirement Cost => new BuildRequirement { wood = 40 };
     public override int VisibilityRadius => 3 + Level;
     public override int RangedDamage => 8;
-    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "dispara 8 veces por segundo" );
+    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "" );
 }
 
 public class AtalayaLevel3 : AtalayaLevel2
@@ -243,7 +243,7 @@ public class AtalayaLevel3 : AtalayaLevel2
     public override BuildRequirement Cost => new BuildRequirement { wood = 60 };
     public override int VisibilityRadius => 3 + Level;
     public override int RangedDamage => 16;
-    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "dispara 16 veces por segundo" );
+    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "" );
 }
 
 public class AtalayaLevel4 : AtalayaLevel3
@@ -252,7 +252,7 @@ public class AtalayaLevel4 : AtalayaLevel3
     public override BuildRequirement Cost => new BuildRequirement { wood = 80 };
     public override int VisibilityRadius => 3 + Level;
     public override int RangedDamage => 32;
-    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "dispara 32 veces por segundo" );
+    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "" );
 }
 #endregion
 
@@ -267,7 +267,7 @@ public class WallLevel1 : Building
     public override bool ShouldRotate => false;
     public override string SpriteKey => $"{Code}_{Level}_{(Orientation == Orientation.Horizontal ? "H" : "V")}";
 
-    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "resistencia de 10" );
+    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "" );
 }
 
 public class WallLevel2 : WallLevel1
@@ -275,7 +275,7 @@ public class WallLevel2 : WallLevel1
     public override int Level => 2;
     public override BuildRequirement Cost => new BuildRequirement { wood = 20 };
     public override int MaxResistance => 20;
-    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "resistencia de 20" );
+    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "" );
 }
 
 public class WallLevel3 : WallLevel2
@@ -283,7 +283,7 @@ public class WallLevel3 : WallLevel2
     public override int Level => 3;
     public override BuildRequirement Cost => new BuildRequirement { wood = 30 };
     public override int MaxResistance => 30;
-    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "resistencia de 30" );
+    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "" );
 }
 
 public class WallLevel4 : WallLevel3
@@ -291,7 +291,7 @@ public class WallLevel4 : WallLevel3
     public override int Level => 4;
     public override BuildRequirement Cost => new BuildRequirement { wood = 40 };
     public override int MaxResistance => 40;
-    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "resistencia de 40" );
+    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "" );
 }
 #endregion
 
@@ -301,27 +301,27 @@ public class SawmillLevel1 : Building
     public override string Code => BuildingCodes.Lumbermill;
     public override int Level => 1;
     public override BuildRequirement Cost => new BuildRequirement { wood = 15, gold = 5 };
-    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "aumenta la recolección de madera en 5" );
+    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "" );
 }
 
 public class SawmillLevel2 : SawmillLevel1
 {
     public override int Level => 2;
     public override BuildRequirement Cost => new BuildRequirement { wood = 30, gold = 10 };
-    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "aumenta la recolección de madera en 15" );
+    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "" );
 }
 
 public class SawmillLevel3 : SawmillLevel2
 {
     public override int Level => 3;
     public override BuildRequirement Cost => new BuildRequirement { wood = 45, gold = 20 };
-    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "aumenta la recolección de madera en 30" );
+    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "" );
 }
 public class SawmillLevel4 : SawmillLevel3
 {
     public override int Level => 4;
     public override BuildRequirement Cost => new BuildRequirement { wood = 45, gold = 20 };
-    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "aumenta la recolección de madera en 30" );
+    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "" );
 }
 #endregion
 
