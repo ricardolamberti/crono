@@ -159,6 +159,13 @@ public class MapLoader : MonoBehaviour
         return null;
     }
 
+    public Sprite GetBuildingSprite(string key)
+    {
+        if (buildingSprites != null && buildingSprites.TryGetValue(key, out var s))
+            return s;
+        return defaultBuildingSprite;
+    }
+
 
     void Start()
     {

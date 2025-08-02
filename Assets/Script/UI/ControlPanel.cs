@@ -96,7 +96,7 @@ public class ControlPanel : MonoBehaviour
             }
             foreach (var act in GamePlayer.Instance.GetActions())
             {
-                AddButton(act.label, act.callback);
+                AddButton(act);
             }
         }
 
@@ -119,7 +119,7 @@ public class ControlPanel : MonoBehaviour
             tileProvider.ProposeActions(GamePlayer.Instance);
             foreach (var act in GamePlayer.Instance.GetActions())
             {
-                AddButton(act.label, act.callback);
+                AddButton(act);
             }
             return;
         }
@@ -140,17 +140,34 @@ public class ControlPanel : MonoBehaviour
 
     void AddButton(string text, Action onClick)
     {
+        AddButton(new ControlPanelAction(text, onClick));
+    }
+
+    void AddButton(ControlPanelAction action)
+    {
         var button = new Button(() =>
         {
             var selected = CharacterController.instance.SelectedCharacter;
             if (selected != null)
                 selected.CancelCurrentTask();
 
-            onClick();
-        })
-        { text = text };
-        button.pickingMode = PickingMode.Position;
+            action.callback();
+        });
 
+        if (action.icon != null)
+        {
+            button.text = string.Empty;
+            button.style.backgroundImage = new StyleBackground(action.icon);
+            button.tooltip = action.label;
+            button.style.width = 64;
+            button.style.height = 64;
+        }
+        else
+        {
+            button.text = action.label;
+        }
+
+        button.pickingMode = PickingMode.Position;
         buttons.Add(button);
     }
 
