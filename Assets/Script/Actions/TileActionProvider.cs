@@ -45,6 +45,8 @@ public class TileActionProvider : MonoBehaviour, IActionProposer
             {
                 if (ControlPanel.Instance.freeResource || GameState.playerResources.science >= evo.requiredScience)
                 {
+                    var upgradeBuilding = BuildingFactory.Create(evo.next, evo.level);
+                    var icon = upgradeBuilding != null ? MapLoader.instance.GetBuildingSprite(upgradeBuilding.SpriteKey) : null;
                     player.AddAction(new ControlPanelAction($"Mejorar a {evo.next}", () =>
                     {
                         var req = BuildRules.GetRequirements(evo.next);
@@ -58,7 +60,7 @@ public class TileActionProvider : MonoBehaviour, IActionProposer
                         var newBuilding = BuildingFactory.Create(evo.next, evo.level);
                         MapLoader.instance.UpgradeBuilding(new Vector2Int(cell.x, cell.y), newBuilding);
                         GameEvents.RaiseSelection(gameObject);
-                    }));
+                    }, icon));
                 }
             }
 
@@ -76,9 +78,10 @@ public class TileActionProvider : MonoBehaviour, IActionProposer
 
         void TryBuild(string text, string code)
         {
+            var building = BuildingFactory.Create(code);
+            var req = building != null ? building.Cost : new BuildRequirement();
+            var icon = building != null ? MapLoader.instance.GetBuildingSprite(building.SpriteKey) : null;
             player.AddAction(new ControlPanelAction(text, () => {
-                var building = BuildingFactory.Create(code);
-                var req = building != null ? building.Cost : new BuildRequirement();
                 if (!ControlPanel.Instance.freeResource)
                 {
                     if (!GameState.playerResources.HasEnough(req))
@@ -95,20 +98,22 @@ public class TileActionProvider : MonoBehaviour, IActionProposer
                     GameState.playerResources.Consume(req);
                     ActionManager.Instance.Enqueue(new BuildAction(worker, pos, code));
                 }
-            }));
+            }, icon));
         }
 
         if (terrainBuildings.TryGetValue(cell.terrain, out var options))
         {
             if (cell.terrain == TerrainTypes.Forest && !TownhallExists())
             {
+                var townhall = BuildingFactory.Create(BuildingCodes.Townhall);
+                var iconTown = townhall != null ? MapLoader.instance.GetBuildingSprite(townhall.SpriteKey) : null;
                 player.AddAction(new ControlPanelAction("Construir casa central", () => {
                     var worker = FindFreeWorker();
                     if (worker != null)
                         ActionManager.Instance.Enqueue(new BuildAction(worker, new Vector2Int(cell.x, cell.y), BuildingCodes.Townhall));
                     else
                         Debug.Log("No hay obreros disponibles.");
-                }));
+                }, iconTown));
             }
             else
             {
