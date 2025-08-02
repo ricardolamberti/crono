@@ -52,7 +52,7 @@
     align-items: flex-start;
 }
 
-.buttons-panel > * {
+.buttons-panel > .unity-button {
     margin-right: 4px;
     margin-bottom: 4px;
     flex-grow: 0;
