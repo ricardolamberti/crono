@@ -119,7 +119,22 @@ public class TimelineManager : MonoBehaviour
         return -1;
     }
 
-    public List<WorldEvent> GetWorldStateAt(float time)
+    GameResources CloneResources(GameResources src)
+    {
+        return new GameResources
+        {
+            gold = src.gold,
+            wood = src.wood,
+            food = src.food,
+            crono = src.crono,
+            science = src.science,
+            freeHousing = src.freeHousing,
+            academicUnits = src.academicUnits,
+            barracksUnits = src.barracksUnits
+        };
+    }
+
+    public Snapshot GetWorldStateAt(float time)
     {
         Snapshot snap = null;
         for (int i = snapshots.Count - 1; i >= 0; i--)
@@ -130,13 +145,14 @@ public class TimelineManager : MonoBehaviour
                 break;
             }
         }
-        List<WorldEvent> events = new();
-        foreach (var e in globalEvents)
+        if (snap != null)
         {
-            if (e.timestamp > time) break;
-            events.Add(e);
+            MapState.cellMap = new Dictionary<Vector2Int, DTO.MapCellDTO>(snap.cells);
+            if (snap.resources.TryGetValue("player", out var res))
+                GameState.playerResources = CloneResources(res);
+            MapLoader.instance?.ReloadFromState();
         }
-        return events;
+        return snap;
     }
 
     public void SaveSnapshot()
@@ -144,8 +160,10 @@ public class TimelineManager : MonoBehaviour
         var snap = new Snapshot();
         snap.timestamp = Time.time;
         snap.cells = new Dictionary<Vector2Int, DTO.MapCellDTO>(MapState.cellMap);
-        snap.resources = new Dictionary<string, GameResources>();
-        // placeholder - deep copy resources if needed
+        snap.resources = new Dictionary<string, GameResources>
+        {
+            ["player"] = CloneResources(GameState.playerResources)
+        };
         snapshots.Add(snap);
     }
 }

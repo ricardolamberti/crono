@@ -1,0 +1,7 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="True">
+    <Style src="project://database/Assets/UI%20Toolkit/TimelinePanel.uss?fileID=7433441132597879392&guid=11d5e9e8be9d451c9b2953e6517a41af&type=3#TimelinePanel" />
+    <ui:VisualElement name="timeline-root" class="timeline-root">
+        <ui:Slider name="TimelineSlider" />
+        <ui:Button name="PresentButton" text="Volver al Presente" />
+    </ui:VisualElement>
+</ui:UXML>

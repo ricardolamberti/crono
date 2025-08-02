@@ -20,6 +20,8 @@ public class GameTimeManager : MonoBehaviour
 
     public static event System.Action<int, int> OnDateChanged;
 
+    private bool observationMode = false;
+
     void Awake()
     {
         Instance = this;
@@ -197,11 +199,16 @@ public class GameTimeManager : MonoBehaviour
 
     public bool Approve(ControlPanelAction action)
     {
-        return true; // placeholder for time-based rules
+        return !observationMode;
     }
 
     public bool Approve(InfoItem info)
     {
-        return true; // placeholder for time-based rules
+        return !observationMode;
+    }
+
+    public void SetObservationMode(bool value)
+    {
+        observationMode = value;
     }
 }
