@@ -1,12 +1,9 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="True">
     <Style src="ControlPanel.uss" />
-    <Style src="TimelinePanel.uss" />
-	 <ui:VisualElement name="dateBar" class="date-bar">
+    <ui:VisualElement name="dateBar" class="date-bar">
         <ui:Label name="DateLabel" text="Mes 1 - Año 1" />
-		<ui:VisualElement name="timeline-root" class="timeline-root">
-			<ui:Slider name="TimelineSlider" />
-			<ui:Button name="PresentButton" text="Volver al Presente" />
-		</ui:VisualElement>
+        <ui:Slider name="TimelineSlider" />
+        <ui:Button name="PresentButton" text="Volver al Presente" />
     </ui:VisualElement>
     <ui:VisualElement name="root" class="panel-root">
         <ui:VisualElement class="panel-column resources-panel">

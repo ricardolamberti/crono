@@ -18,10 +18,12 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 24px;
+    height: 40px;
     background-color: rgba(0, 0, 0, 0.6);
-    justify-content: center;
+    flex-direction: row;
     align-items: center;
+    gap: 10px;
+    padding: 0 10px;
 }
 
 .date-bar .unity-label {
@@ -108,3 +110,7 @@
 .soldier-icon { background-image: resource("Icons/soldier"); }
 .scientist-icon { background-image: resource("Icons/scientist"); }
 .science-icon { background-image: resource("Icons/science"); }
+
+#TimelineSlider {
+    flex-grow: 1;
+}
