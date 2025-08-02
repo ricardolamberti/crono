@@ -29,7 +29,21 @@ public static class BuildingActionHelper
 
     public static ControlPanelAction SpawnCharacter(string label, MapCellDTO cell, Character.Type type)
     {
-        return new ControlPanelAction(label, () => SpawnCharacterNear(cell, type));
+        Sprite icon = null;
+        switch (type)
+        {
+            case Character.Type.Worker:
+                icon = Resources.Load<Sprite>("Icons/worker");
+                break;
+            case Character.Type.Scientist:
+                icon = Resources.Load<Sprite>("Icons/scientist");
+                break;
+            case Character.Type.Warrior:
+                icon = Resources.Load<Sprite>("Icons/soldier");
+                break;
+        }
+
+        return new ControlPanelAction(label, () => SpawnCharacterNear(cell, type), icon);
     }
 
     public static ControlPanelAction NotImplemented(string label)
