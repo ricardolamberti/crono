@@ -42,6 +42,21 @@ public class TimelineManager : MonoBehaviour
         Instance = this;
     }
 
+    void OnEnable()
+    {
+        GameTimeManager.OnDateChanged += OnDateChanged;
+    }
+
+    void OnDisable()
+    {
+        GameTimeManager.OnDateChanged -= OnDateChanged;
+    }
+
+    void OnDateChanged(int month, int year)
+    {
+        SaveSnapshot();
+    }
+
     public WorldEvent RecordEvent(string actorId, string action, Dictionary<string, string> parameters, List<int> deps = null, int? rngSeed = null)
     {
         var ev = new WorldEvent(nextId++, Time.time, actorId, action);
