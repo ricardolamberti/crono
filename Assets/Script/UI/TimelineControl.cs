@@ -22,6 +22,7 @@ public class TimelineControl : MonoBehaviour
             GameTimeManager.UpdateDateFromSeconds(Time.time);
             slider.label = $"Mes {GameTimeManager.CurrentMonth} - Año {GameTimeManager.CurrentYear}";
             slider.RegisterValueChangedCallback(OnSliderChanged);
+            slider.RegisterCallback<GeometryChangedEvent>(_ => UpdateSliderHandle());
         }
         if (presentButton != null)
             presentButton.clicked += ReturnToPresent;
@@ -34,6 +35,7 @@ public class TimelineControl : MonoBehaviour
             slider.highValue = Time.time;
             slider.SetValueWithoutNotify(Time.time);
             slider.label = $"Mes {GameTimeManager.CurrentMonth} - Año {GameTimeManager.CurrentYear}";
+            UpdateSliderHandle();
         }
     }
 
@@ -61,7 +63,24 @@ public class TimelineControl : MonoBehaviour
             slider.SetValueWithoutNotify(Time.time);
             GameTimeManager.UpdateDateFromSeconds(Time.time);
             slider.label = $"Mes {GameTimeManager.CurrentMonth} - Año {GameTimeManager.CurrentYear}";
+            UpdateSliderHandle();
         }
         TimelineManager.Instance?.GetWorldStateAt(Time.time);
+    }
+
+    void UpdateSliderHandle()
+    {
+        if (slider == null) return;
+        var dragger = slider.Q(className: "unity-dragger");
+        if (dragger == null) return;
+
+        float totalSeconds = slider.highValue - slider.lowValue;
+        if (totalSeconds <= 0f) return;
+
+        float monthSeconds = GameTimeManager.SecondsPerMonth;
+        float ratio = monthSeconds / totalSeconds;
+        float width = slider.resolvedStyle.width * ratio;
+        if (width < 1f) width = 1f;
+        dragger.style.width = width;
     }
 }
