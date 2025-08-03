@@ -19,6 +19,8 @@ public class TimelineControl : MonoBehaviour
             slider.lowValue = 0f;
             slider.highValue = Time.time;
             slider.SetValueWithoutNotify(Time.time);
+            GameTimeManager.UpdateDateFromSeconds(Time.time);
+            slider.label = $"Mes {GameTimeManager.CurrentMonth} - Año {GameTimeManager.CurrentYear}";
             slider.RegisterValueChangedCallback(OnSliderChanged);
         }
         if (presentButton != null)
@@ -31,6 +33,7 @@ public class TimelineControl : MonoBehaviour
         {
             slider.highValue = Time.time;
             slider.SetValueWithoutNotify(Time.time);
+            slider.label = $"Mes {GameTimeManager.CurrentMonth} - Año {GameTimeManager.CurrentYear}";
         }
     }
 
@@ -38,6 +41,8 @@ public class TimelineControl : MonoBehaviour
     {
         float t = evt.newValue;
         TimelineManager.Instance?.GetWorldStateAt(t);
+        GameTimeManager.UpdateDateFromSeconds(t);
+        slider.label = $"Mes {GameTimeManager.CurrentMonth} - Año {GameTimeManager.CurrentYear}";
         bool past = t < Time.time;
         if (past != inPast)
         {
@@ -54,6 +59,8 @@ public class TimelineControl : MonoBehaviour
         {
             slider.highValue = Time.time;
             slider.SetValueWithoutNotify(Time.time);
+            GameTimeManager.UpdateDateFromSeconds(Time.time);
+            slider.label = $"Mes {GameTimeManager.CurrentMonth} - Año {GameTimeManager.CurrentYear}";
         }
         TimelineManager.Instance?.GetWorldStateAt(Time.time);
     }

@@ -22,6 +22,42 @@ public class GameTimeManager : MonoBehaviour
 
     private bool observationMode = false;
 
+    public static float SecondsPerMonth => Instance != null ? Instance.interval * Instance.cyclesPerMonth : 1f;
+
+    public static void SecondsToDate(float seconds, out int month, out int year)
+    {
+        if (Instance == null)
+        {
+            month = CurrentMonth;
+            year = CurrentYear;
+            return;
+        }
+
+        int totalMonths = Mathf.FloorToInt(seconds / SecondsPerMonth) + 1;
+        year = (totalMonths - 1) / 12 + 1;
+        month = (totalMonths - 1) % 12 + 1;
+    }
+
+    public static float DateToSeconds(int month, int year)
+    {
+        if (Instance == null)
+            return 0f;
+
+        int totalMonths = (year - 1) * 12 + (month - 1);
+        return totalMonths * SecondsPerMonth;
+    }
+
+    public static void UpdateDateFromSeconds(float seconds)
+    {
+        if (Instance == null)
+            return;
+
+        SecondsToDate(seconds, out var month, out var year);
+        CurrentMonth = month;
+        CurrentYear = year;
+        OnDateChanged?.Invoke(CurrentMonth, CurrentYear);
+    }
+
     void Awake()
     {
         Instance = this;
@@ -34,6 +70,9 @@ public class GameTimeManager : MonoBehaviour
 
     void Update()
     {
+        if (observationMode)
+            return;
+
         timer += Time.deltaTime;
         if (timer >= interval)
         {
