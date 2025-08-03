@@ -6,6 +6,7 @@ public class TimelineControl : MonoBehaviour
     public UIDocument uiDocument;
     private Slider slider;
     private Button presentButton;
+    private VisualElement tickContainer;
     private bool inPast = false;
 
     void OnEnable()
@@ -14,16 +15,24 @@ public class TimelineControl : MonoBehaviour
         var root = uiDocument.rootVisualElement;
         slider = root.Q<Slider>("TimelineSlider");
         presentButton = root.Q<Button>("PresentButton");
+
         if (slider != null)
         {
             slider.lowValue = 0f;
             slider.highValue = Time.time;
+            slider.showInputField = false;
             slider.SetValueWithoutNotify(Time.time);
+
             GameTimeManager.UpdateDateFromSeconds(Time.time);
-            slider.label = $"Mes {GameTimeManager.CurrentMonth} - Año {GameTimeManager.CurrentYear}";
+            slider.label = FormatTimeLabel(Time.time);
+
             slider.RegisterValueChangedCallback(OnSliderChanged);
-            slider.RegisterCallback<GeometryChangedEvent>(_ => UpdateSliderHandle());
+            slider.RegisterCallback<GeometryChangedEvent>(_ => {
+                UpdateSliderHandle();
+                DrawMonthTicks();
+            });
         }
+
         if (presentButton != null)
             presentButton.clicked += ReturnToPresent;
     }
@@ -34,22 +43,32 @@ public class TimelineControl : MonoBehaviour
         {
             slider.highValue = Time.time;
             slider.SetValueWithoutNotify(Time.time);
-            slider.label = $"Mes {GameTimeManager.CurrentMonth} - Año {GameTimeManager.CurrentYear}";
+            GameTimeManager.UpdateDateFromSeconds(Time.time);
+            slider.label = FormatTimeLabel(Time.time);
+
             UpdateSliderHandle();
+            DrawMonthTicks();
         }
     }
 
     void OnSliderChanged(ChangeEvent<float> evt)
     {
         float t = evt.newValue;
-        TimelineManager.Instance?.GetWorldStateAt(t);
-        GameTimeManager.UpdateDateFromSeconds(t);
-        slider.label = $"Mes {GameTimeManager.CurrentMonth} - Año {GameTimeManager.CurrentYear}";
         bool past = t < Time.time;
-        if (past != inPast)
+
+        GameTimeManager.UpdateDateFromSeconds(t);
+        slider.label = FormatTimeLabel(t);
+
+        if (past)
         {
-            inPast = past;
-            GameTimeManager.Instance?.SetObservationMode(inPast);
+            TimelineManager.Instance?.GetWorldStateAt(t);
+            GameTimeManager.Instance?.SetObservationMode(true);
+            inPast = true;
+        }
+        else
+        {
+            GameTimeManager.Instance?.SetObservationMode(false);
+            inPast = false;
         }
     }
 
@@ -62,8 +81,9 @@ public class TimelineControl : MonoBehaviour
             slider.highValue = Time.time;
             slider.SetValueWithoutNotify(Time.time);
             GameTimeManager.UpdateDateFromSeconds(Time.time);
-            slider.label = $"Mes {GameTimeManager.CurrentMonth} - Año {GameTimeManager.CurrentYear}";
+            slider.label = FormatTimeLabel(Time.time);
             UpdateSliderHandle();
+            DrawMonthTicks();
         }
         TimelineManager.Instance?.GetWorldStateAt(Time.time);
     }
@@ -74,13 +94,72 @@ public class TimelineControl : MonoBehaviour
         var dragger = slider.Q(className: "unity-dragger");
         if (dragger == null) return;
 
+        dragger.style.flexGrow = 0;
+        dragger.style.flexShrink = 0;
+
         float totalSeconds = slider.highValue - slider.lowValue;
         if (totalSeconds <= 0f) return;
 
         float monthSeconds = GameTimeManager.SecondsPerMonth;
         float ratio = monthSeconds / totalSeconds;
         float width = slider.resolvedStyle.width * ratio;
-        if (width < 1f) width = 1f;
+        if (width < 4f) width = 4f;
+
         dragger.style.width = width;
+    }
+
+    void DrawMonthTicks()
+    {
+        if (slider == null) return;
+
+        if (tickContainer == null)
+        {
+            tickContainer = new VisualElement();
+            tickContainer.style.position = Position.Absolute;
+            tickContainer.style.bottom = 0;
+            tickContainer.style.left = 0;
+            tickContainer.style.right = 0;
+            tickContainer.style.height = 20;
+            tickContainer.pickingMode = PickingMode.Ignore;
+            slider.parent.Add(tickContainer);
+        }
+
+        tickContainer.Clear();
+
+        float totalSeconds = slider.highValue - slider.lowValue;
+        if (totalSeconds <= 0f) return;
+
+        int totalMonths = Mathf.CeilToInt(totalSeconds / GameTimeManager.SecondsPerMonth);
+        float width = slider.resolvedStyle.width;
+
+        for (int i = 0; i <= totalMonths; i++)
+        {
+            float x = (i / (float)totalMonths) * width;
+            float timeAtTick = slider.lowValue + (i * GameTimeManager.SecondsPerMonth);
+
+            var tick = new VisualElement();
+            tick.style.position = Position.Absolute;
+            tick.style.left = x;
+            tick.style.bottom = 0;
+            tick.style.width = 1;
+            tick.style.height = 8;
+            tick.style.backgroundColor = Color.white;
+            tickContainer.Add(tick);
+
+            // 🔥 Label flotante con el mes/año
+            var label = new Label(FormatTimeLabel(timeAtTick));
+            label.style.position = Position.Absolute;
+            label.style.left = x - 12;
+            label.style.bottom = 10;
+            label.style.fontSize = 8;
+            label.style.color = Color.white;
+            tickContainer.Add(label);
+        }
+    }
+
+    string FormatTimeLabel(float seconds)
+    {
+        GameTimeManager.UpdateDateFromSeconds(seconds);
+        return $"M{GameTimeManager.CurrentMonth} - A{GameTimeManager.CurrentYear}";
     }
 }
