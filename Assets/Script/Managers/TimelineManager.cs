@@ -25,6 +25,7 @@ public class Snapshot
     public float timestamp;
     public Dictionary<Vector2Int, DTO.MapCellDTO> cells;
     public Dictionary<string, GameResources> resources;
+    public List<DTO.CharacterDTO> characters;
 }
 
 public class TimelineManager : MonoBehaviour
@@ -167,6 +168,35 @@ public class TimelineManager : MonoBehaviour
             if (snap.resources.TryGetValue("player", out var res))
                 GameState.playerResources = CloneResources(res);
             MapLoader.instance?.ReloadFromState();
+
+            if (MapLoader.instance != null)
+            {
+                foreach (var ch in GameObject.FindObjectsOfType<Character>())
+                    GameObject.Destroy(ch.gameObject);
+
+                if (snap.characters != null)
+                {
+                    foreach (var c in snap.characters)
+                    {
+                        var pos = new Vector2Int(c.x, c.y);
+                        Character.Type type;
+                        if (System.Enum.TryParse(c.type, out type))
+                        {
+                            MapLoader.instance.SpawnCharacter(pos, type, c.owner);
+                        }
+                        else
+                        {
+                            if (c.type == "worker" || c.type == "scientist" || c.type == "warrior")
+                            {
+                                if (c.type == "worker") type = Character.Type.Worker;
+                                else if (c.type == "scientist") type = Character.Type.Scientist;
+                                else type = Character.Type.Warrior;
+                                MapLoader.instance.SpawnCharacter(pos, type, c.owner);
+                            }
+                        }
+                    }
+                }
+            }
         }
         return snap;
     }
@@ -177,7 +207,7 @@ public class TimelineManager : MonoBehaviour
         int currentMonth = GameTimeManager.CurrentMonth;
         int currentYear = GameTimeManager.CurrentYear;
 
-        // Buscar índice del snapshot existente para este año/mes
+        // Buscar Ã­ndice del snapshot existente para este aÃ±o/mes
         int existingIndex = -1;
         
         if (!force)
@@ -186,6 +216,22 @@ public class TimelineManager : MonoBehaviour
                 GameTimeManager.SecondsToDate(s.timestamp, out currentMonth, out currentYear);
                 return GameTimeManager.CurrentMonth == currentMonth && GameTimeManager.CurrentYear == currentYear;
             });
+
+        var charList = new List<DTO.CharacterDTO>();
+        foreach (var character in GameObject.FindObjectsOfType<Character>())
+        {
+            var p = character.GetGridPosition();
+            string type = character.characterType.ToString();
+            if (character.role != null)
+                type = character.role.Code;
+            charList.Add(new DTO.CharacterDTO
+            {
+                x = p.x,
+                y = p.y,
+                type = type,
+                owner = character.owner
+            });
+        }
 
         var snap = new Snapshot
         {
@@ -197,7 +243,8 @@ public class TimelineManager : MonoBehaviour
             resources = new Dictionary<string, GameResources>
             {
                 ["player"] = GameState.playerResources.Clone()
-            }
+            },
+            characters = charList
         };
 
         if (existingIndex >= 0)
