@@ -292,20 +292,29 @@ public class ControlPanel : MonoBehaviour
             int cost = breach.CalculateCost(config, val);
             label.text = $"Pedido en {val} años - Costo: {cost} crono";
         }
+
         UpdateText(slider.value);
-        slider.RegisterValueChangedCallback(evt => UpdateText(evt.newValue));
+
+        slider.RegisterValueChangedCallback(evt =>
+        {
+            UpdateText(evt.newValue);   // 🔥 Ahora actualiza el label dinámicamente
+        });
 
         var confirm = new Button(() =>
         {
             breach.MakeRequest(config, slider.value);
             ShowBreachRoot(breach);
-        }) { text = "Confirmar" };
+        })
+        { text = "Confirmar" };
 
         buttons.Add(slider);
         buttons.Add(label);
         buttons.Add(confirm);
         AddButton("Volver", () => ShowBreachRoot(breach));
     }
+
+  
+
 }
 
 

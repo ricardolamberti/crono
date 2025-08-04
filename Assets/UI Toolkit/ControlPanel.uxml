@@ -2,7 +2,7 @@
     <Style src="ControlPanel.uss" />
     <ui:VisualElement name="dateBar" class="date-bar">
         <ui:Label name="DateLabel" text="Mes 1 - Año 1" />
-        <ui:Slider name="TimelineSlider" />
+        <ui:SliderInt name="TimelineSlider" />
         <ui:Button name="PresentButton" text="Volver al Presente" />
     </ui:VisualElement>
     <ui:VisualElement name="root" class="panel-root">
