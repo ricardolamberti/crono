@@ -22,6 +22,7 @@ public class SnapshotDTO
     public float timestamp;
     public List<MapCellDTO> cells;
     public List<SnapshotResourceDTO> resources;
+    public List<CharacterDTO> characters;
 }
 
 [System.Serializable]
@@ -75,11 +76,17 @@ public static class SaveSystem
                 {
                     timestamp = snap.timestamp,
                     cells = new List<MapCellDTO>(snap.cells.Values),
-                    resources = new List<SnapshotResourceDTO>()
+                    resources = new List<SnapshotResourceDTO>(),
+                    characters = new List<CharacterDTO>()
                 };
                 foreach (var kv in snap.resources)
                 {
                     sDto.resources.Add(new SnapshotResourceDTO { id = kv.Key, resources = kv.Value });
+                }
+                if (snap.characters != null)
+                {
+                    foreach (var c in snap.characters)
+                        sDto.characters.Add(new CharacterDTO { x = c.x, y = c.y, type = c.type, owner = c.owner });
                 }
                 data.snapshots.Add(sDto);
             }
@@ -134,7 +141,8 @@ public static class SaveSystem
                     {
                         timestamp = sDto.timestamp,
                         cells = new Dictionary<Vector2Int, MapCellDTO>(),
-                        resources = new Dictionary<string, GameResources>()
+                        resources = new Dictionary<string, GameResources>(),
+                        characters = new List<CharacterDTO>()
                     };
                     if (sDto.cells != null)
                     {
@@ -145,6 +153,11 @@ public static class SaveSystem
                     {
                         foreach (var r in sDto.resources)
                             snap.resources[r.id] = r.resources;
+                    }
+                    if (sDto.characters != null)
+                    {
+                        foreach (var c in sDto.characters)
+                            snap.characters.Add(new CharacterDTO { x = c.x, y = c.y, type = c.type, owner = c.owner });
                     }
                     snaps.Add(snap);
                 }
