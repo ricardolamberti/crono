@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class DTO
@@ -14,6 +15,21 @@ public class DTO
         public string owner;
         public string start_player;
         public ResourceBundle resources;
+        public MapCellDTO Clone()
+        {
+            return new MapCellDTO
+            {
+                x = this.x,
+                y = this.y,
+                terrain = this.terrain,
+                building = this.building,
+                owner = this.owner,
+                resources = this.resources != null ? this.resources.Clone() : null
+            };
+        }
+
+    
+
 
     }
     [System.Serializable]
@@ -22,8 +38,19 @@ public class DTO
         public int gold = 0;
         public int wood = 0;
         public int crono = 0;
-    }
 
+        // En GameResources
+        public ResourceBundle Clone()
+        {
+            return new ResourceBundle
+            {
+                gold = this.gold,
+                wood = this.wood,
+                crono = this.crono,
+            };
+        }
+    }
+    
     [System.Serializable]
     public class MapCellListWrapper
     {

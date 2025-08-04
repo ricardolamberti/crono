@@ -67,7 +67,7 @@ public static class SaveSystem
         }
         if (TimelineManager.Instance != null)
         {
-            TimelineManager.Instance.SaveSnapshot();
+            TimelineManager.Instance.SaveSnapshot(true);
             data.snapshots = new List<SnapshotDTO>();
             foreach (var snap in TimelineManager.Instance.GetSnapshots())
             {

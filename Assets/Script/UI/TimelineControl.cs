@@ -72,34 +72,14 @@ public class TimelineControl : MonoBehaviour
         {
             if (!inPast)
             {
-                TimelineManager.Instance?.SaveSnapshot();
+                TimelineManager.Instance?.SaveSnapshot(true);
                 backupMonth = GameTimeManager.CurrentMonth;
                 backupYear = GameTimeManager.CurrentYear;
             }
 
-            var snaps = TimelineManager.Instance?.GetSnapshots();
-            Snapshot nearest = null;
-            float minDiff = float.MaxValue;
-            if (snaps != null)
-            {
-                foreach (var s in snaps)
-                {
-                    float diff = Mathf.Abs(s.timestamp - t);
-                    if (diff < minDiff)
-                    {
-                        minDiff = diff;
-                        nearest = s;
-                    }
-                }
-            }
-
-            if (nearest != null)
-            {
-                TimelineManager.Instance?.GetWorldStateAt(nearest.timestamp);
-                t = nearest.timestamp;
-                slider.SetValueWithoutNotify(Mathf.RoundToInt(nearest.timestamp));
-            }
-
+      
+            TimelineManager.Instance?.GetWorldStateAt(t);
+            slider.SetValueWithoutNotify(Mathf.RoundToInt(t));
             GameTimeManager.UpdateDateFromSeconds(t);
             slider.label = FormatTimeLabel(t);
             GameTimeManager.Instance?.SetObservationMode(true);
@@ -113,8 +93,6 @@ public class TimelineControl : MonoBehaviour
                 TimelineManager.Instance?.RemoveLastSnapshot();
                 GameTimeManager.UpdateDateFromSeconds(Time.time);
                 slider.label = FormatTimeLabel(Time.time);
-                if (GameTimeManager.CurrentMonth == backupMonth && GameTimeManager.CurrentYear == backupYear)
-                    TimelineManager.Instance?.SaveSnapshot();
             }
             else
             {
@@ -137,8 +115,6 @@ public class TimelineControl : MonoBehaviour
             TimelineManager.Instance?.RemoveLastSnapshot();
             GameTimeManager.Instance?.SetObservationMode(false);
             GameTimeManager.UpdateDateFromSeconds(Time.time);
-            if (GameTimeManager.CurrentMonth == backupMonth && GameTimeManager.CurrentYear == backupYear)
-                TimelineManager.Instance?.SaveSnapshot();
         }
         GameTimeManager.Instance?.SetObservationMode(false);
         if (slider != null)

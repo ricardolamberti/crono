@@ -57,8 +57,8 @@ public class GameTimeManager : MonoBehaviour
         CurrentMonth = month;
         CurrentYear = year;
 
-        if (!Instance.observationMode && changed)
-            OnDateChanged?.Invoke(CurrentMonth, CurrentYear);
+//        if (!Instance.observationMode && changed)
+//            OnDateChanged?.Invoke(CurrentMonth, CurrentYear);
     }
 
     void Awake()
@@ -68,7 +68,6 @@ public class GameTimeManager : MonoBehaviour
 
     void Start()
     {
-        OnDateChanged?.Invoke(CurrentMonth, CurrentYear);
     }
 
     void Update()

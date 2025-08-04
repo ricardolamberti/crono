@@ -33,7 +33,20 @@ public class GameResources
         academicUnits -= req.academicUnits;
         barracksUnits -= req.barracksUnits;
     }
-
+    public GameResources Clone()
+    {
+        return new GameResources
+        {
+            gold = this.gold,
+            wood = this.wood,
+            food = this.food,
+            crono = this.crono,
+            freeHousing = this.freeHousing,
+            barracksUnits = this.barracksUnits,
+            academicUnits = this.academicUnits,
+            science = this.science
+        };
+    }
     public override string ToString()
     {
         return $"Oro: {gold}, Madera: {wood}, Comida: {food}, Crono: {crono}, Ciencia: {science}, Habitaciones: {freeHousing}, Academia: {academicUnits}";

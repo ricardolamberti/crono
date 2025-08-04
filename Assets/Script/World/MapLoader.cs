@@ -286,6 +286,7 @@ public class MapLoader : MonoBehaviour
         GenerateGrid(wrapper.cells);
         CenterCamera(wrapper.cells);
         PlayerManager.Instance?.InitializePlayers();
+      
         yield return null;
     }
     public void ShowConstructionPreview(Vector2Int pos, Building building)

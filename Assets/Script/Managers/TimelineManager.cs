@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class WorldEvent
@@ -54,7 +55,7 @@ public class TimelineManager : MonoBehaviour
 
     void OnDateChanged(int month, int year)
     {
-        SaveSnapshot();
+        SaveSnapshot(false);
     }
 
     public WorldEvent RecordEvent(string actorId, string action, Dictionary<string, string> parameters, List<int> deps = null, int? rngSeed = null)
@@ -170,16 +171,43 @@ public class TimelineManager : MonoBehaviour
         return snap;
     }
 
-    public void SaveSnapshot()
+    public void SaveSnapshot(bool force)
     {
-        var snap = new Snapshot();
-        snap.timestamp = Time.time;
-        snap.cells = new Dictionary<Vector2Int, DTO.MapCellDTO>(MapState.cellMap);
-        snap.resources = new Dictionary<string, GameResources>
+
+        int currentMonth = GameTimeManager.CurrentMonth;
+        int currentYear = GameTimeManager.CurrentYear;
+
+        // Buscar índice del snapshot existente para este año/mes
+        int existingIndex = -1;
+        
+        if (!force)
+            existingIndex= snapshots.FindIndex(s =>
+            {
+                GameTimeManager.SecondsToDate(s.timestamp, out currentMonth, out currentYear);
+                return GameTimeManager.CurrentMonth == currentMonth && GameTimeManager.CurrentYear == currentYear;
+            });
+
+        var snap = new Snapshot
         {
-            ["player"] = CloneResources(GameState.playerResources)
+            timestamp = Time.time,
+            cells = MapState.cellMap.ToDictionary(
+                entry => entry.Key,
+                entry => entry.Value.Clone()
+            ),
+            resources = new Dictionary<string, GameResources>
+            {
+                ["player"] = GameState.playerResources.Clone()
+            }
         };
-        snapshots.Add(snap);
+
+        if (existingIndex >= 0)
+        {
+            snapshots[existingIndex] = snap; // Sobrescribir
+        }
+        else
+        {
+            snapshots.Add(snap); // Agregar nuevo
+        }
     }
 
     public void RemoveLastSnapshot()
