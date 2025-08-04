@@ -4,7 +4,7 @@ using UnityEngine.UIElements;
 public class TimelineControl : MonoBehaviour
 {
     public UIDocument uiDocument;
-    private Slider slider;
+    private SliderInt slider;
     private Button presentButton;
     private VisualElement tickContainer;
     private bool inPast = false;
@@ -13,15 +13,15 @@ public class TimelineControl : MonoBehaviour
     {
         if (uiDocument == null) return;
         var root = uiDocument.rootVisualElement;
-        slider = root.Q<Slider>("TimelineSlider");
+        slider = root.Q<SliderInt>("TimelineSlider");
         presentButton = root.Q<Button>("PresentButton");
 
         if (slider != null)
         {
-            slider.lowValue = 0f;
-            slider.highValue = Time.time;
+            slider.lowValue = 0;
+            slider.highValue = Mathf.RoundToInt(Time.time);
             slider.showInputField = false;
-            slider.SetValueWithoutNotify(Time.time);
+            slider.SetValueWithoutNotify(Mathf.RoundToInt(Time.time));
 
             GameTimeManager.UpdateDateFromSeconds(Time.time);
             slider.label = FormatTimeLabel(Time.time);
@@ -45,37 +45,65 @@ public class TimelineControl : MonoBehaviour
     {
         if (slider == null) return;
 
-        slider.highValue = Time.time;
+        slider.highValue = Mathf.RoundToInt(Time.time);
 
         // 🔥 Solo auto-actualiza si NO estamos en el pasado
         if (!inPast)
         {
-            slider.SetValueWithoutNotify(Time.time);
-            GameTimeManager.UpdateDateFromSeconds(Time.time);
-            slider.label = FormatTimeLabel(Time.time);
+            int now = Mathf.RoundToInt(Time.time);
+            slider.SetValueWithoutNotify(now);
+            GameTimeManager.UpdateDateFromSeconds(now);
+            slider.label = FormatTimeLabel(now);
         }
 
         UpdateSliderHandle();
         DrawMonthTicks();
     }
 
-    void OnSliderChanged(ChangeEvent<float> evt)
+    void OnSliderChanged(ChangeEvent<int> evt)
     {
         Debug.Log($"[Timeline] Cambió slider: {evt.newValue}");
         float t = evt.newValue;
         bool past = t < Time.time - 0.1f; // margen pequeño
 
-        GameTimeManager.UpdateDateFromSeconds(t);
-        slider.label = FormatTimeLabel(t);
-
         if (past)
         {
-            TimelineManager.Instance?.GetWorldStateAt(t);
+            if (!inPast)
+                TimelineManager.Instance?.SaveSnapshot();
+
+            var snaps = TimelineManager.Instance?.GetSnapshots();
+            Snapshot nearest = null;
+            float minDiff = float.MaxValue;
+            if (snaps != null)
+            {
+                foreach (var s in snaps)
+                {
+                    float diff = Mathf.Abs(s.timestamp - t);
+                    if (diff < minDiff)
+                    {
+                        minDiff = diff;
+                        nearest = s;
+                    }
+                }
+            }
+
+            if (nearest != null)
+            {
+                TimelineManager.Instance?.GetWorldStateAt(nearest.timestamp);
+                t = nearest.timestamp;
+                slider.SetValueWithoutNotify(Mathf.RoundToInt(nearest.timestamp));
+            }
+
+            GameTimeManager.UpdateDateFromSeconds(t);
+            slider.label = FormatTimeLabel(t);
             GameTimeManager.Instance?.SetObservationMode(true);
             inPast = true;
         }
         else
         {
+            TimelineManager.Instance?.GetWorldStateAt(Time.time);
+            GameTimeManager.UpdateDateFromSeconds(Time.time);
+            slider.label = FormatTimeLabel(Time.time);
             GameTimeManager.Instance?.SetObservationMode(false);
             inPast = false;
         }
@@ -90,10 +118,11 @@ public class TimelineControl : MonoBehaviour
         GameTimeManager.Instance?.SetObservationMode(false);
         if (slider != null)
         {
-            slider.highValue = Time.time;
-            slider.SetValueWithoutNotify(Time.time);
-            GameTimeManager.UpdateDateFromSeconds(Time.time);
-            slider.label = FormatTimeLabel(Time.time);
+            int now = Mathf.RoundToInt(Time.time);
+            slider.highValue = now;
+            slider.SetValueWithoutNotify(now);
+            GameTimeManager.UpdateDateFromSeconds(now);
+            slider.label = FormatTimeLabel(now);
             UpdateSliderHandle();
             DrawMonthTicks();
         }
