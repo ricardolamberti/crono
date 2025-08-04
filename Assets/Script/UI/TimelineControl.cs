@@ -8,6 +8,8 @@ public class TimelineControl : MonoBehaviour
     private Button presentButton;
     private VisualElement tickContainer;
     private bool inPast = false;
+    private int backupMonth;
+    private int backupYear;
 
     void OnEnable()
     {
@@ -69,7 +71,11 @@ public class TimelineControl : MonoBehaviour
         if (past)
         {
             if (!inPast)
+            {
                 TimelineManager.Instance?.SaveSnapshot();
+                backupMonth = GameTimeManager.CurrentMonth;
+                backupYear = GameTimeManager.CurrentYear;
+            }
 
             var snaps = TimelineManager.Instance?.GetSnapshots();
             Snapshot nearest = null;
@@ -102,8 +108,19 @@ public class TimelineControl : MonoBehaviour
         else
         {
             TimelineManager.Instance?.GetWorldStateAt(Time.time);
-            GameTimeManager.UpdateDateFromSeconds(Time.time);
-            slider.label = FormatTimeLabel(Time.time);
+            if (inPast)
+            {
+                TimelineManager.Instance?.RemoveLastSnapshot();
+                GameTimeManager.UpdateDateFromSeconds(Time.time);
+                slider.label = FormatTimeLabel(Time.time);
+                if (GameTimeManager.CurrentMonth == backupMonth && GameTimeManager.CurrentYear == backupYear)
+                    TimelineManager.Instance?.SaveSnapshot();
+            }
+            else
+            {
+                GameTimeManager.UpdateDateFromSeconds(Time.time);
+                slider.label = FormatTimeLabel(Time.time);
+            }
             GameTimeManager.Instance?.SetObservationMode(false);
             inPast = false;
         }
@@ -114,19 +131,26 @@ public class TimelineControl : MonoBehaviour
 
     void ReturnToPresent()
     {
-        inPast = false;
+        if (inPast)
+        {
+            TimelineManager.Instance?.GetWorldStateAt(Time.time);
+            TimelineManager.Instance?.RemoveLastSnapshot();
+            GameTimeManager.Instance?.SetObservationMode(false);
+            GameTimeManager.UpdateDateFromSeconds(Time.time);
+            if (GameTimeManager.CurrentMonth == backupMonth && GameTimeManager.CurrentYear == backupYear)
+                TimelineManager.Instance?.SaveSnapshot();
+        }
         GameTimeManager.Instance?.SetObservationMode(false);
         if (slider != null)
         {
             int now = Mathf.RoundToInt(Time.time);
             slider.highValue = now;
             slider.SetValueWithoutNotify(now);
-            GameTimeManager.UpdateDateFromSeconds(now);
             slider.label = FormatTimeLabel(now);
             UpdateSliderHandle();
             DrawMonthTicks();
         }
-        TimelineManager.Instance?.GetWorldStateAt(Time.time);
+        inPast = false;
     }
 
     void UpdateSliderHandle()
@@ -200,7 +224,7 @@ public class TimelineControl : MonoBehaviour
 
     string FormatTimeLabel(float seconds)
     {
-        GameTimeManager.UpdateDateFromSeconds(seconds);
-        return $"M{GameTimeManager.CurrentMonth} - A{GameTimeManager.CurrentYear}";
+        GameTimeManager.SecondsToDate(seconds, out var month, out var year);
+        return $"M{month} - A{year}";
     }
 }

@@ -182,6 +182,12 @@ public class TimelineManager : MonoBehaviour
         snapshots.Add(snap);
     }
 
+    public void RemoveLastSnapshot()
+    {
+        if (snapshots.Count > 0)
+            snapshots.RemoveAt(snapshots.Count - 1);
+    }
+
     public List<Snapshot> GetSnapshots()
     {
         return new List<Snapshot>(snapshots);
