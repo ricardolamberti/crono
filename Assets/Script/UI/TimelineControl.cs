@@ -27,34 +27,43 @@ public class TimelineControl : MonoBehaviour
             slider.label = FormatTimeLabel(Time.time);
 
             slider.RegisterValueChangedCallback(OnSliderChanged);
-            slider.RegisterCallback<GeometryChangedEvent>(_ => {
+
+            // ✅ Espera hasta que el layout tenga tamaño real
+            slider.schedule.Execute(() =>
+            {
                 UpdateSliderHandle();
                 DrawMonthTicks();
-            });
+            }).StartingIn(100);
         }
 
         if (presentButton != null)
             presentButton.clicked += ReturnToPresent;
     }
 
+
     void Update()
     {
-        if (!inPast && slider != null)
+        if (slider == null) return;
+
+        slider.highValue = Time.time;
+
+        // 🔥 Solo auto-actualiza si NO estamos en el pasado
+        if (!inPast)
         {
-            slider.highValue = Time.time;
             slider.SetValueWithoutNotify(Time.time);
             GameTimeManager.UpdateDateFromSeconds(Time.time);
             slider.label = FormatTimeLabel(Time.time);
-
-            UpdateSliderHandle();
-            DrawMonthTicks();
         }
+
+        UpdateSliderHandle();
+        DrawMonthTicks();
     }
 
     void OnSliderChanged(ChangeEvent<float> evt)
     {
+        Debug.Log($"[Timeline] Cambió slider: {evt.newValue}");
         float t = evt.newValue;
-        bool past = t < Time.time;
+        bool past = t < Time.time - 0.1f; // margen pequeño
 
         GameTimeManager.UpdateDateFromSeconds(t);
         slider.label = FormatTimeLabel(t);
@@ -71,6 +80,9 @@ public class TimelineControl : MonoBehaviour
             inPast = false;
         }
     }
+
+
+ 
 
     void ReturnToPresent()
     {
@@ -110,7 +122,7 @@ public class TimelineControl : MonoBehaviour
 
     void DrawMonthTicks()
     {
-        if (slider == null) return;
+        if (slider == null || slider.resolvedStyle.width <= 0) return;
 
         if (tickContainer == null)
         {
@@ -141,21 +153,21 @@ public class TimelineControl : MonoBehaviour
             tick.style.position = Position.Absolute;
             tick.style.left = x;
             tick.style.bottom = 0;
-            tick.style.width = 1;
-            tick.style.height = 8;
+            tick.style.width = 2;
+            tick.style.height = 10;
             tick.style.backgroundColor = Color.white;
             tickContainer.Add(tick);
 
-            // 🔥 Label flotante con el mes/año
             var label = new Label(FormatTimeLabel(timeAtTick));
             label.style.position = Position.Absolute;
             label.style.left = x - 12;
-            label.style.bottom = 10;
+            label.style.bottom = 12;
             label.style.fontSize = 8;
             label.style.color = Color.white;
             tickContainer.Add(label);
         }
     }
+
 
     string FormatTimeLabel(float seconds)
     {
