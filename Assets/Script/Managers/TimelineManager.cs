@@ -181,4 +181,14 @@ public class TimelineManager : MonoBehaviour
         };
         snapshots.Add(snap);
     }
+
+    public List<Snapshot> GetSnapshots()
+    {
+        return new List<Snapshot>(snapshots);
+    }
+
+    public void SetSnapshots(List<Snapshot> snaps)
+    {
+        snapshots = snaps ?? new List<Snapshot>();
+    }
 }

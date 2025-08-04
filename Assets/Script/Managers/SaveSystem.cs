@@ -13,6 +13,22 @@ public class GameSaveData
     public int month;
     public List<Vec2IntDTO> explored;
     public List<CharacterDTO> characters;
+    public List<SnapshotDTO> snapshots;
+}
+
+[System.Serializable]
+public class SnapshotDTO
+{
+    public float timestamp;
+    public List<MapCellDTO> cells;
+    public List<SnapshotResourceDTO> resources;
+}
+
+[System.Serializable]
+public class SnapshotResourceDTO
+{
+    public string id;
+    public GameResources resources;
 }
 
 public static class SaveSystem
@@ -48,6 +64,25 @@ public static class SaveSystem
                 type = type,
                 owner = character.owner
             });
+        }
+        if (TimelineManager.Instance != null)
+        {
+            TimelineManager.Instance.SaveSnapshot();
+            data.snapshots = new List<SnapshotDTO>();
+            foreach (var snap in TimelineManager.Instance.GetSnapshots())
+            {
+                var sDto = new SnapshotDTO
+                {
+                    timestamp = snap.timestamp,
+                    cells = new List<MapCellDTO>(snap.cells.Values),
+                    resources = new List<SnapshotResourceDTO>()
+                };
+                foreach (var kv in snap.resources)
+                {
+                    sDto.resources.Add(new SnapshotResourceDTO { id = kv.Key, resources = kv.Value });
+                }
+                data.snapshots.Add(sDto);
+            }
         }
         string json = JsonUtility.ToJson(data, true);
         string path = Path.Combine(SaveFolder, DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".json");
@@ -87,6 +122,34 @@ public static class SaveSystem
         {
             foreach (var pos in data.explored)
                 MapState.exploredCells.Add(new Vector2Int(pos.x, pos.y));
+        }
+        if (TimelineManager.Instance != null)
+        {
+            var snaps = new List<Snapshot>();
+            if (data.snapshots != null)
+            {
+                foreach (var sDto in data.snapshots)
+                {
+                    var snap = new Snapshot
+                    {
+                        timestamp = sDto.timestamp,
+                        cells = new Dictionary<Vector2Int, MapCellDTO>(),
+                        resources = new Dictionary<string, GameResources>()
+                    };
+                    if (sDto.cells != null)
+                    {
+                        foreach (var cell in sDto.cells)
+                            snap.cells[new Vector2Int(cell.x, cell.y)] = cell;
+                    }
+                    if (sDto.resources != null)
+                    {
+                        foreach (var r in sDto.resources)
+                            snap.resources[r.id] = r.resources;
+                    }
+                    snaps.Add(snap);
+                }
+            }
+            TimelineManager.Instance.SetSnapshots(snaps);
         }
         Debug.Log($"Game loaded from {path}");
 
