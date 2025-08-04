@@ -75,11 +75,11 @@ public static class SaveSystem
                 var sDto = new SnapshotDTO
                 {
                     timestamp = snap.timestamp,
-                    cells = new List<MapCellDTO>(snap.cells.Values),
+                    cells = new List<MapCellDTO>(snap.cellDeltas.Values),
                     resources = new List<SnapshotResourceDTO>(),
                     characters = new List<CharacterDTO>()
                 };
-                foreach (var kv in snap.resources)
+                foreach (var kv in snap.resourceDeltas)
                 {
                     sDto.resources.Add(new SnapshotResourceDTO { id = kv.Key, resources = kv.Value });
                 }
@@ -140,19 +140,19 @@ public static class SaveSystem
                     var snap = new Snapshot
                     {
                         timestamp = sDto.timestamp,
-                        cells = new Dictionary<Vector2Int, MapCellDTO>(),
-                        resources = new Dictionary<string, GameResources>(),
+                        cellDeltas = new Dictionary<Vector2Int, MapCellDTO>(),
+                        resourceDeltas = new Dictionary<string, GameResources>(),
                         characters = new List<CharacterDTO>()
                     };
                     if (sDto.cells != null)
                     {
                         foreach (var cell in sDto.cells)
-                            snap.cells[new Vector2Int(cell.x, cell.y)] = cell;
+                            snap.cellDeltas[new Vector2Int(cell.x, cell.y)] = cell;
                     }
                     if (sDto.resources != null)
                     {
                         foreach (var r in sDto.resources)
-                            snap.resources[r.id] = r.resources;
+                            snap.resourceDeltas[r.id] = r.resources;
                     }
                     if (sDto.characters != null)
                     {

@@ -23,9 +23,20 @@ public class WorldEvent
 public class Snapshot
 {
     public float timestamp;
-    public Dictionary<Vector2Int, DTO.MapCellDTO> cells;
-    public Dictionary<string, GameResources> resources;
+    // Only the cells that changed since the previous snapshot
+    public Dictionary<Vector2Int, DTO.MapCellDTO> cellDeltas;
+    // Only the resources that changed since the previous snapshot
+    public Dictionary<string, GameResources> resourceDeltas;
+    // Characters are stored in full for now
     public List<DTO.CharacterDTO> characters;
+}
+
+// Represents a fully reconstructed world state at a given time
+public class WorldState
+{
+    public Dictionary<Vector2Int, DTO.MapCellDTO> cells = new();
+    public Dictionary<string, GameResources> resources = new();
+    public List<DTO.CharacterDTO> characters = new();
 }
 
 public class TimelineManager : MonoBehaviour
@@ -36,6 +47,9 @@ public class TimelineManager : MonoBehaviour
     private Dictionary<string, List<WorldEvent>> entityLogs = new();
     private Dictionary<string, int> objectOrigins = new();
     private List<Snapshot> snapshots = new();
+    // Cached full state of last snapshot for delta calculation
+    private Dictionary<Vector2Int, DTO.MapCellDTO> lastSnapshotCells = new();
+    private Dictionary<string, GameResources> lastSnapshotResources = new();
     private Dictionary<int, int> rngSeeds = new();
     private int nextId = 1;
 
@@ -151,54 +165,97 @@ public class TimelineManager : MonoBehaviour
         };
     }
 
-    public Snapshot GetWorldStateAt(float time)
+    bool CellsEqual(DTO.MapCellDTO a, DTO.MapCellDTO b)
     {
-        Snapshot snap = null;
-        for (int i = snapshots.Count - 1; i >= 0; i--)
+        if (a == null && b == null) return true;
+        if (a == null || b == null) return false;
+        if (a.terrain != b.terrain) return false;
+        if (a.building != b.building) return false;
+        if (a.owner != b.owner) return false;
+        if (a.level != b.level) return false;
+        if (a.start_player != b.start_player) return false;
+        if (a.resources == null && b.resources == null) return true;
+        if (a.resources == null || b.resources == null) return false;
+        return a.resources.gold == b.resources.gold &&
+               a.resources.wood == b.resources.wood &&
+               a.resources.crono == b.resources.crono;
+    }
+
+    bool ResourcesEqual(GameResources a, GameResources b)
+    {
+        if (a == null && b == null) return true;
+        if (a == null || b == null) return false;
+        return a.gold == b.gold && a.wood == b.wood && a.food == b.food &&
+               a.crono == b.crono && a.science == b.science &&
+               a.freeHousing == b.freeHousing &&
+               a.academicUnits == b.academicUnits &&
+               a.barracksUnits == b.barracksUnits;
+    }
+
+    public WorldState GetWorldStateAt(float time)
+    {
+        var world = new WorldState();
+        List<DTO.CharacterDTO> chars = null;
+
+        foreach (var snap in snapshots.OrderBy(s => s.timestamp))
         {
-            if (snapshots[i].timestamp <= time)
-            {
-                snap = snapshots[i];
+            if (snap.timestamp > time)
                 break;
-            }
-        }
-        if (snap != null)
-        {
-            MapState.cellMap = new Dictionary<Vector2Int, DTO.MapCellDTO>(snap.cells);
-            if (snap.resources.TryGetValue("player", out var res))
-                GameState.playerResources = CloneResources(res);
-            MapLoader.instance?.ReloadFromState();
 
-            if (MapLoader.instance != null)
+            if (snap.cellDeltas != null)
             {
-                foreach (var ch in GameObject.FindObjectsOfType<Character>())
-                    GameObject.Destroy(ch.gameObject);
+                foreach (var kv in snap.cellDeltas)
+                    world.cells[kv.Key] = kv.Value.Clone();
+            }
 
-                if (snap.characters != null)
+            if (snap.resourceDeltas != null)
+            {
+                foreach (var kv in snap.resourceDeltas)
+                    world.resources[kv.Key] = CloneResources(kv.Value);
+            }
+
+            if (snap.characters != null)
+                chars = new List<DTO.CharacterDTO>(snap.characters);
+        }
+
+        MapState.cellMap = world.cells.ToDictionary(kv => kv.Key, kv => kv.Value.Clone());
+        if (world.resources.TryGetValue("player", out var res))
+            GameState.playerResources = CloneResources(res);
+        else
+            GameState.playerResources = new GameResources();
+        MapLoader.instance?.ReloadFromState();
+
+        if (MapLoader.instance != null)
+        {
+            foreach (var ch in GameObject.FindObjectsOfType<Character>())
+                GameObject.Destroy(ch.gameObject);
+
+            if (chars != null)
+            {
+                foreach (var c in chars)
                 {
-                    foreach (var c in snap.characters)
+                    var pos = new Vector2Int(c.x, c.y);
+                    Character.Type type;
+                    if (System.Enum.TryParse(c.type, out type))
                     {
-                        var pos = new Vector2Int(c.x, c.y);
-                        Character.Type type;
-                        if (System.Enum.TryParse(c.type, out type))
+                        MapLoader.instance.SpawnCharacter(pos, type, c.owner);
+                    }
+                    else
+                    {
+                        if (c.type == "worker" || c.type == "scientist" || c.type == "warrior")
                         {
+                            if (c.type == "worker") type = Character.Type.Worker;
+                            else if (c.type == "scientist") type = Character.Type.Scientist;
+                            else type = Character.Type.Warrior;
                             MapLoader.instance.SpawnCharacter(pos, type, c.owner);
-                        }
-                        else
-                        {
-                            if (c.type == "worker" || c.type == "scientist" || c.type == "warrior")
-                            {
-                                if (c.type == "worker") type = Character.Type.Worker;
-                                else if (c.type == "scientist") type = Character.Type.Scientist;
-                                else type = Character.Type.Warrior;
-                                MapLoader.instance.SpawnCharacter(pos, type, c.owner);
-                            }
                         }
                     }
                 }
             }
         }
-        return snap;
+
+        world.characters = chars ?? new List<DTO.CharacterDTO>();
+        return world;
     }
 
     public void SaveSnapshot(bool force)
@@ -233,17 +290,29 @@ public class TimelineManager : MonoBehaviour
             });
         }
 
+        var cellDeltas = new Dictionary<Vector2Int, DTO.MapCellDTO>();
+        foreach (var kv in MapState.cellMap)
+        {
+            if (!lastSnapshotCells.TryGetValue(kv.Key, out var prev) || !CellsEqual(kv.Value, prev))
+                cellDeltas[kv.Key] = kv.Value.Clone();
+        }
+
+        var currentResources = new Dictionary<string, GameResources>
+        {
+            ["player"] = GameState.playerResources
+        };
+        var resourceDeltas = new Dictionary<string, GameResources>();
+        foreach (var kv in currentResources)
+        {
+            if (!lastSnapshotResources.TryGetValue(kv.Key, out var prevRes) || !ResourcesEqual(kv.Value, prevRes))
+                resourceDeltas[kv.Key] = CloneResources(kv.Value);
+        }
+
         var snap = new Snapshot
         {
             timestamp = Time.time,
-            cells = MapState.cellMap.ToDictionary(
-                entry => entry.Key,
-                entry => entry.Value.Clone()
-            ),
-            resources = new Dictionary<string, GameResources>
-            {
-                ["player"] = GameState.playerResources.Clone()
-            },
+            cellDeltas = cellDeltas,
+            resourceDeltas = resourceDeltas,
             characters = charList
         };
 
@@ -255,12 +324,43 @@ public class TimelineManager : MonoBehaviour
         {
             snapshots.Add(snap); // Agregar nuevo
         }
+
+        lastSnapshotCells = MapState.cellMap.ToDictionary(
+            entry => entry.Key,
+            entry => entry.Value.Clone()
+        );
+        lastSnapshotResources = currentResources.ToDictionary(
+            entry => entry.Key,
+            entry => CloneResources(entry.Value)
+        );
     }
 
     public void RemoveLastSnapshot()
     {
         if (snapshots.Count > 0)
+        {
             snapshots.RemoveAt(snapshots.Count - 1);
+            RebuildLastState();
+        }
+    }
+
+    void RebuildLastState()
+    {
+        lastSnapshotCells = new Dictionary<Vector2Int, DTO.MapCellDTO>();
+        lastSnapshotResources = new Dictionary<string, GameResources>();
+        foreach (var snap in snapshots.OrderBy(s => s.timestamp))
+        {
+            if (snap.cellDeltas != null)
+            {
+                foreach (var kv in snap.cellDeltas)
+                    lastSnapshotCells[kv.Key] = kv.Value.Clone();
+            }
+            if (snap.resourceDeltas != null)
+            {
+                foreach (var kv in snap.resourceDeltas)
+                    lastSnapshotResources[kv.Key] = CloneResources(kv.Value);
+            }
+        }
     }
 
     public List<Snapshot> GetSnapshots()
@@ -271,5 +371,6 @@ public class TimelineManager : MonoBehaviour
     public void SetSnapshots(List<Snapshot> snaps)
     {
         snapshots = snaps ?? new List<Snapshot>();
+        RebuildLastState();
     }
 }
