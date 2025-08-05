@@ -41,7 +41,10 @@ public class TimelineControl : MonoBehaviour
         }
 
         if (presentButton != null)
+        {
             presentButton.clicked += ReturnToPresent;
+            presentButton.SetEnabled(false);
+        }
         if (timeTravelButton != null)
             timeTravelButton.clicked += BeginTimeTravel;
     }
@@ -88,6 +91,7 @@ public class TimelineControl : MonoBehaviour
             slider.label = FormatTimeLabel(t);
             GameTimeManager.Instance?.SetObservationMode(true);
             inPast = true;
+            presentButton?.SetEnabled(true);
         }
         else
         {
@@ -105,6 +109,7 @@ public class TimelineControl : MonoBehaviour
             }
             GameTimeManager.Instance?.SetObservationMode(false);
             inPast = false;
+            presentButton?.SetEnabled(false);
         }
     }
 
@@ -114,6 +119,10 @@ public class TimelineControl : MonoBehaviour
     void BeginTimeTravel()
     {
         TimelineManager.Instance?.BeginTimeTravelTo();
+        GameTimeManager.Instance?.SetObservationMode(false);
+        slider?.SetEnabled(false);
+        timeTravelButton?.SetEnabled(false);
+        presentButton?.SetEnabled(true);
     }
 
     void ReturnToPresent()
@@ -135,7 +144,10 @@ public class TimelineControl : MonoBehaviour
             slider.label = FormatTimeLabel(now);
             UpdateSliderHandle();
             DrawMonthTicks();
+            slider.SetEnabled(true);
         }
+        timeTravelButton?.SetEnabled(true);
+        presentButton?.SetEnabled(false);
         inPast = false;
     }
 
