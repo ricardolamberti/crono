@@ -94,7 +94,7 @@ public class TileActionProvider : MonoBehaviour, IActionProposer
                     }
                 }
 
-                var worker = FindFreeWorker();
+                var worker = FindFreeWorker(pos);
                 if (worker != null)
                 {
                     worker.SetGatherRoute(null);
@@ -111,7 +111,7 @@ public class TileActionProvider : MonoBehaviour, IActionProposer
                 var townhall = BuildingFactory.Create(BuildingCodes.Townhall);
                 var iconTown = townhall != null ? MapLoader.instance.GetBuildingSprite(townhall.SpriteKey) : null;
                 player.AddAction(new ControlPanelAction("Construir casa central", () => {
-                    var worker = FindFreeWorker();
+                    var worker = FindFreeWorker(new Vector2Int(cell.x, cell.y));
                     if (worker != null)
                         ActionManager.Instance.Enqueue(new BuildAction(worker, new Vector2Int(cell.x, cell.y), BuildingCodes.Townhall));
                     else
@@ -131,29 +131,48 @@ public class TileActionProvider : MonoBehaviour, IActionProposer
         }
     }
 
-    Character FindFreeWorker()
+    Character FindFreeWorker(Vector2Int targetPos)
     {
         var all = GameObject.FindObjectsOfType<Character>();
+
+        Character best = null;
+        float bestDist = float.MaxValue;
 
         // Primero buscar un obrero que no esté realizando ninguna tarea
         foreach (var c in all)
         {
+            if (c.owner != "player1") continue;
             if (c.role is WorkerRole && c.currentTask == Character.Task.None)
             {
-                return c;
+                float dist = Vector2Int.Distance(c.GetGridPosition(), targetPos);
+                if (dist < bestDist)
+                {
+                    bestDist = dist;
+                    best = c;
+                }
             }
         }
+
+        if (best != null)
+            return best;
 
         // Si no hay obreros libres, tomar cualquiera en modo automático
+        bestDist = float.MaxValue;
         foreach (var c in all)
         {
+            if (c.owner != "player1") continue;
             if (c.role is WorkerRole && c.controlMode == Character.ControlMode.Automatic)
             {
-                return c;
+                float dist = Vector2Int.Distance(c.GetGridPosition(), targetPos);
+                if (dist < bestDist)
+                {
+                    bestDist = dist;
+                    best = c;
+                }
             }
         }
 
-        return null;
+        return best;
     }
 
 
