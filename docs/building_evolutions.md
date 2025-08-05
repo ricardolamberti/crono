@@ -9,9 +9,9 @@ Este documento detalla las acciones habilitadas en cada nivel de las distintas c
 | Townhall | 3 | nuevo obrero, nuevo marino, nuevo espia, nuevo experto |
 | Townhall | 4 | nuevo obrero, nuevo marino, nuevo espia, nuevo experto |
 | Barracas | 1 | nuevo soldado |
-| Barracas | 2 | nuevo soldado, nuevo tanque |
-| Barracas | 3 | nuevo soldado, nuevo tanque, nuevo elite |
-| Barracas | 4 | nuevo soldado, nuevo tanque, nuevo elite, nuevo destructor |
+| Barracas | 2 | nuevo soldado, nuevo arquero |
+| Barracas | 3 | nuevo soldado, nuevo arquero, nuevo tanque |
+| Barracas | 4 | nuevo soldado, nuevo arquero, nuevo tanque, nuevo cybor, nuevo dron |
 | Aeropuerto | 1 | nuevo avion |
 | Aeropuerto | 2 | nuevo avion, nuevo bombardero |
 | Puerto | 1 | nuevo pesquero |

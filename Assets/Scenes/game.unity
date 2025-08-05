@@ -1008,7 +1008,7 @@ MonoBehaviour:
     - {fileID: 739907800, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
     - {fileID: 739907800, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
     - {fileID: 440698487, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
-  eliteSprites:
+  cyborSprites:
     north:
     - {fileID: -1146325917, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
     - {fileID: 477912563, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
@@ -1025,7 +1025,7 @@ MonoBehaviour:
     - {fileID: -1340127470, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
     - {fileID: -1863310492, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
     - {fileID: 1291912294, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
-  destructorSprites:
+  dronSprites:
     north:
     - {fileID: 1135083526, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
     - {fileID: -674185064, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}

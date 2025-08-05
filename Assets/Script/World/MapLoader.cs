@@ -115,8 +115,8 @@ public class MapLoader : MonoBehaviour
     public DirectionalSprites soldadoRasoSprites;
     public DirectionalSprites arqueroSprites;
     public DirectionalSprites tanqueSprites;
-    public DirectionalSprites eliteSprites;
-    public DirectionalSprites destructorSprites;
+    public DirectionalSprites cyborSprites;
+    public DirectionalSprites dronSprites;
 
     public Sprite arrowWeaponSprite;
     public Sprite bulletWeaponSprite;
@@ -140,8 +140,8 @@ public class MapLoader : MonoBehaviour
             { WarriorClass.SoldadoRaso, soldadoRasoSprites },
             { WarriorClass.Arquero, arqueroSprites },
             { WarriorClass.Tanque, tanqueSprites },
-            { WarriorClass.Elite, eliteSprites },
-            { WarriorClass.Destructor, destructorSprites }
+            { WarriorClass.Cybor, cyborSprites },
+            { WarriorClass.Dron, dronSprites }
         };
 
         weaponSpriteMap = new Dictionary<WeaponType, Sprite>

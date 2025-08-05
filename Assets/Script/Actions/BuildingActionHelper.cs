@@ -14,7 +14,7 @@ public static class BuildingActionHelper
                 yield return SpawnCharacter(label, cell, Character.Type.Worker);
             else if (lower.Contains("cientifico"))
                 yield return SpawnCharacter(label, cell, Character.Type.Scientist);
-            else if (lower.Contains("soldado"))
+            else if (lower.Contains("soldado") || lower.Contains("arquero") || lower.Contains("tanque") || lower.Contains("cybor") || lower.Contains("dron"))
                 yield return SpawnCharacter(label, cell, Character.Type.Warrior);
             else if (lower.Contains("grabar estado"))
                 yield return SaveState(label);
@@ -30,6 +30,7 @@ public static class BuildingActionHelper
     public static ControlPanelAction SpawnCharacter(string label, MapCellDTO cell, Character.Type type)
     {
         Sprite icon = null;
+        var lower = label.ToLowerInvariant();
         switch (type)
         {
             case Character.Type.Worker:
@@ -39,7 +40,16 @@ public static class BuildingActionHelper
                 icon = Resources.Load<Sprite>("Icons/scientist");
                 break;
             case Character.Type.Warrior:
-                icon = Resources.Load<Sprite>("Icons/soldier");
+                if (lower.Contains("arquero"))
+                    icon = Resources.Load<Sprite>("Icons/archer");
+                else if (lower.Contains("tanque"))
+                    icon = Resources.Load<Sprite>("Icons/tank");
+                else if (lower.Contains("cybor"))
+                    icon = Resources.Load<Sprite>("Icons/cybor");
+                else if (lower.Contains("dron"))
+                    icon = Resources.Load<Sprite>("Icons/dron");
+                else
+                    icon = Resources.Load<Sprite>("Icons/soldier");
                 break;
         }
 

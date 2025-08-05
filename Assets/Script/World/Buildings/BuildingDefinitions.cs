@@ -55,21 +55,21 @@ public class BarracksLevel2 : BarracksLevel1
 {
     public override int Level => 2;
     public override BuildRequirement Cost => new BuildRequirement { wood = 60, gold = 30 };
-    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "nuevo soldado", "nuevo tanque" );
+    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "nuevo soldado", "nuevo arquero" );
 }
 
 public class BarracksLevel3 : BarracksLevel2
 {
     public override int Level => 3;
     public override BuildRequirement Cost => new BuildRequirement { wood = 90, gold = 60 };
-    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "nuevo soldado", "nuevo tanque", "nuevo elite" );
+    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "nuevo soldado", "nuevo arquero", "nuevo tanque" );
 }
 
 public class BarracksLevel4 : BarracksLevel3
 {
     public override int Level => 4;
     public override BuildRequirement Cost => new BuildRequirement { wood = 120, gold = 90 };
-    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "nuevo soldado", "nuevo tanque", "nuevo elite", "nuevo destructor" );
+    public override IEnumerable<ControlPanelAction> GetActions(MapCellDTO cell) => BuildingActionHelper.FromLabels(cell, "nuevo soldado", "nuevo arquero", "nuevo tanque", "nuevo cybor", "nuevo dron" );
 }
 #endregion
 

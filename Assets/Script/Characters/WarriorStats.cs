@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 
 public enum WeaponType { None, Arrow, Bullet, Ray }
-public enum WarriorClass { SoldadoRaso, Arquero, Tanque, Elite, Destructor }
+public enum WarriorClass { SoldadoRaso, Arquero, Tanque, Cybor, Dron }
 
 public class WarriorStats
 {
@@ -24,7 +24,7 @@ public static class WarriorStatsMatrix
         { WarriorClass.SoldadoRaso, new WarriorStats(2, 0, WeaponType.None) },
         { WarriorClass.Arquero,     new WarriorStats(2, 2, WeaponType.Arrow) },
         { WarriorClass.Tanque,      new WarriorStats(4, 3, WeaponType.Bullet) },
-        { WarriorClass.Elite,       new WarriorStats(5, 4, WeaponType.Bullet) },
-        { WarriorClass.Destructor,  new WarriorStats(6, 6, WeaponType.Ray) },
+        { WarriorClass.Cybor,       new WarriorStats(5, 4, WeaponType.Bullet) },
+        { WarriorClass.Dron,        new WarriorStats(6, 6, WeaponType.Ray) },
     };
 }
