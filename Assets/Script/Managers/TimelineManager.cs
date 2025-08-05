@@ -81,7 +81,7 @@ public class TimelineManager : MonoBehaviour
         if (isTimeTraveling)
             return;
 
-        originalTime = Time.time;
+        originalTime = GameClock.Time;
         currentTimelineEvents = globalEvents
             .Where(e => e.timestamp <= originalTime)
             .ToList();
@@ -113,7 +113,7 @@ public class TimelineManager : MonoBehaviour
 
     public WorldEvent RecordEvent(string actorId, string action, Dictionary<string, string> parameters, List<int> deps = null, int? rngSeed = null)
     {
-        var ev = new WorldEvent(nextId++, Time.time, actorId, action);
+        var ev = new WorldEvent(nextId++, GameClock.Time, actorId, action);
         if (parameters != null)
         {
             foreach (var kv in parameters)
@@ -351,7 +351,7 @@ public class TimelineManager : MonoBehaviour
 
         var snap = new Snapshot
         {
-            timestamp = Time.time,
+            timestamp = GameClock.Time,
             cellDeltas = cellDeltas,
             resourceDeltas = resourceDeltas,
             characters = charList

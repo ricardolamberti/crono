@@ -23,12 +23,12 @@ public class TimelineControl : MonoBehaviour
         if (slider != null)
         {
             slider.lowValue = 0;
-            slider.highValue = Mathf.RoundToInt(Time.time);
+            slider.highValue = Mathf.RoundToInt(GameClock.Time);
             slider.showInputField = false;
-            slider.SetValueWithoutNotify(Mathf.RoundToInt(Time.time));
+            slider.SetValueWithoutNotify(Mathf.RoundToInt(GameClock.Time));
 
-            GameTimeManager.UpdateDateFromSeconds(Time.time);
-            slider.label = FormatTimeLabel(Time.time);
+            GameTimeManager.UpdateDateFromSeconds(GameClock.Time);
+            slider.label = FormatTimeLabel(GameClock.Time);
 
             slider.RegisterValueChangedCallback(OnSliderChanged);
 
@@ -51,12 +51,12 @@ public class TimelineControl : MonoBehaviour
     {
         if (slider == null) return;
 
-        slider.highValue = Mathf.RoundToInt(Time.time);
+        slider.highValue = Mathf.RoundToInt(GameClock.Time);
 
         // 🔥 Solo auto-actualiza si NO estamos en el pasado
         if (!inPast)
         {
-            int now = Mathf.RoundToInt(Time.time);
+            int now = Mathf.RoundToInt(GameClock.Time);
             slider.SetValueWithoutNotify(now);
             GameTimeManager.UpdateDateFromSeconds(now);
             slider.label = FormatTimeLabel(now);
@@ -70,7 +70,7 @@ public class TimelineControl : MonoBehaviour
     {
         Debug.Log($"[Timeline] Cambió slider: {evt.newValue}");
         float t = evt.newValue;
-        bool past = t < Time.time - 0.1f; // margen pequeño
+        bool past = t < GameClock.Time - 0.1f; // margen pequeño
 
         if (past)
         {
@@ -91,17 +91,17 @@ public class TimelineControl : MonoBehaviour
         }
         else
         {
-            TimelineManager.Instance?.GetWorldStateAt(Time.time);
+            TimelineManager.Instance?.GetWorldStateAt(GameClock.Time);
             if (inPast)
             {
                 TimelineManager.Instance?.RemoveLastSnapshot();
-                GameTimeManager.UpdateDateFromSeconds(Time.time);
-                slider.label = FormatTimeLabel(Time.time);
+                GameTimeManager.UpdateDateFromSeconds(GameClock.Time);
+                slider.label = FormatTimeLabel(GameClock.Time);
             }
             else
             {
-                GameTimeManager.UpdateDateFromSeconds(Time.time);
-                slider.label = FormatTimeLabel(Time.time);
+                GameTimeManager.UpdateDateFromSeconds(GameClock.Time);
+                slider.label = FormatTimeLabel(GameClock.Time);
             }
             GameTimeManager.Instance?.SetObservationMode(false);
             inPast = false;
@@ -121,15 +121,15 @@ public class TimelineControl : MonoBehaviour
         TimelineManager.Instance?.FinishTimeTravel();
         if (inPast)
         {
-            TimelineManager.Instance?.GetWorldStateAt(Time.time);
+            TimelineManager.Instance?.GetWorldStateAt(GameClock.Time);
             TimelineManager.Instance?.RemoveLastSnapshot();
             GameTimeManager.Instance?.SetObservationMode(false);
-            GameTimeManager.UpdateDateFromSeconds(Time.time);
+            GameTimeManager.UpdateDateFromSeconds(GameClock.Time);
         }
         GameTimeManager.Instance?.SetObservationMode(false);
         if (slider != null)
         {
-            int now = Mathf.RoundToInt(Time.time);
+            int now = Mathf.RoundToInt(GameClock.Time);
             slider.highValue = now;
             slider.SetValueWithoutNotify(now);
             slider.label = FormatTimeLabel(now);
