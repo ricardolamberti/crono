@@ -44,6 +44,7 @@ public class TimelineManager : MonoBehaviour
     public static TimelineManager Instance { get; private set; }
 
     private List<WorldEvent> globalEvents = new();
+    private List<WorldEvent> currentTimelineEvents = null;
     private Dictionary<string, List<WorldEvent>> entityLogs = new();
     private Dictionary<string, int> objectOrigins = new();
     private List<Snapshot> snapshots = new();
@@ -52,6 +53,8 @@ public class TimelineManager : MonoBehaviour
     private Dictionary<string, GameResources> lastSnapshotResources = new();
     private Dictionary<int, int> rngSeeds = new();
     private int nextId = 1;
+    private bool isTimeTraveling = false;
+    private float originalTime = 0f;
 
     void Awake()
     {
@@ -73,6 +76,41 @@ public class TimelineManager : MonoBehaviour
         SaveSnapshot(false);
     }
 
+    public void BeginTimeTravelTo()
+    {
+        if (isTimeTraveling)
+            return;
+
+        originalTime = Time.time;
+        currentTimelineEvents = globalEvents
+            .Where(e => e.timestamp <= originalTime)
+            .ToList();
+        isTimeTraveling = true;
+    }
+
+    public void FinishTimeTravel()
+    {
+        if (!isTimeTraveling)
+            return;
+
+        globalEvents = currentTimelineEvents ?? new List<WorldEvent>();
+        RebuildEntityLogs();
+
+        snapshots = snapshots.Where(s => s.timestamp <= originalTime).ToList();
+        RebuildLastState();
+        SaveSnapshot(true);
+
+        isTimeTraveling = false;
+        currentTimelineEvents = null;
+
+        GameTimeManager.UpdateDateFromSeconds(originalTime);
+    }
+
+    public void RequestDefensiveJoin()
+    {
+        Debug.Log("Defensive join requested.");
+    }
+
     public WorldEvent RecordEvent(string actorId, string action, Dictionary<string, string> parameters, List<int> deps = null, int? rngSeed = null)
     {
         var ev = new WorldEvent(nextId++, Time.time, actorId, action);
@@ -84,7 +122,10 @@ public class TimelineManager : MonoBehaviour
         if (deps != null)
             ev.dependencies.AddRange(deps);
 
-        globalEvents.Add(ev);
+        if (isTimeTraveling)
+            currentTimelineEvents.Add(ev);
+        else
+            globalEvents.Add(ev);
         if (!entityLogs.ContainsKey(actorId))
             entityLogs[actorId] = new List<WorldEvent>();
         entityLogs[actorId].Add(ev);
@@ -360,6 +401,17 @@ public class TimelineManager : MonoBehaviour
                 foreach (var kv in snap.resourceDeltas)
                     lastSnapshotResources[kv.Key] = CloneResources(kv.Value);
             }
+        }
+    }
+
+    void RebuildEntityLogs()
+    {
+        entityLogs = new Dictionary<string, List<WorldEvent>>();
+        foreach (var ev in globalEvents)
+        {
+            if (!entityLogs.ContainsKey(ev.actorId))
+                entityLogs[ev.actorId] = new List<WorldEvent>();
+            entityLogs[ev.actorId].Add(ev);
         }
     }
 
