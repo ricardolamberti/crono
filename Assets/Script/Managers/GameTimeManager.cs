@@ -75,6 +75,7 @@ public class GameTimeManager : MonoBehaviour
         if (observationMode)
             return;
 
+        GameClock.Advance(Time.deltaTime);
         timer += Time.deltaTime;
         if (timer >= interval)
         {

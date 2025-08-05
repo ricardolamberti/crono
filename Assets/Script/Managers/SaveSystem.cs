@@ -9,6 +9,7 @@ public class GameSaveData
 {
     public List<MapCellDTO> cells;
     public GameResources resources;
+    public float time;
     public int year;
     public int month;
     public List<Vec2IntDTO> explored;
@@ -43,6 +44,7 @@ public static class SaveSystem
         {
             cells = new List<MapCellDTO>(MapState.cellMap.Values),
             resources = GameState.playerResources,
+            time = GameClock.Time,
             year = GameTimeManager.CurrentYear,
             month = GameTimeManager.CurrentMonth,
             explored = new List<Vec2IntDTO>(),
@@ -124,6 +126,8 @@ public static class SaveSystem
         GameState.playerResources = data.resources ?? new GameResources();
         GameTimeManager.CurrentYear = data.year;
         GameTimeManager.CurrentMonth = data.month;
+        GameClock.Set(data.time);
+        GameTimeManager.UpdateDateFromSeconds(GameClock.Time);
         MapState.exploredCells = new HashSet<Vector2Int>();
         if (data.explored != null)
         {
