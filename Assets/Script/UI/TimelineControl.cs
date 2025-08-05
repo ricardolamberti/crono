@@ -6,6 +6,7 @@ public class TimelineControl : MonoBehaviour
     public UIDocument uiDocument;
     private SliderInt slider;
     private Button presentButton;
+    private Button timeTravelButton;
     private VisualElement tickContainer;
     private bool inPast = false;
     private int backupMonth;
@@ -17,6 +18,7 @@ public class TimelineControl : MonoBehaviour
         var root = uiDocument.rootVisualElement;
         slider = root.Q<SliderInt>("TimelineSlider");
         presentButton = root.Q<Button>("PresentButton");
+        timeTravelButton = root.Q<Button>("TimeTravelButton");
 
         if (slider != null)
         {
@@ -40,6 +42,8 @@ public class TimelineControl : MonoBehaviour
 
         if (presentButton != null)
             presentButton.clicked += ReturnToPresent;
+        if (timeTravelButton != null)
+            timeTravelButton.clicked += BeginTimeTravel;
     }
 
 
@@ -105,10 +109,16 @@ public class TimelineControl : MonoBehaviour
     }
 
 
- 
+
+
+    void BeginTimeTravel()
+    {
+        TimelineManager.Instance?.BeginTimeTravelTo();
+    }
 
     void ReturnToPresent()
     {
+        TimelineManager.Instance?.FinishTimeTravel();
         if (inPast)
         {
             TimelineManager.Instance?.GetWorldStateAt(Time.time);
