@@ -238,10 +238,21 @@ public class TimelineManager : MonoBehaviour
         var world = new WorldState();
         List<DTO.CharacterDTO> chars = null;
 
-        foreach (var snap in snapshots.OrderBy(s => s.timestamp))
+        var orderedSnapshots = snapshots.OrderBy(s => s.timestamp).ToList();
+        bool anyApplied = false;
+
+        for (int i = 0; i < orderedSnapshots.Count; i++)
         {
+            var snap = orderedSnapshots[i];
+
             if (snap.timestamp > time)
-                break;
+            {
+                // Si aún no aplicamos ningún snapshot, usamos el primero
+                if (!anyApplied && orderedSnapshots.Count > 0)
+                    snap = orderedSnapshots[0];
+                else
+                    break;
+            }
 
             if (snap.cellDeltas != null)
             {
@@ -257,13 +268,34 @@ public class TimelineManager : MonoBehaviour
 
             if (snap.characters != null)
                 chars = new List<DTO.CharacterDTO>(snap.characters);
+
+            anyApplied = true;
+        }
+
+        if (!anyApplied && orderedSnapshots.Count > 0)
+        {
+            var first = orderedSnapshots[0];
+            if (first.cellDeltas != null)
+            {
+                foreach (var kv in first.cellDeltas)
+                    world.cells[kv.Key] = kv.Value.Clone();
+            }
+
+            if (first.resourceDeltas != null)
+            {
+                foreach (var kv in first.resourceDeltas)
+                    world.resources[kv.Key] = CloneResources(kv.Value);
+            }
+
+            if (first.characters != null)
+                chars = new List<DTO.CharacterDTO>(first.characters);
         }
 
         MapState.cellMap = world.cells.ToDictionary(kv => kv.Key, kv => kv.Value.Clone());
-        if (world.resources.TryGetValue("player", out var res))
-            GameState.playerResources = CloneResources(res);
-        else
-            GameState.playerResources = new GameResources();
+        GameState.playerResources = world.resources.TryGetValue("player", out var res)
+            ? CloneResources(res)
+            : new GameResources();
+
         MapLoader.instance?.ReloadFromState();
 
         if (MapLoader.instance != null)
@@ -276,20 +308,17 @@ public class TimelineManager : MonoBehaviour
                 foreach (var c in chars)
                 {
                     var pos = new Vector2Int(c.x, c.y);
-                    Character.Type type;
-                    if (System.Enum.TryParse(c.type, out type))
+                    if (System.Enum.TryParse(c.type, out Character.Type type))
                     {
                         MapLoader.instance.SpawnCharacter(pos, type, c.owner);
                     }
                     else
                     {
-                        if (c.type == "worker" || c.type == "scientist" || c.type == "warrior")
-                        {
-                            if (c.type == "worker") type = Character.Type.Worker;
-                            else if (c.type == "scientist") type = Character.Type.Scientist;
-                            else type = Character.Type.Warrior;
-                            MapLoader.instance.SpawnCharacter(pos, type, c.owner);
-                        }
+                        if (c.type == "worker") type = Character.Type.Worker;
+                        else if (c.type == "scientist") type = Character.Type.Scientist;
+                        else if (c.type == "warrior") type = Character.Type.Warrior;
+                        else continue;
+                        MapLoader.instance.SpawnCharacter(pos, type, c.owner);
                     }
                 }
             }
@@ -298,6 +327,7 @@ public class TimelineManager : MonoBehaviour
         world.characters = chars ?? new List<DTO.CharacterDTO>();
         return world;
     }
+
 
     public void SaveSnapshot(bool force)
     {
