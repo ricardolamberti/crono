@@ -11,6 +11,7 @@ public class TimelineControl : MonoBehaviour
     private bool inPast = false;
     private int backupMonth;
     private int backupYear;
+    private float selectedTime;
 
     void OnEnable()
     {
@@ -26,6 +27,8 @@ public class TimelineControl : MonoBehaviour
             slider.highValue = Mathf.RoundToInt(GameClock.Time);
             slider.showInputField = false;
             slider.SetValueWithoutNotify(Mathf.RoundToInt(GameClock.Time));
+
+            selectedTime = GameClock.Time;
 
             GameTimeManager.UpdateDateFromSeconds(GameClock.Time);
             slider.label = FormatTimeLabel(GameClock.Time);
@@ -63,6 +66,7 @@ public class TimelineControl : MonoBehaviour
             slider.SetValueWithoutNotify(now);
             GameTimeManager.UpdateDateFromSeconds(now);
             slider.label = FormatTimeLabel(now);
+            selectedTime = now;
         }
 
         UpdateSliderHandle();
@@ -73,6 +77,7 @@ public class TimelineControl : MonoBehaviour
     {
         Debug.Log($"[Timeline] Cambió slider: {evt.newValue}");
         float t = evt.newValue;
+        selectedTime = t;
         bool past = t < GameClock.Time - 0.1f; // margen pequeño
 
         if (past)
@@ -110,6 +115,7 @@ public class TimelineControl : MonoBehaviour
             GameTimeManager.Instance?.SetObservationMode(false);
             inPast = false;
             presentButton?.SetEnabled(false);
+            selectedTime = GameClock.Time;
         }
     }
 
@@ -118,11 +124,12 @@ public class TimelineControl : MonoBehaviour
 
     void BeginTimeTravel()
     {
-        TimelineManager.Instance?.BeginTimeTravelTo();
+        TimelineManager.Instance?.BeginTimeTravelTo(selectedTime);
         GameTimeManager.Instance?.SetObservationMode(false);
         slider?.SetEnabled(false);
         timeTravelButton?.SetEnabled(false);
         presentButton?.SetEnabled(true);
+        inPast = false;
     }
 
     void ReturnToPresent()
@@ -145,6 +152,7 @@ public class TimelineControl : MonoBehaviour
             UpdateSliderHandle();
             DrawMonthTicks();
             slider.SetEnabled(true);
+            selectedTime = now;
         }
         timeTravelButton?.SetEnabled(true);
         presentButton?.SetEnabled(false);
