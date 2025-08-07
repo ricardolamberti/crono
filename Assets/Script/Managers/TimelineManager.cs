@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -39,15 +40,26 @@ public class WorldState
     public List<DTO.CharacterDTO> characters = new();
 }
 
+public class TimelineBranch
+{
+    public string branchId;
+    public string? parentBranchId;
+    public float branchPointTime;
+    public List<WorldEvent> events = new();
+    public List<Snapshot> snapshots = new();
+    public bool isActive;
+    public string createdByPlayer;
+}
+
 public class TimelineManager : MonoBehaviour
 {
     public static TimelineManager Instance { get; private set; }
 
-    private List<WorldEvent> globalEvents = new();
     private List<WorldEvent> currentTimelineEvents = null;
     private Dictionary<string, List<WorldEvent>> entityLogs = new();
     private Dictionary<string, int> objectOrigins = new();
-    private List<Snapshot> snapshots = new();
+    private Dictionary<string, TimelineBranch> allBranches = new();
+    private TimelineBranch currentBranch;
     // Cached full state of last snapshot for delta calculation
     private Dictionary<Vector2Int, DTO.MapCellDTO> lastSnapshotCells = new();
     private Dictionary<string, GameResources> lastSnapshotResources = new();
@@ -56,12 +68,20 @@ public class TimelineManager : MonoBehaviour
     private bool isTimeTraveling = false;
     private float originalTime = 0f;
     private float timeTravelStartTime = 0f;
-    private List<List<WorldEvent>> timelineBranches = new();
-    private List<List<Snapshot>> snapshotBranches = new();
 
     void Awake()
     {
         Instance = this;
+        var root = new TimelineBranch
+        {
+            branchId = Guid.NewGuid().ToString(),
+            parentBranchId = null,
+            branchPointTime = 0f,
+            isActive = true,
+            createdByPlayer = string.Empty
+        };
+        allBranches[root.branchId] = root;
+        currentBranch = root;
     }
 
     void OnEnable()
@@ -86,7 +106,7 @@ public class TimelineManager : MonoBehaviour
 
         originalTime = GameClock.Time;
         timeTravelStartTime = originalTime;
-        currentTimelineEvents = globalEvents
+        currentTimelineEvents = currentBranch.events
             .Where(e => e.timestamp <= originalTime)
             .ToList();
         isTimeTraveling = true;
@@ -97,13 +117,24 @@ public class TimelineManager : MonoBehaviour
         if (!isTimeTraveling)
             return;
 
-        timelineBranches.Add(globalEvents);
-        snapshotBranches.Add(snapshots);
+        var oldBranch = currentBranch;
+        oldBranch.isActive = false;
 
-        globalEvents = currentTimelineEvents ?? new List<WorldEvent>();
+        var newBranch = new TimelineBranch
+        {
+            branchId = Guid.NewGuid().ToString(),
+            parentBranchId = oldBranch.branchId,
+            branchPointTime = timeTravelStartTime,
+            isActive = true,
+            createdByPlayer = "player",
+            events = currentTimelineEvents ?? new List<WorldEvent>(),
+            snapshots = CloneAndAdaptSnapshotsFromOldBranch(oldBranch.snapshots, timeTravelStartTime)
+        };
+
+        allBranches[newBranch.branchId] = newBranch;
+        currentBranch = newBranch;
+
         RebuildEntityLogs();
-
-        snapshots = snapshots.Where(s => s.timestamp < timeTravelStartTime).ToList();
         RebuildLastState();
 
         float t = timeTravelStartTime;
@@ -142,7 +173,7 @@ public class TimelineManager : MonoBehaviour
         if (isTimeTraveling)
             currentTimelineEvents.Add(ev);
         else
-            globalEvents.Add(ev);
+            currentBranch.events.Add(ev);
         if (!entityLogs.ContainsKey(actorId))
             entityLogs[actorId] = new List<WorldEvent>();
         entityLogs[actorId].Add(ev);
@@ -172,7 +203,7 @@ public class TimelineManager : MonoBehaviour
         while (q.Count > 0)
         {
             int id = q.Dequeue();
-            var ev = globalEvents.Find(e => e.id == id);
+            var ev = currentBranch.events.Find(e => e.id == id);
             if (ev != null)
             {
                 result.Add(ev);
@@ -206,6 +237,29 @@ public class TimelineManager : MonoBehaviour
         if(rngSeeds.TryGetValue(eventId, out var s))
             return s;
         return -1;
+    }
+
+    List<Snapshot> CloneAndAdaptSnapshotsFromOldBranch(List<Snapshot> oldSnaps, float cutoff)
+    {
+        var list = new List<Snapshot>();
+        foreach (var snap in oldSnaps.Where(s => s.timestamp < cutoff))
+        {
+            var clone = new Snapshot
+            {
+                timestamp = snap.timestamp,
+                cellDeltas = snap.cellDeltas?.ToDictionary(kv => kv.Key, kv => kv.Value.Clone()),
+                resourceDeltas = snap.resourceDeltas?.ToDictionary(kv => kv.Key, kv => CloneResources(kv.Value)),
+                characters = snap.characters?.Select(c => new DTO.CharacterDTO { x = c.x, y = c.y, type = c.type, owner = c.owner }).ToList()
+            };
+            AdaptToNewPast(clone);
+            list.Add(clone);
+        }
+        return list;
+    }
+
+    void AdaptToNewPast(Snapshot snap)
+    {
+        // Placeholder for adapting snapshot data based on new past events
     }
 
     GameResources CloneResources(GameResources src)
@@ -258,7 +312,7 @@ public class TimelineManager : MonoBehaviour
         if (isTimeTraveling && time < timeTravelStartTime)
             timeTravelStartTime = time;
 
-        var orderedSnapshots = snapshots.OrderBy(s => s.timestamp).ToList();
+        var orderedSnapshots = currentBranch.snapshots.OrderBy(s => s.timestamp).ToList();
         bool anyApplied = false;
 
         for (int i = 0; i < orderedSnapshots.Count; i++)
@@ -357,9 +411,9 @@ public class TimelineManager : MonoBehaviour
 
         // Buscar índice del snapshot existente para este año/mes
         int existingIndex = -1;
-        
+
         if (!force)
-            existingIndex= snapshots.FindIndex(s =>
+            existingIndex= currentBranch.snapshots.FindIndex(s =>
             {
                 GameTimeManager.SecondsToDate(s.timestamp, out currentMonth, out currentYear);
                 return GameTimeManager.CurrentMonth == currentMonth && GameTimeManager.CurrentYear == currentYear;
@@ -409,11 +463,11 @@ public class TimelineManager : MonoBehaviour
 
         if (existingIndex >= 0)
         {
-            snapshots[existingIndex] = snap; // Sobrescribir
+            currentBranch.snapshots[existingIndex] = snap; // Sobrescribir
         }
         else
         {
-            snapshots.Add(snap); // Agregar nuevo
+            currentBranch.snapshots.Add(snap); // Agregar nuevo
         }
 
         lastSnapshotCells = MapState.cellMap.ToDictionary(
@@ -428,9 +482,9 @@ public class TimelineManager : MonoBehaviour
 
     public void RemoveLastSnapshot()
     {
-        if (snapshots.Count > 0)
+        if (currentBranch.snapshots.Count > 0)
         {
-            snapshots.RemoveAt(snapshots.Count - 1);
+            currentBranch.snapshots.RemoveAt(currentBranch.snapshots.Count - 1);
             RebuildLastState();
         }
     }
@@ -439,7 +493,7 @@ public class TimelineManager : MonoBehaviour
     {
         lastSnapshotCells = new Dictionary<Vector2Int, DTO.MapCellDTO>();
         lastSnapshotResources = new Dictionary<string, GameResources>();
-        foreach (var snap in snapshots.OrderBy(s => s.timestamp))
+        foreach (var snap in currentBranch.snapshots.OrderBy(s => s.timestamp))
         {
             if (snap.cellDeltas != null)
             {
@@ -457,7 +511,7 @@ public class TimelineManager : MonoBehaviour
     void RebuildEntityLogs()
     {
         entityLogs = new Dictionary<string, List<WorldEvent>>();
-        foreach (var ev in globalEvents)
+        foreach (var ev in currentBranch.events)
         {
             if (!entityLogs.ContainsKey(ev.actorId))
                 entityLogs[ev.actorId] = new List<WorldEvent>();
@@ -467,12 +521,23 @@ public class TimelineManager : MonoBehaviour
 
     public List<Snapshot> GetSnapshots()
     {
-        return new List<Snapshot>(snapshots);
+        return new List<Snapshot>(currentBranch.snapshots);
     }
 
     public void SetSnapshots(List<Snapshot> snaps)
     {
-        snapshots = snaps ?? new List<Snapshot>();
+        currentBranch.snapshots = snaps ?? new List<Snapshot>();
         RebuildLastState();
+    }
+
+    public TimelineBranch GetBranchById(string id)
+    {
+        allBranches.TryGetValue(id, out var branch);
+        return branch;
+    }
+
+    public List<TimelineBranch> GetAllBranches()
+    {
+        return allBranches.Values.ToList();
     }
 }
