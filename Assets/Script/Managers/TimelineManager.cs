@@ -111,7 +111,8 @@ public class TimelineManager : MonoBehaviour
         {
             GameClock.Set(t);
             GameTimeManager.UpdateDateFromSeconds(t);
-            SaveSnapshot(true);
+            SaveSnapshot(false);
+
             t += GameTimeManager.SecondsPerMonth;
         }
 

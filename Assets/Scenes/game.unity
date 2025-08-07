@@ -909,54 +909,57 @@ MonoBehaviour:
   workerSprite: {fileID: 1135083526, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
   scientistSprite: {fileID: -309974351, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
   warriorSprite: {fileID: 643633751, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
-  workerNorthSprites:
-  - {fileID: -765382535, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
-  - {fileID: 814666221, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
-  - {fileID: -985753611, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
-  workerSouthSprites:
-  - {fileID: 1135083526, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
-  - {fileID: -674185064, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
-  - {fileID: -1610019563, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
-  workerEastSprites:
-  - {fileID: 182264363, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
-  - {fileID: -1807105520, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
-  - {fileID: -790226298, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
-  workerWestSprites:
-  - {fileID: 1490954961, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
-  - {fileID: 375906505, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
-  - {fileID: -198031234, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
-  scientistNorthSprites:
-  - {fileID: -1963016186, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
-  - {fileID: 1327190823, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
-  - {fileID: 44557685, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
-  scientistSouthSprites:
-  - {fileID: 1011502378, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
-  - {fileID: 2037655124, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
-  - {fileID: 1634547432, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
-  scientistEastSprites:
-  - {fileID: -1315830535, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
-  - {fileID: 1704256697, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
-  - {fileID: 258749708, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
-  scientistWestSprites:
-  - {fileID: 739907800, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
-  - {fileID: -1210673635, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
-  - {fileID: 440698487, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
-  warriorNorthSprites:
-  - {fileID: -1146325917, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
-  - {fileID: 477912563, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
-  - {fileID: -2048885289, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
-  warriorSouthSprites:
-  - {fileID: 643633751, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
-  - {fileID: 713800047, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
-  - {fileID: -1514120873, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
-  warriorEastSprites:
-  - {fileID: 1908875206, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
-  - {fileID: 1889731191, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
-  - {fileID: 2053344478, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
-  warriorWestSprites:
-  - {fileID: -1340127470, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
-  - {fileID: -1863310492, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
-  - {fileID: 1291912294, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+  workerSprites:
+    north:
+    - {fileID: -1963016186, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: 1327190823, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: -1963016186, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    south:
+    - {fileID: 1011502378, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: 2037655124, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: 1634547432, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    east:
+    - {fileID: 739907800, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: -1210673635, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: 440698487, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    west:
+    - {fileID: -1315830535, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: 1704256697, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: 258749708, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+  scientistSprites:
+    north:
+    - {fileID: -985753611, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: 814666221, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: -765382535, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    south:
+    - {fileID: 1135083526, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: -674185064, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: -1610019563, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    east:
+    - {fileID: 182264363, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: -1807105520, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: -790226298, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    west:
+    - {fileID: 1490954961, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: 375906505, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: -198031234, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+  warriorSprites:
+    north:
+    - {fileID: 1073000670, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: 2088440166, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: 2136900228, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    south:
+    - {fileID: -309974351, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: -1922563264, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: -547758941, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    east:
+    - {fileID: 445482215, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: -1432272365, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: -947855627, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    west:
+    - {fileID: 563909890, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: 1947613602, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
+    - {fileID: 1009405168, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}
   soldadoRasoSprites:
     north:
     - {fileID: 321498602, guid: e587ef0ee1304a047b65c87a3df9df8e, type: 3}

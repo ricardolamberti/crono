@@ -23,7 +23,6 @@ public class MapLoader : MonoBehaviour
     public Sprite waterSprite;
     public Sprite defaultSprite;
 
-  
     public Sprite hutSprite;
     public Sprite barracksSprite;
     public Sprite mineSprite;
@@ -96,22 +95,9 @@ public class MapLoader : MonoBehaviour
     public Sprite scientistSprite;
     public Sprite warriorSprite;
 
-   
-    public Sprite[] workerNorthSprites;
-    public Sprite[] workerSouthSprites;
-    public Sprite[] workerEastSprites;
-    public Sprite[] workerWestSprites;
-
-    public Sprite[] scientistNorthSprites;
-    public Sprite[] scientistSouthSprites;
-    public Sprite[] scientistEastSprites;
-    public Sprite[] scientistWestSprites;
-
-    public Sprite[] warriorNorthSprites;
-    public Sprite[] warriorSouthSprites;
-    public Sprite[] warriorEastSprites;
-    public Sprite[] warriorWestSprites;
-
+    public DirectionalSprites workerSprites;
+    public DirectionalSprites scientistSprites;
+    public DirectionalSprites warriorSprites;
     public DirectionalSprites soldadoRasoSprites;
     public DirectionalSprites arqueroSprites;
     public DirectionalSprites tanqueSprites;
@@ -699,20 +685,20 @@ public class MapLoader : MonoBehaviour
         {
             go.tag = "Worker";
             animator.spriteRenderer = renderer;
-            animator.northSprites = workerNorthSprites;
-            animator.southSprites = workerSouthSprites;
-            animator.eastSprites = workerEastSprites;
-            animator.westSprites = workerWestSprites;
+            animator.northSprites = workerSprites.north;
+            animator.southSprites = workerSprites.south;
+            animator.eastSprites = workerSprites.east;
+            animator.westSprites = workerSprites.west;
             role = go.AddComponent<WorkerRole>();
         }
         if (type == Character.Type.Scientist && animator != null)
         {
             go.tag = "Scientist";
             animator.spriteRenderer = renderer;
-            animator.northSprites = scientistNorthSprites;
-            animator.southSprites = scientistSouthSprites;
-            animator.eastSprites = scientistEastSprites;
-            animator.westSprites = scientistWestSprites;
+            animator.northSprites = scientistSprites.north;
+            animator.southSprites = scientistSprites.south;
+            animator.eastSprites = scientistSprites.east;
+            animator.westSprites = scientistSprites.west;
             role = go.AddComponent<ScientistRole>();
         }
         if (type == Character.Type.Warrior && animator != null)
@@ -732,10 +718,10 @@ public class MapLoader : MonoBehaviour
             }
             else
             {
-                animator.northSprites = warriorNorthSprites;
-                animator.southSprites = warriorSouthSprites;
-                animator.eastSprites = warriorEastSprites;
-                animator.westSprites = warriorWestSprites;
+                animator.northSprites = warriorSprites.north;
+                animator.southSprites = warriorSprites.south;
+                animator.eastSprites = warriorSprites.east;
+                animator.westSprites = warriorSprites.west;
             }
 
             if (weaponSpriteMap != null && weaponSpriteMap.TryGetValue(wr.Stats.weapon, out var ws))

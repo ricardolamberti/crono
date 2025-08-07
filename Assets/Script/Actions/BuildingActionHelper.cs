@@ -41,9 +41,9 @@ public static class BuildingActionHelper
                 break;
             case Character.Type.Warrior:
                 if (lower.Contains("arquero"))
-                    icon = Resources.Load<Sprite>("Icons/archer");
+                    icon = Resources.Load<Sprite>("Icons/arquero");
                 else if (lower.Contains("tanque"))
-                    icon = Resources.Load<Sprite>("Icons/tank");
+                    icon = Resources.Load<Sprite>("Icons/tanque");
                 else if (lower.Contains("cybor"))
                     icon = Resources.Load<Sprite>("Icons/cybor");
                 else if (lower.Contains("dron"))

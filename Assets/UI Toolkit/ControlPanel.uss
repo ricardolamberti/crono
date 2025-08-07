@@ -110,6 +110,11 @@
 .soldier-icon { background-image: resource("Icons/soldier"); }
 .scientist-icon { background-image: resource("Icons/scientist"); }
 .science-icon { background-image: resource("Icons/science"); }
+.archer-icon { background-image: resource("Icons/arquero"); }
+.cybor-icon { background-image: resource("Icons/cybor"); }
+.dron-icon { background-image: resource("Icons/dron"); }
+.tank-icon { background-image: resource("Icons/tanque"); }
+
 
 #TimelineSlider {
     flex-grow: 1;
