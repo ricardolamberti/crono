@@ -56,6 +56,7 @@ public class TimelineManager : MonoBehaviour
     public static TimelineManager Instance { get; private set; }
 
     private List<WorldEvent> currentTimelineEvents = null;
+    private List<Snapshot> currentTimelineSnapshots = null;
     private Dictionary<string, List<WorldEvent>> entityLogs = new();
     private Dictionary<string, int> objectOrigins = new();
     private Dictionary<string, TimelineBranch> allBranches = new();
@@ -99,16 +100,32 @@ public class TimelineManager : MonoBehaviour
         SaveSnapshot(false);
     }
 
-    public void BeginTimeTravelTo()
+    public void BeginTimeTravelTo(float targetTime)
     {
         if (isTimeTraveling)
             return;
 
         originalTime = GameClock.Time;
-        timeTravelStartTime = originalTime;
+        timeTravelStartTime = targetTime;
+
         currentTimelineEvents = currentBranch.events
-            .Where(e => e.timestamp <= originalTime)
+            .Where(e => e.timestamp <= targetTime)
             .ToList();
+
+        currentTimelineSnapshots = new List<Snapshot>();
+
+        GameClock.Set(targetTime);
+        GameTimeManager.UpdateDateFromSeconds(targetTime);
+
+        lastSnapshotCells = MapState.cellMap.ToDictionary(
+            entry => entry.Key,
+            entry => entry.Value.Clone()
+        );
+        lastSnapshotResources = new Dictionary<string, GameResources>
+        {
+            ["player"] = CloneResources(GameState.playerResources)
+        };
+
         isTimeTraveling = true;
     }
 
@@ -131,27 +148,21 @@ public class TimelineManager : MonoBehaviour
             snapshots = CloneAndAdaptSnapshotsFromOldBranch(oldBranch.snapshots, timeTravelStartTime)
         };
 
+        if (currentTimelineSnapshots != null)
+            newBranch.snapshots.AddRange(currentTimelineSnapshots);
+
         allBranches[newBranch.branchId] = newBranch;
         currentBranch = newBranch;
 
         RebuildEntityLogs();
         RebuildLastState();
 
-        float t = timeTravelStartTime;
-        while (t <= originalTime)
-        {
-            GameClock.Set(t);
-            GameTimeManager.UpdateDateFromSeconds(t);
-            SaveSnapshot(false);
-
-            t += GameTimeManager.SecondsPerMonth;
-        }
-
         GameClock.Set(originalTime);
         GameTimeManager.UpdateDateFromSeconds(originalTime);
 
         isTimeTraveling = false;
         currentTimelineEvents = null;
+        currentTimelineSnapshots = null;
     }
 
     public void RequestDefensiveJoin()
@@ -413,11 +424,14 @@ public class TimelineManager : MonoBehaviour
         int existingIndex = -1;
 
         if (!force)
-            existingIndex= currentBranch.snapshots.FindIndex(s =>
+        {
+            var targetList = isTimeTraveling ? currentTimelineSnapshots : currentBranch.snapshots;
+            existingIndex = targetList.FindIndex(s =>
             {
                 GameTimeManager.SecondsToDate(s.timestamp, out currentMonth, out currentYear);
                 return GameTimeManager.CurrentMonth == currentMonth && GameTimeManager.CurrentYear == currentYear;
             });
+        }
 
         var charList = new List<DTO.CharacterDTO>();
         foreach (var character in GameObject.FindObjectsOfType<Character>())
@@ -461,13 +475,19 @@ public class TimelineManager : MonoBehaviour
             characters = charList
         };
 
-        if (existingIndex >= 0)
+        if (isTimeTraveling)
         {
-            currentBranch.snapshots[existingIndex] = snap; // Sobrescribir
+            if (existingIndex >= 0)
+                currentTimelineSnapshots[existingIndex] = snap;
+            else
+                currentTimelineSnapshots.Add(snap);
         }
         else
         {
-            currentBranch.snapshots.Add(snap); // Agregar nuevo
+            if (existingIndex >= 0)
+                currentBranch.snapshots[existingIndex] = snap; // Sobrescribir
+            else
+                currentBranch.snapshots.Add(snap); // Agregar nuevo
         }
 
         lastSnapshotCells = MapState.cellMap.ToDictionary(
