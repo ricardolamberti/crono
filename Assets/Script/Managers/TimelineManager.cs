@@ -381,6 +381,9 @@ public class TimelineManager : MonoBehaviour
             ? CloneResources(res)
             : new GameResources();
 
+        lastSnapshotCells = world.cells.ToDictionary(kv => kv.Key, kv => kv.Value.Clone());
+        lastSnapshotResources = world.resources.ToDictionary(kv => kv.Key, kv => CloneResources(kv.Value));
+
         MapLoader.instance?.ReloadFromState();
 
         if (MapLoader.instance != null)
