@@ -55,6 +55,9 @@ public class TimelineManager : MonoBehaviour
     private int nextId = 1;
     private bool isTimeTraveling = false;
     private float originalTime = 0f;
+    private float timeTravelStartTime = 0f;
+    private List<List<WorldEvent>> timelineBranches = new();
+    private List<List<Snapshot>> snapshotBranches = new();
 
     void Awake()
     {
@@ -82,6 +85,7 @@ public class TimelineManager : MonoBehaviour
             return;
 
         originalTime = GameClock.Time;
+        timeTravelStartTime = originalTime;
         currentTimelineEvents = globalEvents
             .Where(e => e.timestamp <= originalTime)
             .ToList();
@@ -93,17 +97,29 @@ public class TimelineManager : MonoBehaviour
         if (!isTimeTraveling)
             return;
 
+        timelineBranches.Add(globalEvents);
+        snapshotBranches.Add(snapshots);
+
         globalEvents = currentTimelineEvents ?? new List<WorldEvent>();
         RebuildEntityLogs();
 
-        snapshots = snapshots.Where(s => s.timestamp <= originalTime).ToList();
+        snapshots = snapshots.Where(s => s.timestamp < timeTravelStartTime).ToList();
         RebuildLastState();
-        SaveSnapshot(true);
+
+        float t = timeTravelStartTime;
+        while (t <= originalTime)
+        {
+            GameClock.Set(t);
+            GameTimeManager.UpdateDateFromSeconds(t);
+            SaveSnapshot(true);
+            t += GameTimeManager.SecondsPerMonth;
+        }
+
+        GameClock.Set(originalTime);
+        GameTimeManager.UpdateDateFromSeconds(originalTime);
 
         isTimeTraveling = false;
         currentTimelineEvents = null;
-
-        GameTimeManager.UpdateDateFromSeconds(originalTime);
     }
 
     public void RequestDefensiveJoin()
@@ -237,6 +253,9 @@ public class TimelineManager : MonoBehaviour
     {
         var world = new WorldState();
         List<DTO.CharacterDTO> chars = null;
+
+        if (isTimeTraveling && time < timeTravelStartTime)
+            timeTravelStartTime = time;
 
         var orderedSnapshots = snapshots.OrderBy(s => s.timestamp).ToList();
         bool anyApplied = false;
