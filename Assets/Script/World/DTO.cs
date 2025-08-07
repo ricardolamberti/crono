@@ -23,7 +23,9 @@ public class DTO
                 y = this.y,
                 terrain = this.terrain,
                 building = this.building,
+                level = this.level,
                 owner = this.owner,
+                start_player = this.start_player,
                 resources = this.resources != null ? this.resources.Clone() : null
             };
         }
