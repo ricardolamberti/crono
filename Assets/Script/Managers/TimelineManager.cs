@@ -850,6 +850,21 @@ public class TimelineManager : MonoBehaviour
         }
     }
 
+    public List<WorldEvent> GetEvents()
+    {
+        return new List<WorldEvent>(currentBranch.events);
+    }
+
+    public void SetEvents(List<WorldEvent> evs)
+    {
+        currentBranch.events = evs ?? new List<WorldEvent>();
+        if (currentBranch.events.Count > 0)
+            nextId = currentBranch.events.Max(e => e.id) + 1;
+        else
+            nextId = 1;
+        RebuildEntityLogs();
+    }
+
     public List<Snapshot> GetSnapshots()
     {
         return new List<Snapshot>(currentBranch.snapshots);
