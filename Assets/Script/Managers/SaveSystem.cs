@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using static DTO;
 
@@ -15,6 +16,7 @@ public class GameSaveData
     public List<Vec2IntDTO> explored;
     public List<CharacterDTO> characters;
     public List<SnapshotDTO> snapshots;
+    public List<WorldEventDTO> events;
 }
 
 [System.Serializable]
@@ -31,6 +33,24 @@ public class SnapshotResourceDTO
 {
     public string id;
     public GameResources resources;
+}
+
+[System.Serializable]
+public class WorldEventDTO
+{
+    public int id;
+    public float timestamp;
+    public string actorId;
+    public string action;
+    public List<WorldEventParamDTO> parameters;
+    public List<int> dependencies;
+}
+
+[System.Serializable]
+public class WorldEventParamDTO
+{
+    public string key;
+    public string value;
 }
 
 public static class SaveSystem
@@ -72,6 +92,7 @@ public static class SaveSystem
         {
             TimelineManager.Instance.SaveSnapshot(true);
             data.snapshots = new List<SnapshotDTO>();
+            data.events = new List<WorldEventDTO>();
             foreach (var snap in TimelineManager.Instance.GetSnapshots())
             {
                 var sDto = new SnapshotDTO
@@ -91,6 +112,24 @@ public static class SaveSystem
                         sDto.characters.Add(new CharacterDTO { x = c.x, y = c.y, type = c.type, owner = c.owner });
                 }
                 data.snapshots.Add(sDto);
+            }
+
+            foreach (var ev in TimelineManager.Instance.GetEvents())
+            {
+                var eDto = new WorldEventDTO
+                {
+                    id = ev.id,
+                    timestamp = ev.timestamp,
+                    actorId = ev.actorId,
+                    action = ev.action,
+                    parameters = new List<WorldEventParamDTO>(),
+                    dependencies = new List<int>(ev.dependencies)
+                };
+                foreach (var kv in ev.parameters)
+                {
+                    eDto.parameters.Add(new WorldEventParamDTO { key = kv.Key, value = kv.Value });
+                }
+                data.events.Add(eDto);
             }
         }
         string json = JsonUtility.ToJson(data, true);
@@ -166,6 +205,24 @@ public static class SaveSystem
                     snaps.Add(snap);
                 }
             }
+            var events = new List<WorldEvent>();
+            if (data.events != null)
+            {
+                foreach (var eDto in data.events)
+                {
+                    var ev = new WorldEvent(eDto.id, eDto.timestamp, eDto.actorId, eDto.action);
+                    if (eDto.parameters != null)
+                    {
+                        foreach (var p in eDto.parameters)
+                            ev.parameters[p.key] = p.value;
+                    }
+                    if (eDto.dependencies != null)
+                        ev.dependencies.AddRange(eDto.dependencies);
+                    events.Add(ev);
+                }
+                events = events.OrderBy(e => e.timestamp).ToList();
+            }
+            TimelineManager.Instance.SetEvents(events);
             TimelineManager.Instance.SetSnapshots(snaps);
         }
         Debug.Log($"Game loaded from {path}");
