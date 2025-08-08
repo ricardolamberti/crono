@@ -853,13 +853,13 @@ public class MapLoader : MonoBehaviour
     }
     public void RemoveTileAt(Vector2Int pos)
     {
-        if (tiles.TryGetValue(pos, out GameObject tile))
+       if (tiles.TryGetValue(pos, out GameObject tile))
         {
             Destroy(tile);
             tiles.Remove(pos);
         }
-
-        MapState.cellMap.Remove(pos);
+      
+       MapState.cellMap.Remove(pos);
         MapState.buildings.Remove(pos); // 🔄 también eliminamos del registro de edificios si aplica
     }
 
