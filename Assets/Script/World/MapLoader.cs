@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 
-using System.Collections; 
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.Networking;
 using static MapGenerator;
@@ -523,7 +524,7 @@ public class MapLoader : MonoBehaviour
         }
     }
 
-    public void PlaceBuilding(Vector2Int pos, string code, string owner, int level = 1)
+    public void PlaceBuilding(Vector2Int pos, string code, string owner, int level = 1, bool recordEvent = true)
     {
         if (!MapState.cellMap.TryGetValue(pos, out var cell))
             return;
@@ -544,7 +545,7 @@ public class MapLoader : MonoBehaviour
             RevealRadius(pos, buildingObj.VisibilityRadius);
         }
 
-        if (TimelineManager.Instance != null)
+        if (recordEvent && TimelineManager.Instance != null)
         {
             var ev = TimelineManager.Instance.RecordEvent(
                 owner,
@@ -558,6 +559,32 @@ public class MapLoader : MonoBehaviour
             );
             TimelineManager.Instance.RegisterObject($"building:{pos.x},{pos.y}", ev);
         }
+    }
+
+    public bool TryPlaceBuildingFromEvent(WorldEvent ev)
+    {
+        if (ev == null || ev.parameters == null)
+            return false;
+        if (!ev.parameters.TryGetValue("x", out var xs) || !ev.parameters.TryGetValue("y", out var ys) || !ev.parameters.TryGetValue("code", out var code))
+            return false;
+
+        if (!int.TryParse(xs, out int x) || !int.TryParse(ys, out int y))
+            return false;
+
+        var pos = new Vector2Int(x, y);
+        if (!IsPositionFree(pos))
+            return false;
+
+        var building = BuildingFactory.Create(code);
+        if (building == null)
+            return false;
+
+        if (!GameState.playerResources.HasEnough(building.Cost))
+            return false;
+        GameState.playerResources.Consume(building.Cost);
+
+        PlaceBuilding(pos, code, ev.actorId, building.Level, false);
+        return true;
     }
 
     public void UpdateBuildingOrientation(Vector2Int pos, Orientation orientation)
@@ -662,7 +689,7 @@ public class MapLoader : MonoBehaviour
     }
 
 
-    public void SpawnCharacter(Vector2Int pos, Character.Type type, string owner)
+    public void SpawnCharacter(Vector2Int pos, Character.Type type, string owner, bool recordEvent = true)
     {
         GameObject go = Instantiate(characterPrefab);
         go.transform.position = GridUtils.GridToWorld(pos);
@@ -746,7 +773,7 @@ public class MapLoader : MonoBehaviour
         go.transform.LookAt(Camera.main.transform);
         go.transform.rotation = Quaternion.Euler(0, go.transform.rotation.eulerAngles.y, 0);
 
-        if (TimelineManager.Instance != null)
+        if (recordEvent && TimelineManager.Instance != null)
         {
             var ev = TimelineManager.Instance.RecordEvent(
                 owner,
@@ -760,6 +787,31 @@ public class MapLoader : MonoBehaviour
             );
             TimelineManager.Instance.RegisterObject(go.GetInstanceID().ToString(), ev);
         }
+    }
+
+    public bool TrySpawnCharacterFromEvent(WorldEvent ev)
+    {
+        if (ev == null || ev.parameters == null)
+            return false;
+        if (!ev.parameters.TryGetValue("x", out var xs) || !ev.parameters.TryGetValue("y", out var ys) || !ev.parameters.TryGetValue("type", out var typeStr))
+            return false;
+        if (!int.TryParse(xs, out int x) || !int.TryParse(ys, out int y))
+            return false;
+
+        var pos = new Vector2Int(x, y);
+        if (!IsPositionFree(pos))
+            return false;
+
+        if (!Enum.TryParse<Character.Type>(typeStr, true, out var type))
+        {
+            if (typeStr == "worker") type = Character.Type.Worker;
+            else if (typeStr == "scientist") type = Character.Type.Scientist;
+            else if (typeStr == "warrior") type = Character.Type.Warrior;
+            else return false;
+        }
+
+        SpawnCharacter(pos, type, ev.actorId, false);
+        return true;
     }
 
     public void DemolishBuilding(Vector2Int pos)

@@ -45,6 +45,7 @@ public class TimelineBranch
     public string branchId;
     public string? parentBranchId;
     public float branchPointTime;
+    public Snapshot baseSnapshot;
     public List<WorldEvent> events = new();
     public List<Snapshot> snapshots = new();
     public bool isActive;
@@ -78,6 +79,13 @@ public class TimelineManager : MonoBehaviour
             branchId = Guid.NewGuid().ToString(),
             parentBranchId = null,
             branchPointTime = 0f,
+            baseSnapshot = new Snapshot
+            {
+                timestamp = 0f,
+                cellDeltas = new Dictionary<Vector2Int, DTO.MapCellDTO>(),
+                resourceDeltas = new Dictionary<string, GameResources>(),
+                characters = new List<DTO.CharacterDTO>()
+            },
             isActive = true,
             createdByPlayer = string.Empty
         };
@@ -136,6 +144,17 @@ public class TimelineManager : MonoBehaviour
 
         var oldBranch = currentBranch;
         oldBranch.isActive = false;
+        var baseSnap = CaptureCurrentStateSnapshot();
+
+        var futureEvents = oldBranch.events
+            .Where(e => e.timestamp > timeTravelStartTime)
+            .ToList();
+
+        var allEvents = new List<WorldEvent>();
+        if (currentTimelineEvents != null)
+            allEvents.AddRange(currentTimelineEvents);
+        allEvents.AddRange(futureEvents);
+        allEvents = allEvents.OrderBy(e => e.timestamp).ToList();
 
         var newBranch = new TimelineBranch
         {
@@ -144,8 +163,9 @@ public class TimelineManager : MonoBehaviour
             branchPointTime = timeTravelStartTime,
             isActive = true,
             createdByPlayer = "player",
-            events = currentTimelineEvents ?? new List<WorldEvent>(),
-            snapshots = CloneAndAdaptSnapshotsFromOldBranch(oldBranch.snapshots, timeTravelStartTime)
+            baseSnapshot = baseSnap,
+            events = allEvents,
+            snapshots = new List<Snapshot>()
         };
 
         if (currentTimelineSnapshots != null)
@@ -155,30 +175,12 @@ public class TimelineManager : MonoBehaviour
         currentBranch = newBranch;
 
         RebuildEntityLogs();
+
+        RebuildBranchFromEvents(baseSnap, allEvents);
         RebuildLastState();
 
         GameClock.Set(originalTime);
         GameTimeManager.UpdateDateFromSeconds(originalTime);
-
-        // 1. Reaplicar eventos del futuro si son válidos
-        var futureEvents = oldBranch.events
-            .Where(e => e.timestamp > timeTravelStartTime)
-            .OrderBy(e => e.timestamp)
-            .ToList();
-
-        foreach (var ev in futureEvents)
-        {
-            if (IsEventStillValid(ev))
-            {
-                ApplyEvent(ev);
-                currentBranch.events.Add(ev);
-            }
-            else
-            {
-                Debug.Log($"[Timeline] Evento descartado por inconsistencia: {ev.action} en {ev.timestamp}");
-            }
-        }
-
 
         isTimeTraveling = false;
         currentTimelineEvents = null;
@@ -211,6 +213,132 @@ public class TimelineManager : MonoBehaviour
         }
 
         // Otros casos: spawn_character, upgrade_building, etc.
+    }
+
+    bool TryApplyEvent(WorldEvent ev)
+    {
+        switch (ev.action)
+        {
+            case "build":
+            case "place_building":
+                return MapLoader.instance != null && MapLoader.instance.TryPlaceBuildingFromEvent(ev);
+            case "spawn_character":
+                return MapLoader.instance != null && MapLoader.instance.TrySpawnCharacterFromEvent(ev);
+            default:
+                return false;
+        }
+    }
+
+    bool IsEventValid(WorldEvent ev, HashSet<int> appliedEvents)
+    {
+        foreach (var dep in ev.dependencies)
+        {
+            if (!appliedEvents.Contains(dep))
+                return false;
+        }
+        return true;
+    }
+
+    bool LoadSnapshot(Snapshot snap)
+    {
+        if (snap == null)
+            return false;
+
+        MapState.cellMap = snap.cellDeltas?.ToDictionary(kv => kv.Key, kv => kv.Value.Clone())
+            ?? new Dictionary<Vector2Int, DTO.MapCellDTO>();
+
+        if (snap.resourceDeltas != null && snap.resourceDeltas.TryGetValue("player", out var res))
+            GameState.playerResources = CloneResources(res);
+        else
+            GameState.playerResources = new GameResources();
+
+        foreach (var ch in GameObject.FindObjectsOfType<Character>())
+            GameObject.Destroy(ch.gameObject);
+
+        MapLoader.instance?.ReloadFromState();
+
+        if (snap.characters != null)
+        {
+            foreach (var c in snap.characters)
+            {
+                var pos = new Vector2Int(c.x, c.y);
+                if (Enum.TryParse<Character.Type>(c.type, true, out var t))
+                    MapLoader.instance?.SpawnCharacter(pos, t, c.owner, false);
+                else
+                {
+                    Character.Type t2;
+                    if (c.type == "worker") t2 = Character.Type.Worker;
+                    else if (c.type == "scientist") t2 = Character.Type.Scientist;
+                    else if (c.type == "warrior") t2 = Character.Type.Warrior;
+                    else continue;
+                    MapLoader.instance?.SpawnCharacter(pos, t2, c.owner, false);
+                }
+            }
+        }
+
+        return true;
+    }
+
+    public bool RebuildBranchFromEvents(Snapshot baseSnapshot, List<WorldEvent> events)
+    {
+        if (!LoadSnapshot(baseSnapshot))
+            return false;
+
+        var ordered = events.OrderBy(e => e.timestamp).ToList();
+        HashSet<int> applied = new HashSet<int>();
+
+        foreach (var ev in ordered)
+        {
+            if (!IsEventValid(ev, applied))
+            {
+                Debug.Log($"[Timeline] Evento {ev.id} descartado por dependencias.");
+                continue;
+            }
+
+            if (TryApplyEvent(ev))
+            {
+                applied.Add(ev.id);
+            }
+            else
+            {
+                Debug.Log($"[Timeline] Evento {ev.id} descartado por estado inválido.");
+            }
+        }
+
+        return true;
+    }
+
+    Snapshot CaptureCurrentStateSnapshot()
+    {
+        var charList = new List<DTO.CharacterDTO>();
+        foreach (var character in GameObject.FindObjectsOfType<Character>())
+        {
+            var p = character.GetGridPosition();
+            string type = character.characterType.ToString();
+            if (character.role != null)
+                type = character.role.Code;
+            charList.Add(new DTO.CharacterDTO
+            {
+                x = p.x,
+                y = p.y,
+                type = type,
+                owner = character.owner
+            });
+        }
+
+        var cells = MapState.cellMap.ToDictionary(kv => kv.Key, kv => kv.Value.Clone());
+        var res = new Dictionary<string, GameResources>
+        {
+            ["player"] = CloneResources(GameState.playerResources)
+        };
+
+        return new Snapshot
+        {
+            timestamp = GameClock.Time,
+            cellDeltas = cells,
+            resourceDeltas = res,
+            characters = charList
+        };
     }
 
     public void RequestDefensiveJoin()
