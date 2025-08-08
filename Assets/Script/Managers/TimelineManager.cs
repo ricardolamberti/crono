@@ -570,10 +570,10 @@ public class TimelineManager : MonoBehaviour
 
         // Buscar índice del snapshot existente para este año/mes
         int existingIndex = -1;
+        var targetList = isTimeTraveling ? currentTimelineSnapshots : currentBranch.snapshots;
 
         if (!force)
         {
-            var targetList = isTimeTraveling ? currentTimelineSnapshots : currentBranch.snapshots;
             existingIndex = targetList.FindIndex(s =>
             {
                 GameTimeManager.SecondsToDate(s.timestamp, out currentMonth, out currentYear);
@@ -623,19 +623,16 @@ public class TimelineManager : MonoBehaviour
             characters = charList
         };
 
-        if (isTimeTraveling)
-        {
-            if (existingIndex >= 0)
-                currentTimelineSnapshots[existingIndex] = snap;
-            else
-                currentTimelineSnapshots.Add(snap);
-        }
+        if (existingIndex >= 0)
+            targetList[existingIndex] = snap;
         else
+            targetList.Add(snap);
+
+        // Ensure changes only affect future states by discarding snapshots after this moment
+        for (int i = targetList.Count - 1; i >= 0; i--)
         {
-            if (existingIndex >= 0)
-                currentBranch.snapshots[existingIndex] = snap; // Sobrescribir
-            else
-                currentBranch.snapshots.Add(snap); // Agregar nuevo
+            if (targetList[i].timestamp > snap.timestamp)
+                targetList.RemoveAt(i);
         }
 
         lastSnapshotCells = MapState.cellMap.ToDictionary(
