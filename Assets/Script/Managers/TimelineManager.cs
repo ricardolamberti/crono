@@ -651,20 +651,20 @@ public class TimelineManager : MonoBehaviour
             timeTravelStartTime = time;
 
         var orderedSnapshots = currentBranch.snapshots.OrderBy(s => s.timestamp).ToList();
-        bool anyApplied = false;
+        if (orderedSnapshots.Count == 0)
+            return world;
 
-        for (int i = 0; i < orderedSnapshots.Count; i++)
+        var first = orderedSnapshots[0];
+        if (time < first.timestamp)
         {
-            var snap = orderedSnapshots[i];
+            // No se puede viajar antes del inicio: fijamos el tiempo al primer snapshot
+            time = first.timestamp;
+        }
 
+        foreach (var snap in orderedSnapshots)
+        {
             if (snap.timestamp > time)
-            {
-                // Si aún no aplicamos ningún snapshot, usamos el primero
-                if (!anyApplied && orderedSnapshots.Count > 0)
-                    snap = orderedSnapshots[0];
-                else
-                    break;
-            }
+                break;
 
             if (snap.cellDeltas != null)
             {
@@ -680,27 +680,6 @@ public class TimelineManager : MonoBehaviour
 
             if (snap.characters != null)
                 chars = new List<DTO.CharacterDTO>(snap.characters);
-
-            anyApplied = true;
-        }
-
-        if (!anyApplied && orderedSnapshots.Count > 0)
-        {
-            var first = orderedSnapshots[0];
-            if (first.cellDeltas != null)
-            {
-                foreach (var kv in first.cellDeltas)
-                    world.cells[kv.Key] = kv.Value.Clone();
-            }
-
-            if (first.resourceDeltas != null)
-            {
-                foreach (var kv in first.resourceDeltas)
-                    world.resources[kv.Key] = CloneResources(kv.Value);
-            }
-
-            if (first.characters != null)
-                chars = new List<DTO.CharacterDTO>(first.characters);
         }
 
         MapState.cellMap = world.cells.ToDictionary(kv => kv.Key, kv => kv.Value.Clone());
