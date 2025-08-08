@@ -245,13 +245,6 @@ public class ControlPanel : MonoBehaviour
     }
 
 
-    void CreateUnit(string type) { Debug.Log($"Crear unidad: {type}"); }
-    void Build(string type) { Debug.Log($"Construir: {type}"); }
-    void Harvest(string resource) { Debug.Log($"Recolectar: {resource}"); }
-    void Upgrade() { Debug.Log("Mejorar edificio"); }
-    void Patrol() { Debug.Log("Patrullando..."); }
-    void Attack() { Debug.Log("Atacando..."); }
-    void Heal() { Debug.Log("Curando..."); }
 
     void ShowBreachRoot(TimeBreach breach)
     {

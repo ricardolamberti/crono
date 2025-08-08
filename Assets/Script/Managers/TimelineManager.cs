@@ -160,9 +160,57 @@ public class TimelineManager : MonoBehaviour
         GameClock.Set(originalTime);
         GameTimeManager.UpdateDateFromSeconds(originalTime);
 
+        // 1. Reaplicar eventos del futuro si son válidos
+        var futureEvents = oldBranch.events
+            .Where(e => e.timestamp > timeTravelStartTime)
+            .OrderBy(e => e.timestamp)
+            .ToList();
+
+        foreach (var ev in futureEvents)
+        {
+            if (IsEventStillValid(ev))
+            {
+                ApplyEvent(ev);
+                currentBranch.events.Add(ev);
+            }
+            else
+            {
+                Debug.Log($"[Timeline] Evento descartado por inconsistencia: {ev.action} en {ev.timestamp}");
+            }
+        }
+
+
         isTimeTraveling = false;
         currentTimelineEvents = null;
         currentTimelineSnapshots = null;
+    }
+    bool IsEventStillValid(WorldEvent ev)
+    {
+        if (ev.action == "place_building")
+        {
+            var x = int.Parse(ev.parameters["x"]);
+            var y = int.Parse(ev.parameters["y"]);
+            var pos = new Vector2Int(x, y);
+            return MapLoader.instance.IsPositionFree(pos);
+        }
+
+        // Agregá validaciones específicas para otros tipos
+        return true;
+    }
+    void ApplyEvent(WorldEvent ev)
+    {
+        if (ev.action == "build")
+        {
+            var code = ev.parameters["code"];
+            var x = int.Parse(ev.parameters["x"]);
+            var y = int.Parse(ev.parameters["y"]);
+            var pos = new Vector2Int(x, y);
+            var owner = ev.actorId;
+
+            MapLoader.instance.PlaceBuilding(pos, code, owner);
+        }
+
+        // Otros casos: spawn_character, upgrade_building, etc.
     }
 
     public void RequestDefensiveJoin()
@@ -253,7 +301,7 @@ public class TimelineManager : MonoBehaviour
     List<Snapshot> CloneAndAdaptSnapshotsFromOldBranch(List<Snapshot> oldSnaps, float cutoff)
     {
         var list = new List<Snapshot>();
-        foreach (var snap in oldSnaps.Where(s => s.timestamp < cutoff))
+        foreach (var snap in oldSnaps.Where(s => s.timestamp > cutoff))
         {
             var clone = new Snapshot
             {
@@ -267,11 +315,103 @@ public class TimelineManager : MonoBehaviour
         }
         return list;
     }
-
     void AdaptToNewPast(Snapshot snap)
     {
-        // Placeholder for adapting snapshot data based on new past events
+        // 1. Adaptar celdas
+        if (snap.cellDeltas != null)
+        {
+            var keysToRemove = new List<Vector2Int>();
+            foreach (var kv in snap.cellDeltas)
+            {
+                var pos = kv.Key;
+                var snapshotCell = kv.Value;
+
+                if (!MapState.cellMap.TryGetValue(pos, out var currentCell))
+                {
+                    // Celda eliminada en nuevo pasado
+                    keysToRemove.Add(pos);
+                    continue;
+                }
+
+                if (!string.IsNullOrEmpty(snapshotCell.building) && string.IsNullOrEmpty(currentCell.building))
+                {
+                    // Edificio existía en la línea vieja, pero fue demolido
+                    keysToRemove.Add(pos);
+                    continue;
+                }
+
+                if (snapshotCell.building != currentCell.building || snapshotCell.level != currentCell.level)
+                {
+                    // Inconsistencia en tipo o nivel
+                    keysToRemove.Add(pos);
+                    continue;
+                }
+            }
+
+            foreach (var key in keysToRemove)
+                snap.cellDeltas.Remove(key);
+        }
+
+        // 2. Adaptar recursos
+        if (snap.resourceDeltas != null)
+        {
+            var keysToRemove = new List<string>();
+
+            foreach (var kv in snap.resourceDeltas)
+            {
+                string key = kv.Key;
+                GameResources snapshotRes = kv.Value;
+                GameResources currentRes = GameState.playerResources;
+
+                bool conflict = false;
+
+                if (key == "player")
+                {
+                    conflict = snapshotRes.gold > currentRes.gold ||
+                               snapshotRes.wood > currentRes.wood ||
+                               snapshotRes.food > currentRes.food ||
+                               snapshotRes.crono > currentRes.crono ||
+                               snapshotRes.science > currentRes.science ||
+                               snapshotRes.freeHousing > currentRes.freeHousing ||
+                               snapshotRes.academicUnits > currentRes.academicUnits ||
+                               snapshotRes.barracksUnits > currentRes.barracksUnits;
+                }
+                else
+                {
+                    // otros recursos por clave si existieran
+                    conflict = true; // o asumimos inválido si no sabemos cómo comparar
+                }
+
+                if (conflict)
+                    keysToRemove.Add(key);
+            }
+
+            foreach (var key in keysToRemove)
+                snap.resourceDeltas.Remove(key);
+        }
+
+
+        // 3. Adaptar personajes
+        if (snap.characters != null)
+        {
+            snap.characters = snap.characters
+                .Where(c =>
+                {
+                    var pos = new Vector2Int(c.x, c.y);
+
+                    // Si la celda no existe o hay un personaje ya ahí, descartamos al duplicado
+                    if (!MapState.cellMap.ContainsKey(pos))
+                        return false;
+
+                    bool ocupado = GameObject.FindObjectsOfType<Character>()
+                        .Any(ch => ch.GetGridPosition() == pos);
+
+                    return !ocupado;
+                })
+                .ToList();
+        }
     }
+
 
     GameResources CloneResources(GameResources src)
     {
@@ -388,9 +528,14 @@ public class TimelineManager : MonoBehaviour
 
         if (MapLoader.instance != null)
         {
-            foreach (var ch in GameObject.FindObjectsOfType<Character>())
-                GameObject.Destroy(ch.gameObject);
-
+            foreach (var pos in MapState.cellMap.Keys.ToList())
+            {
+                if (!world.cells.ContainsKey(pos))
+                {
+                    MapState.cellMap.Remove(pos);
+                    MapLoader.instance?.RemoveTileAt(pos); // Necesitás implementar esto si no existe
+                }
+            }
             if (chars != null)
             {
                 foreach (var c in chars)
@@ -563,4 +708,5 @@ public class TimelineManager : MonoBehaviour
     {
         return allBranches.Values.ToList();
     }
+
 }

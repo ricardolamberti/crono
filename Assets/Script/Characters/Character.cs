@@ -165,14 +165,14 @@ public void AssignBuildTask(Vector2Int pos, string building)
     {
         currentPath = new Queue<Vector2Int>(path);
         MoveToNext();
-        TimelineManager.Instance?.RecordEvent(
-            name,
-            "path_set",
-            new Dictionary<string, string>
-            {
-                {"path", string.Join(";", path.Select(p => $"{p.x},{p.y}"))}
-            }
-        );
+        //       TimelineManager.Instance?.RecordEvent(
+        //           name,
+        //"path_set",
+        //new Dictionary<string, string>
+        //{
+        //{ "path", string.Join(";", path.Select(p => $"{p.x},{p.y}"))}
+        //}
+        //   );
     }
 
     public void SetGatherRoute(List<Vector2Int> route)
@@ -470,20 +470,20 @@ public void AssignBuildTask(Vector2Int pos, string building)
                 MapLoader.instance.RevealRadius(pos, buildingObj.VisibilityRadius);
             Debug.Log($"{name} construyó {building} en {pos}");
             MapLoader.instance.ClearConstructionPreview(pos);
-
+            
             var ev = TimelineManager.Instance?.RecordEvent(
                 name,
                 "build",
                 new Dictionary<string, string>
                 {
-                    {"building", building},
+                    {"code", building},
                     {"x", pos.x.ToString()},
                     {"y", pos.y.ToString()}
                 }
             );
             if (ev != null)
                 TimelineManager.Instance.RegisterObject($"building:{pos.x},{pos.y}", ev);
-
+            
             if (building == BuildingCodes.Townhall)
             {
                 foreach (var c in GameObject.FindObjectsOfType<Character>())
