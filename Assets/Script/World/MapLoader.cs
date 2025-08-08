@@ -692,7 +692,7 @@ public class MapLoader : MonoBehaviour
     }
 
 
-    public void SpawnCharacter(Vector2Int pos, Character.Type type, string owner, bool recordEvent = true)
+    public void SpawnCharacter(Vector2Int pos, Character.Type type, string owner, bool recordEvent = false)
     {
         GameObject go = Instantiate(characterPrefab);
         go.transform.position = GridUtils.GridToWorld(pos);
