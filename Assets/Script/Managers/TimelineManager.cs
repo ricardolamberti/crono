@@ -153,7 +153,7 @@ public class TimelineManager : MonoBehaviour
         var baseSnap = CaptureCurrentStateSnapshot();
 
         var futureEvents = oldBranch.events
-            .Where(e => e.timestamp > timeTravelStartTime)
+            .Where(e => e.timestamp > timeTravelStartTime && e.timestamp <= originalTime)
             .ToList();
 
         var allEvents = new List<WorldEvent>();
@@ -174,21 +174,18 @@ public class TimelineManager : MonoBehaviour
             snapshots = new List<Snapshot>()
         };
 
-        if (currentTimelineSnapshots != null)
-            newBranch.snapshots.AddRange(currentTimelineSnapshots);
-
         allBranches[newBranch.branchId] = newBranch;
         currentBranch = newBranch;
 
-        RebuildEntityLogs();
+        isTimeTraveling = false;
 
-        RebuildBranchFromEvents(baseSnap, allEvents);
+        RebuildBranchMonthByMonth(baseSnap, allEvents, originalTime);
+        RebuildEntityLogs();
         RebuildLastState();
 
         GameClock.Set(originalTime);
         GameTimeManager.UpdateDateFromSeconds(originalTime);
 
-        isTimeTraveling = false;
         currentTimelineEvents = null;
         currentTimelineSnapshots = null;
     }
@@ -360,6 +357,79 @@ public class TimelineManager : MonoBehaviour
         RebuildEntityLogs();
 
         return true;
+    }
+
+    void RebuildBranchMonthByMonth(Snapshot baseSnapshot, List<WorldEvent> events, float endTime)
+    {
+        if (!LoadSnapshot(baseSnapshot))
+            return;
+
+        currentBranch.snapshots.Clear();
+
+        lastSnapshotCells = MapState.cellMap.ToDictionary(
+            entry => entry.Key,
+            entry => entry.Value.Clone()
+        );
+        lastSnapshotResources = new Dictionary<string, GameResources>
+        {
+            ["player"] = CloneResources(GameState.playerResources)
+        };
+
+        discardedEvents.Clear();
+        var ordered = events.OrderBy(e => e.timestamp).ToList();
+        HashSet<int> applied = new HashSet<int>();
+        List<WorldEvent> survivors = new();
+        int idx = 0;
+
+        float currentTime = baseSnapshot.timestamp;
+        GameClock.Set(currentTime);
+        GameTimeManager.UpdateDateFromSeconds(currentTime);
+        GameTimeManager.SecondsToDate(currentTime, out int month, out int year);
+
+        while (currentTime < endTime)
+        {
+            int nextMonth = month == 12 ? 1 : month + 1;
+            int nextYear = month == 12 ? year + 1 : year;
+            float nextTime = GameTimeManager.DateToSeconds(nextMonth, nextYear);
+            float intervalEnd = Mathf.Min(nextTime, endTime);
+
+            while (idx < ordered.Count && ordered[idx].timestamp <= intervalEnd)
+            {
+                var ev = ordered[idx++];
+                ev.wasApplied = false;
+                ev.failureReason = null;
+
+                if (!IsEventValid(ev, applied))
+                {
+                    ev.failureReason = "missing_dependency";
+                    discardedEvents.Add(ev);
+                    continue;
+                }
+
+                if (TryApplyEvent(ev))
+                {
+                    ev.wasApplied = true;
+                    applied.Add(ev.id);
+                    survivors.Add(ev);
+                }
+                else
+                {
+                    ev.failureReason = "validation_failed";
+                    discardedEvents.Add(ev);
+                }
+            }
+
+            GameClock.Set(intervalEnd);
+            GameTimeManager.UpdateDateFromSeconds(intervalEnd);
+            SaveSnapshot(true);
+
+            currentTime = intervalEnd;
+            month = nextMonth;
+            year = nextYear;
+        }
+
+        events.Clear();
+        events.AddRange(survivors);
     }
 
     Snapshot CaptureCurrentStateSnapshot()
