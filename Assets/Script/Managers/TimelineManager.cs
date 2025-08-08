@@ -11,6 +11,10 @@ public class WorldEvent
     public string action;
     public Dictionary<string, string> parameters = new();
     public List<int> dependencies = new();
+    // Indicates whether the event was applied when rebuilding a branch
+    public bool wasApplied = false;
+    // If not applied, stores the reason
+    public string failureReason = null;
 
     public WorldEvent(int id, float timestamp, string actorId, string action)
     {
@@ -66,6 +70,8 @@ public class TimelineManager : MonoBehaviour
     private Dictionary<Vector2Int, DTO.MapCellDTO> lastSnapshotCells = new();
     private Dictionary<string, GameResources> lastSnapshotResources = new();
     private Dictionary<int, int> rngSeeds = new();
+    // Stores events that were discarded when rebuilding a branch
+    private List<WorldEvent> discardedEvents = new();
     private int nextId = 1;
     private bool isTimeTraveling = false;
     private float originalTime = 0f;
@@ -224,6 +230,39 @@ public class TimelineManager : MonoBehaviour
                 return MapLoader.instance != null && MapLoader.instance.TryPlaceBuildingFromEvent(ev);
             case "spawn_character":
                 return MapLoader.instance != null && MapLoader.instance.TrySpawnCharacterFromEvent(ev);
+            case "collect_resource":
+                return TryCollectResource(ev);
+            default:
+                return false;
+        }
+    }
+
+    bool TryCollectResource(WorldEvent ev)
+    {
+        if (ev == null || ev.parameters == null)
+            return false;
+        if (!ev.parameters.TryGetValue("resource", out var res) || !ev.parameters.TryGetValue("amount", out var amt))
+            return false;
+        if (!int.TryParse(amt, out int amount) || amount <= 0)
+            return false;
+
+        switch (res)
+        {
+            case "gold":
+                GameState.playerResources.gold += amount;
+                return true;
+            case "wood":
+                GameState.playerResources.wood += amount;
+                return true;
+            case "food":
+                GameState.playerResources.food += amount;
+                return true;
+            case "crono":
+                GameState.playerResources.crono += amount;
+                return true;
+            case "science":
+                GameState.playerResources.science += amount;
+                return true;
             default:
                 return false;
         }
@@ -284,26 +323,41 @@ public class TimelineManager : MonoBehaviour
         if (!LoadSnapshot(baseSnapshot))
             return false;
 
+        discardedEvents.Clear();
         var ordered = events.OrderBy(e => e.timestamp).ToList();
         HashSet<int> applied = new HashSet<int>();
+        List<WorldEvent> survivors = new();
 
         foreach (var ev in ordered)
         {
+            ev.wasApplied = false;
+            ev.failureReason = null;
+
             if (!IsEventValid(ev, applied))
             {
+                ev.failureReason = "missing_dependency";
+                discardedEvents.Add(ev);
                 Debug.Log($"[Timeline] Evento {ev.id} descartado por dependencias.");
                 continue;
             }
 
             if (TryApplyEvent(ev))
             {
+                ev.wasApplied = true;
                 applied.Add(ev.id);
+                survivors.Add(ev);
             }
             else
             {
+                ev.failureReason = "validation_failed";
+                discardedEvents.Add(ev);
                 Debug.Log($"[Timeline] Evento {ev.id} descartado por estado inválido.");
             }
         }
+
+        events.Clear();
+        events.AddRange(survivors);
+        RebuildEntityLogs();
 
         return true;
     }
@@ -373,6 +427,11 @@ public class TimelineManager : MonoBehaviour
         if (entityLogs.TryGetValue(entityId, out var list))
             return new List<WorldEvent>(list);
         return new List<WorldEvent>();
+    }
+
+    public List<WorldEvent> GetDiscardedEvents()
+    {
+        return new List<WorldEvent>(discardedEvents);
     }
 
     public List<WorldEvent> TraceDependencies(string entityId)
