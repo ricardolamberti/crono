@@ -415,11 +415,11 @@ public class MapLoader : MonoBehaviour
             return false;
 
         // 3. Que no haya un personaje en esa celda
-        foreach (var character in GameObject.FindObjectsOfType<Character>())
-        {
-            if (character.GetGridPosition() == pos)
-                return false;
-        }
+        //foreach (var character in GameObject.FindObjectsOfType<Character>())
+        //{
+        //    if (character.GetGridPosition() == pos)
+        //        return false;
+        //}
 
         return true;
     }
@@ -582,8 +582,8 @@ public class MapLoader : MonoBehaviour
         if (building == null)
             return false;
 
-        if (!GameState.playerResources.HasEnough(building.Cost))
-            return false;
+        if (!GameState.playerResources.HasEnough(building.Cost) )
+             return false;
         GameState.playerResources.Consume(building.Cost);
 
         PlaceBuilding(pos, code, ev.actorId, building.Level, false);

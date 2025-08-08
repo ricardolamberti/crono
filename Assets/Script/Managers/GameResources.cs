@@ -12,6 +12,7 @@ public class GameResources
 
     public bool HasEnough(BuildRequirement req)
     {
+        if (ControlPanel.Instance.freeResource) return true;
         return gold >= req.gold &&
                wood >= req.wood &&
                food >= req.food &&
