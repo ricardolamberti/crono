@@ -273,7 +273,10 @@ public class MapLoader : MonoBehaviour
         GenerateGrid(wrapper.cells);
         CenterCamera(wrapper.cells);
         PlayerManager.Instance?.InitializePlayers();
-      
+
+        // Force creation of the base snapshot once the initial world is ready
+        TimelineManager.Instance?.SaveSnapshot(true);
+
         yield return null;
     }
     public void ShowConstructionPreview(Vector2Int pos, Building building)
