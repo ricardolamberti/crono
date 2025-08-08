@@ -834,10 +834,18 @@ public class TimelineManager : MonoBehaviour
         }
 
         var cellDeltas = new Dictionary<Vector2Int, DTO.MapCellDTO>();
-        foreach (var kv in MapState.cellMap)
+        if (force)
         {
-            if (!lastSnapshotCells.TryGetValue(kv.Key, out var prev) || !CellsEqual(kv.Value, prev))
+            foreach (var kv in MapState.cellMap)
                 cellDeltas[kv.Key] = kv.Value.Clone();
+        }
+        else
+        {
+            foreach (var kv in MapState.cellMap)
+            {
+                if (!lastSnapshotCells.TryGetValue(kv.Key, out var prev) || !CellsEqual(kv.Value, prev))
+                    cellDeltas[kv.Key] = kv.Value.Clone();
+            }
         }
 
         var currentResources = new Dictionary<string, GameResources>
@@ -845,10 +853,18 @@ public class TimelineManager : MonoBehaviour
             ["player"] = GameState.playerResources
         };
         var resourceDeltas = new Dictionary<string, GameResources>();
-        foreach (var kv in currentResources)
+        if (force)
         {
-            if (!lastSnapshotResources.TryGetValue(kv.Key, out var prevRes) || !ResourcesEqual(kv.Value, prevRes))
+            foreach (var kv in currentResources)
                 resourceDeltas[kv.Key] = CloneResources(kv.Value);
+        }
+        else
+        {
+            foreach (var kv in currentResources)
+            {
+                if (!lastSnapshotResources.TryGetValue(kv.Key, out var prevRes) || !ResourcesEqual(kv.Value, prevRes))
+                    resourceDeltas[kv.Key] = CloneResources(kv.Value);
+            }
         }
 
         var snap = new Snapshot
