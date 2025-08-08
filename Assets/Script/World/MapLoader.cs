@@ -467,20 +467,20 @@ public class MapLoader : MonoBehaviour
         {
             GameObject tree = new GameObject($"Tree_{i}");
             var renderer = tree.AddComponent<SpriteRenderer>();
-            renderer.sprite = treeSprites[Random.Range(0, treeSprites.Count)];
+            renderer.sprite = treeSprites[UnityEngine.Random.Range(0, treeSprites.Count)];
             renderer.sortingOrder = Mathf.RoundToInt(-transform.position.z * 100);
 
             tree.transform.SetParent(tile.transform);
 
             // ❗ Posición aleatoria dentro del tile (descentrado, XZ)
             tree.transform.localPosition = new Vector3(
-                Random.Range(-0.4f, 0.4f),
+                UnityEngine.Random.Range(-0.4f, 0.4f),
                 0.01f,
-                Random.Range(-0.4f, 0.4f)
+                UnityEngine.Random.Range(-0.4f, 0.4f)
             );
 
             // ❗ Escala aleatoria
-            float scale = Random.Range(0.3f, 0.6f);
+            float scale = UnityEngine.Random.Range(0.3f, 0.6f);
             tree.transform.localScale = new Vector3(scale, scale, scale);
             tree.AddComponent<Billboard>();
           
@@ -488,7 +488,7 @@ public class MapLoader : MonoBehaviour
             // ❗ Rotación levemente distinta por árbol (solo para romper simetría visual)
             tree.transform.localRotation = Quaternion.Euler(
                 90,
-                Random.Range(-15f, 15f), // rotación suave sobre eje vertical
+                UnityEngine.Random.Range(-15f, 15f), // rotación suave sobre eje vertical
                 0
             );
         }
