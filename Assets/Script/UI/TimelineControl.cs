@@ -203,10 +203,35 @@ public class TimelineControl : MonoBehaviour
         int totalMonths = Mathf.CeilToInt(totalSeconds / GameTimeManager.SecondsPerMonth);
         float width = slider.resolvedStyle.width;
 
-        for (int i = 0; i <= totalMonths; i++)
+        int monthStep = Mathf.Max(1, Mathf.CeilToInt(totalMonths / 12f));
+
+        for (int m = 0; m <= totalMonths; m += monthStep)
         {
-            float x = (i / (float)totalMonths) * width;
-            float timeAtTick = slider.lowValue + (i * GameTimeManager.SecondsPerMonth);
+            float x = (m / (float)totalMonths) * width;
+            float timeAtTick = slider.lowValue + (m * GameTimeManager.SecondsPerMonth);
+
+            var tick = new VisualElement();
+            tick.style.position = Position.Absolute;
+            tick.style.left = x;
+            tick.style.bottom = 0;
+            tick.style.width = 2;
+            tick.style.height = 10;
+            tick.style.backgroundColor = Color.white;
+            tickContainer.Add(tick);
+
+            var label = new Label(FormatTimeLabel(timeAtTick));
+            label.style.position = Position.Absolute;
+            label.style.left = x - 12;
+            label.style.bottom = 12;
+            label.style.fontSize = 8;
+            label.style.color = Color.white;
+            tickContainer.Add(label);
+        }
+
+        if (totalMonths % monthStep != 0)
+        {
+            float x = width;
+            float timeAtTick = slider.highValue;
 
             var tick = new VisualElement();
             tick.style.position = Position.Absolute;
