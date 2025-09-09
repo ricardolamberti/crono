@@ -27,11 +27,11 @@ public class TimelineControl : MonoBehaviour
             slider.highValue = Mathf.RoundToInt(GameClock.Time);
             slider.showInputField = false;
             slider.SetValueWithoutNotify(Mathf.RoundToInt(GameClock.Time));
+            slider.label = string.Empty;
 
             selectedTime = GameClock.Time;
 
             GameTimeManager.UpdateDateFromSeconds(GameClock.Time);
-            slider.label = FormatTimeLabel(GameClock.Time);
 
             slider.RegisterValueChangedCallback(OnSliderChanged);
 
@@ -65,7 +65,6 @@ public class TimelineControl : MonoBehaviour
             int now = Mathf.RoundToInt(GameClock.Time);
             slider.SetValueWithoutNotify(now);
             GameTimeManager.UpdateDateFromSeconds(now);
-            slider.label = FormatTimeLabel(now);
             selectedTime = now;
         }
 
@@ -93,7 +92,6 @@ public class TimelineControl : MonoBehaviour
             TimelineManager.Instance?.GetWorldStateAt(t);
             slider.SetValueWithoutNotify(Mathf.RoundToInt(t));
             GameTimeManager.UpdateDateFromSeconds(t);
-            slider.label = FormatTimeLabel(t);
             GameTimeManager.Instance?.SetObservationMode(true);
             inPast = true;
             presentButton?.SetEnabled(true);
@@ -105,12 +103,10 @@ public class TimelineControl : MonoBehaviour
             {
                 TimelineManager.Instance?.RemoveLastSnapshot();
                 GameTimeManager.UpdateDateFromSeconds(GameClock.Time);
-                slider.label = FormatTimeLabel(GameClock.Time);
             }
             else
             {
                 GameTimeManager.UpdateDateFromSeconds(GameClock.Time);
-                slider.label = FormatTimeLabel(GameClock.Time);
             }
             GameTimeManager.Instance?.SetObservationMode(false);
             inPast = false;
@@ -148,7 +144,6 @@ public class TimelineControl : MonoBehaviour
             int now = Mathf.RoundToInt(GameClock.Time);
             slider.highValue = now;
             slider.SetValueWithoutNotify(now);
-            slider.label = FormatTimeLabel(now);
             UpdateSliderHandle();
             DrawMonthTicks();
             slider.SetEnabled(true);
@@ -256,6 +251,6 @@ public class TimelineControl : MonoBehaviour
     string FormatTimeLabel(float seconds)
     {
         GameTimeManager.SecondsToDate(seconds, out var month, out var year);
-        return $"M{month} - A{year}";
+        return $"Mes {month} - Año {year}";
     }
 }
