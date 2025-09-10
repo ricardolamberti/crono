@@ -329,8 +329,19 @@ public class TimelineManager : MonoBehaviour
         HashSet<int> invalid = new HashSet<int>();
         List<WorldEvent> survivors = new();
 
-        foreach (var ev in ordered)
+        int index = 0;
+        while (index < ordered.Count && ordered[index].timestamp <= baseSnapshot.timestamp)
         {
+            var ev = ordered[index++];
+            ev.wasApplied = true;
+            ev.failureReason = null;
+            applied.Add(ev.id);
+            survivors.Add(ev);
+        }
+
+        for (; index < ordered.Count; index++)
+        {
+            var ev = ordered[index];
             ev.wasApplied = false;
             ev.failureReason = null;
 
@@ -387,6 +398,15 @@ public class TimelineManager : MonoBehaviour
         HashSet<int> invalid = new HashSet<int>();
         List<WorldEvent> survivors = new();
         int idx = 0;
+
+        while (idx < ordered.Count && ordered[idx].timestamp <= baseSnapshot.timestamp)
+        {
+            var ev = ordered[idx++];
+            ev.wasApplied = true;
+            ev.failureReason = null;
+            applied.Add(ev.id);
+            survivors.Add(ev);
+        }
 
         float currentTime = baseSnapshot.timestamp;
         GameClock.Set(currentTime);
