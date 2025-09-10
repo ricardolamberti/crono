@@ -265,11 +265,11 @@ public class TimelineManager : MonoBehaviour
         }
     }
 
-    bool IsEventValid(WorldEvent ev, HashSet<int> appliedEvents)
+    bool IsEventValid(WorldEvent ev, HashSet<int> appliedEvents, HashSet<int> invalidEvents)
     {
         foreach (var dep in ev.dependencies)
         {
-            if (!appliedEvents.Contains(dep))
+            if (!appliedEvents.Contains(dep) || invalidEvents.Contains(dep))
                 return false;
         }
         return true;
@@ -280,13 +280,16 @@ public class TimelineManager : MonoBehaviour
         if (snap == null)
             return false;
 
-        MapState.cellMap = snap.cellDeltas?.ToDictionary(kv => kv.Key, kv => kv.Value.Clone())
-            ?? new Dictionary<Vector2Int, DTO.MapCellDTO>();
+        MapState.cellMap = new Dictionary<Vector2Int, DTO.MapCellDTO>();
+        if (snap.cellDeltas != null)
+        {
+            foreach (var kv in snap.cellDeltas)
+                MapState.cellMap[kv.Key] = kv.Value.Clone();
+        }
 
+        GameState.playerResources = new GameResources();
         if (snap.resourceDeltas != null && snap.resourceDeltas.TryGetValue("player", out var res))
             GameState.playerResources = CloneResources(res);
-        else
-            GameState.playerResources = new GameResources();
 
         foreach (var ch in GameObject.FindObjectsOfType<Character>())
             GameObject.Destroy(ch.gameObject);
@@ -323,6 +326,7 @@ public class TimelineManager : MonoBehaviour
         discardedEvents.Clear();
         var ordered = events.OrderBy(e => e.timestamp).ToList();
         HashSet<int> applied = new HashSet<int>();
+        HashSet<int> invalid = new HashSet<int>();
         List<WorldEvent> survivors = new();
 
         foreach (var ev in ordered)
@@ -330,10 +334,11 @@ public class TimelineManager : MonoBehaviour
             ev.wasApplied = false;
             ev.failureReason = null;
 
-            if (!IsEventValid(ev, applied))
+            if (!IsEventValid(ev, applied, invalid))
             {
                 ev.failureReason = "missing_dependency";
                 discardedEvents.Add(ev);
+                invalid.Add(ev.id);
                 Debug.Log($"[Timeline] Evento {ev.id} descartado por dependencias.");
                 continue;
             }
@@ -348,6 +353,7 @@ public class TimelineManager : MonoBehaviour
             {
                 ev.failureReason = "validation_failed";
                 discardedEvents.Add(ev);
+                invalid.Add(ev.id);
                 Debug.Log($"[Timeline] Evento {ev.id} descartado por estado inválido.");
             }
         }
@@ -378,6 +384,7 @@ public class TimelineManager : MonoBehaviour
         discardedEvents.Clear();
         var ordered = events.OrderBy(e => e.timestamp).ToList();
         HashSet<int> applied = new HashSet<int>();
+        HashSet<int> invalid = new HashSet<int>();
         List<WorldEvent> survivors = new();
         int idx = 0;
 
@@ -399,10 +406,11 @@ public class TimelineManager : MonoBehaviour
                 ev.wasApplied = false;
                 ev.failureReason = null;
 
-                if (!IsEventValid(ev, applied))
+                if (!IsEventValid(ev, applied, invalid))
                 {
                     ev.failureReason = "missing_dependency";
                     discardedEvents.Add(ev);
+                    invalid.Add(ev.id);
                     continue;
                 }
 
@@ -416,6 +424,7 @@ public class TimelineManager : MonoBehaviour
                 {
                     ev.failureReason = "validation_failed";
                     discardedEvents.Add(ev);
+                    invalid.Add(ev.id);
                 }
             }
 
@@ -721,15 +730,6 @@ public class TimelineManager : MonoBehaviour
             timeTravelStartTime = time;
 
         var orderedSnapshots = currentBranch.snapshots.OrderBy(s => s.timestamp).ToList();
-        if (orderedSnapshots.Count == 0)
-            return world;
-
-        var first = orderedSnapshots[0];
-        if (time < first.timestamp)
-        {
-            // No se puede viajar antes del inicio: fijamos el tiempo al primer snapshot
-            time = first.timestamp;
-        }
 
         foreach (var snap in orderedSnapshots)
         {
@@ -752,43 +752,32 @@ public class TimelineManager : MonoBehaviour
                 chars = new List<DTO.CharacterDTO>(snap.characters);
         }
 
+        foreach (var ch in GameObject.FindObjectsOfType<Character>())
+            GameObject.Destroy(ch.gameObject);
+
         MapState.cellMap = world.cells.ToDictionary(kv => kv.Key, kv => kv.Value.Clone());
         GameState.playerResources = world.resources.TryGetValue("player", out var res)
             ? CloneResources(res)
             : new GameResources();
 
-        lastSnapshotCells = world.cells.ToDictionary(kv => kv.Key, kv => kv.Value.Clone());
-        lastSnapshotResources = world.resources.ToDictionary(kv => kv.Key, kv => CloneResources(kv.Value));
-
         MapLoader.instance?.ReloadFromState();
 
-        if (MapLoader.instance != null)
+        if (MapLoader.instance != null && chars != null)
         {
-            foreach (var pos in MapState.cellMap.Keys.ToList())
+            foreach (var c in chars)
             {
-                if (!world.cells.ContainsKey(pos))
+                var pos = new Vector2Int(c.x, c.y);
+                if (System.Enum.TryParse(c.type, out Character.Type type))
                 {
-                    MapState.cellMap.Remove(pos);
-                    MapLoader.instance?.RemoveTileAt(pos); // Necesitás implementar esto si no existe
+                    MapLoader.instance.SpawnCharacter(pos, type, c.owner);
                 }
-            }
-            if (chars != null)
-            {
-                foreach (var c in chars)
+                else
                 {
-                    var pos = new Vector2Int(c.x, c.y);
-                    if (System.Enum.TryParse(c.type, out Character.Type type))
-                    {
-                        MapLoader.instance.SpawnCharacter(pos, type, c.owner);
-                    }
-                    else
-                    {
-                        if (c.type == "worker") type = Character.Type.Worker;
-                        else if (c.type == "scientist") type = Character.Type.Scientist;
-                        else if (c.type == "warrior") type = Character.Type.Warrior;
-                        else continue;
-                        MapLoader.instance.SpawnCharacter(pos, type, c.owner);
-                    }
+                    if (c.type == "worker") type = Character.Type.Worker;
+                    else if (c.type == "scientist") type = Character.Type.Scientist;
+                    else if (c.type == "warrior") type = Character.Type.Warrior;
+                    else continue;
+                    MapLoader.instance.SpawnCharacter(pos, type, c.owner);
                 }
             }
         }
